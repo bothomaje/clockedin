@@ -10,12 +10,12 @@
       </tr>
     </thead>
     <tbody>
-      @for (job of jobs; track job.id) {
+      @for (job of jobs | async; track job.id) {
         <tr>
           <td>{{ job.company }}</td>
           <td>{{ job.role }}</td>
-          <td><span class="badge bg-secondary">{{ job.status }}</span></td>
-          <td>{{ job.appliedDate }}</td>
+          <td><span class="badge bg-secondary">Status Here</span></td>
+          <td>Date Here</td>
         </tr>
       }
     </tbody>

@@ -1,5 +1,21 @@
 <main class="container mt-4">
-  <h2>Dashboard</h2>
+  <section class="d-flex justify-content-between">
+    <h2>Dashboard</h2>
+
+    @if (editedJob) {
+      <section class="gap-2 d-flex">
+        <button class="btn btn-danger" (click)="cancelJobEdit()">Cancel</button>
+        <button class="btn btn-primary" (click)="saveJob()">Save</button>
+      </section>
+    } @else {
+      <button class="btn btn-primary" (click)="beginJobEdit()">Add Job</button>
+    }
+  </section>
+
+  @if (editedJob) {
+    <textarea class="form-control mt-2" [(ngModel)]="editedJob.jobDescription" rows="10" placeholder="Please enter the job description..."></textarea>
+  }
+
   <table class="table table-striped mt-3">
     <thead class="table-dark">
       <tr>
@@ -17,6 +33,8 @@
           <td><span class="badge bg-secondary">Status Here</span></td>
           <td>Date Here</td>
         </tr>
+      } @empty {
+        <p>Loading...</p>
       }
     </tbody>
   </table>

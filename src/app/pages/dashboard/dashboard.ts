@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { JobService } from '../../services/job-service';
+import { Job } from '../../models/job.model';
 
 @Component({
   imports: [],
@@ -6,4 +8,7 @@ import { Component } from '@angular/core';
   // styleUrl: './dashboard.scss',
   templateUrl: './dashboard.html',
 })
-export class Dashboard {}
+export class Dashboard {
+  private jobService = inject(JobService);
+  jobs: Job[] = this.jobService.getJobs();
+}

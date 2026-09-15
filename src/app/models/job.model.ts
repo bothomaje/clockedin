@@ -5,6 +5,8 @@ export enum JobStatus {
   OFFER = 'offer',
   REJECTED = 'rejected',
   ACCEPTED = 'accepted',
+  WITHDRAWN = 'withdrawn',
+  ARCHIVED = 'archived',
 }
 
 export interface JobUpdate {
@@ -16,10 +18,14 @@ export interface Job {
   id?: string;
   company?: string;
   role?: string;
-
-  jobUpdates: JobUpdate[];
   jobDescription: string;
-
+  url?: string;
+  location?: string;
+  employmentType?: string;
+  salary?: string;
+  notes?: string;
+  applicationDeadline?: Date | null;
+  jobUpdates: JobUpdate[];
   generatedCoverLetter?: string;
   generatedCv?: string;
 }

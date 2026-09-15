@@ -20,6 +20,12 @@ export class Dashboard {
 
   jobs = this.jobService.getJobs();
 
+  notesDraft = '';
+
+  toDate(value: string): Date {
+    return new Date(value);
+  }
+
   beginJobEdit() {
     this.editedJob = {
       company: '',
@@ -45,7 +51,14 @@ export class Dashboard {
       this.viewedJob = undefined;
     } else {
       this.viewedJob = job;
+      this.notesDraft = job.notes ?? '';
     }
+  }
+
+  async saveNotes() {
+    if (!this.viewedJob?.id) return;
+    await this.jobService.updateJob(this.viewedJob.id, { notes: this.notesDraft });
+    this.viewedJob.notes = this.notesDraft;
   }
 
   getLatestJobUpdate(job: Job): JobUpdate {

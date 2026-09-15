@@ -37,6 +37,12 @@ export class JobService {
       company: job.company ?? '',
       role: job.role ?? '',
       jobDescription: job.jobDescription ?? '',
+      url: job.url ?? '',
+      location: job.location ?? '',
+      employmentType: job.employmentType ?? '',
+      salary: job.salary ?? '',
+      notes: job.notes ?? '',
+      applicationDeadline: job.applicationDeadline ?? null,
       jobUpdates: job.jobUpdates.map((u) => ({
         status: u.status,
         updatedAt: u.updatedAt,
@@ -68,7 +74,24 @@ export class JobService {
       company: data['company'],
       role: data['role'],
       jobDescription: data['jobDescription'] ?? '',
+      url: data['url'],
+      location: data['location'],
+      employmentType: data['employmentType'],
+      salary: data['salary'],
+      notes: data['notes'],
+      applicationDeadline:
+        data['applicationDeadline'] instanceof Timestamp
+          ? data['applicationDeadline'].toDate()
+          : data['applicationDeadline'],
       jobUpdates,
     };
+  }
+
+  async updateJob(jobId: string, updates: Partial<Job>): Promise<void> {
+    const uid = firebaseAuth.currentUser?.uid;
+    if (!uid) throw new Error('Cannot update job: No user is signed in.');
+
+    const jobRef = doc(this.db, 'users', uid, 'jobs', jobId);
+    await updateDoc(jobRef, updates as DocumentData);
   }
 }

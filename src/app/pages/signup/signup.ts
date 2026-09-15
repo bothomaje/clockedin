@@ -17,12 +17,35 @@ export class Signup {
 
   email = '';
   password = '';
+  confirmPassword = '';
 
   errorMessage = '';
   isSubmitting = false;
 
+  get passwordValid(): boolean {
+    return (
+      this.password.length >= 8 && /[A-Za-z]/.test(this.password) && /[0-9]/.test(this.password)
+    );
+  }
+
+  get passwordsMatch(): boolean {
+    return this.password === this.confirmPassword;
+  }
+
   async onSubmit() {
     this.errorMessage = '';
+
+    if (!this.passwordValid) {
+      this.errorMessage =
+        'Password must be at least 8 characters and include a letter and a number.';
+      return;
+    }
+
+    if (!this.passwordsMatch) {
+      this.errorMessage = 'Passwords do not match.';
+      return;
+    }
+
     this.isSubmitting = true;
 
     try {
@@ -30,7 +53,7 @@ export class Signup {
       await this.userService.createUserDoc(credential.user.uid, this.email);
       this.router.navigate(['/dashboard']);
     } catch (err) {
-      this.errorMessage = 'Could not create an account. Try again.';
+      this.errorMessage = this.authService.getAuthErrorMessage(err);
     } finally {
       this.isSubmitting = false;
     }

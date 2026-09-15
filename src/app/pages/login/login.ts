@@ -27,7 +27,7 @@ export class Login {
       await this.authService.signIn(this.email, this.password);
       this.router.navigate(['/dashboard']);
     } catch (err) {
-      this.errorMessage = 'Invalid email or password. Try again.';
+      this.errorMessage = this.authService.getAuthErrorMessage(err);
     } finally {
       this.isSubmitting = false;
     }

@@ -10,12 +10,17 @@
       <label class="form-label">Email</label>
       <input type="email" class="form-control" name="email" [(ngModel)]="email" required />
     </section>
-    <section>
+    <section class="mt-2">
       <label class="form-label">Password</label>
       <input type="password" class="form-control" name="password" [(ngModel)]="password" required />
     </section>
+    <section class="mt-2">
+      <label class="form-label">Confirm Password</label>
+      <input type="password" class="form-control" name="confirmPassword" [(ngModel)]="confirmPassword">
+    </section>
+    <p class="form-text">At least 8 characters, with a letter and a number.</p>
 
-    <button type="submit" class="btn btn-primary mt-3" [disabled]="isSubmitting || signUpForm.invalid">
+    <button type="submit" class="btn btn-primary mt-3" [disabled]="isSubmitting || !passwordValid || !passwordsMatch || signUpForm.invalid">
       {{ isSubmitting ? 'Creating account...' : 'Create Account' }}
     </button>
   </form>

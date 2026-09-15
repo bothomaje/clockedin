@@ -2,10 +2,15 @@ import { Service } from '@angular/core';
 import {
   Auth,
   createUserWithEmailAndPassword,
-  getAuth,
+  deleteUser,
+  EmailAuthProvider,
   onAuthStateChanged,
+  reauthenticateWithCredential,
+  sendEmailVerification,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
+  updatePassword,
   User,
 } from 'firebase/auth';
 import { Observable, shareReplay } from 'rxjs';
@@ -50,5 +55,35 @@ export class AuthService {
       default:
         return 'Something went wrong. Please try again.';
     }
+  }
+
+  currentUserSnapshot(): User | null {
+    return this.auth.currentUser;
+  }
+
+  sendPasswordReset(email: string) {
+    return sendPasswordResetEmail(this.auth, email);
+  }
+
+  sendVerificationEmail() {
+    if (!this.auth.currentUser) throw new Error('No user is signed in.');
+    return sendEmailVerification(this.auth.currentUser);
+  }
+
+  private async reauthenticate(currentPassword: string) {
+    const user = this.auth.currentUser;
+    if (!user?.email) throw new Error('No user is signed in.');
+    const credential = EmailAuthProvider.credential(user.email, currentPassword);
+    await reauthenticateWithCredential(user, credential);
+  }
+
+  async changePassword(currentPassword: string, newPassword: string) {
+    await this.reauthenticate(currentPassword);
+    await updatePassword(this.auth.currentUser!, newPassword);
+  }
+
+  async deleteAccount(currentPassword: string) {
+    await this.reauthenticate(currentPassword);
+    await deleteUser(this.auth.currentUser!);
   }
 }

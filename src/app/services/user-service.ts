@@ -1,7 +1,15 @@
 import { Service } from '@angular/core';
 import { User } from '../models/user/user.model';
 import { firebaseAuth, firestore } from '../firebase';
-import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  Timestamp,
+  writeBatch,
+} from 'firebase/firestore';
 import { Info } from '../models/user/info.model';
 import { Experience } from '../models/user/career/experience.model';
 import { Education } from '../models/user/career/education.model';
@@ -105,5 +113,13 @@ export class UserService {
   async updateCareerProfiles(careerProfiles: CareerProfile[]): Promise<void> {
     const uid = this.currentUid();
     await setDoc(this.userDoc(uid), { career: { careerProfiles } }, { merge: true });
+  }
+
+  async deleteAllUserData(uid: string): Promise<void> {
+    const jobsSnapshot = await getDocs(collection(this.db, 'users', uid, 'jobs'));
+    const batch = writeBatch(this.db);
+    jobsSnapshot.forEach((jobDoc) => batch.delete(jobDoc.ref));
+    batch.delete(this.userDoc(uid));
+    await batch.commit();
   }
 }

@@ -13,9 +13,10 @@
     <section class="mt-2">
       <label class="form-label">Password</label>
       <input type="password" class="form-control" name="password" [(ngModel)]="password" required />
+      <p class="mt-2">Forgot password? <a routerLink="/forgot-password">Reset</a></p>
     </section>
 
-    <button type="submit" class="btn btn-primary mt-3" [disabled]="isSubmitting || loginForm.invalid">
+    <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || loginForm.invalid">
       {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
     </button>
   </form>

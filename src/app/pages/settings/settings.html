@@ -1,0 +1,76 @@
+<main class="container mt-4">
+  <h2>Account Settings</h2>
+
+  <section class="mt-4">
+    <h3>Email</h3>
+    <hr />
+    <p>{{ email }}</p>
+    @if (emailVerified) {
+      <span class="badge bg-success">Verified</span>
+    } @else {
+      <span class="badge bg-warning text-dark">Not Verified</span>
+      @if (!verificationSent) {
+        <button
+          type="button"
+          class="btn btn-link btn-sm"
+          [disabled]="isSendingVerification || verificationSent"
+          (click)="resendVerification()">
+          {{ isSendingVerification ? 'Sending…' : 'Send verification email' }}
+        </button>
+
+        @if (verificationError) {
+          <p class="text-danger mt-2">{{ verificationError }}</p>
+        }
+      } @else {
+        <p class="text-success mt-2">Verification email sent. Check your inbox.</p>
+      }
+    }
+  </section>
+
+  <section class="mt-5">
+    <h3>Change Password</h3>
+    <hr />
+    @if (passwordMessage) { <p class="alert alert-success">{{ passwordMessage }}</p> }
+    @if (passwordError) { <p class="alert alert-danger">{{ passwordError }}</p> }
+
+    <form (ngSubmit)="changePassword()">
+      <section>
+        <label class="form-label">Current Password</label>
+        <input type="password" class="form-control" name="current-password" [(ngModel)]="currentPassword" required>
+      </section>
+      <section class="mt-2">
+        <label class="form-label">New Password</label>
+        <input type="password" class="form-control" name="new-password" [(ngModel)]="newPassword" required>
+      </section>
+      <section class="mt-2">
+        <label class="form-label">Confirm New Password</label>
+        <input type="password" class="form-control" name="confirm-new-password" [(ngModel)]="confirmNewPassword" required>
+      </section>
+      <p class="form-text">At least 8 characters, with a letter and a number.</p>
+      <button type="submit" class="btn btn-primary"
+        [disabled]="isSavingPassword || !currentPassword || !newPasswordValid || !newPasswordsMatch">
+        {{ isSavingPassword ? 'Saving...' : 'Update Password' }}
+      </button>
+    </form>
+  </section>
+
+  <section class="mt-5 mb-5">
+    <h3 class="text-danger">Delete Account</h3>
+    <hr />
+    @if (deleteError) { <p class="alert alert-danger">{{ deleteError }}</p> }
+
+    @if (!confirmingDelete) {
+      <button class="btn btn-outline-danger" (click)="beginDelete()">Delete My Account</button>
+    } @else {
+      <p class="text-danger">This permanently deletes your account and all data. This cannot be undone.</p>
+      <label class="form-label">Confirm your password</label>
+      <input type="password" class="form-control" [(ngModel)]="deletePassword">
+      <section class="d-flex gap-2 mt-3">
+        <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+        <button class="btn btn-danger" [disabled]="isDeleting || !deletePassword" (click)="deleteAccount()">
+          {{ isDeleting ? 'Deleting...' : 'Permanently Delete Account' }}
+        </button>
+      </section>
+    }
+  </section>
+</main>

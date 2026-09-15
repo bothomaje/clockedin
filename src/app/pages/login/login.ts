@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { AuthService } from '../../services/auth-service';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -6,12 +6,12 @@ import { FormsModule } from '@angular/forms';
 @Component({
   imports: [FormsModule, RouterLink],
   selector: 'app-login',
-  // styleUrl: './login.scss',
   templateUrl: './login.html',
 })
 export class Login {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   email = '';
   password = '';
@@ -30,6 +30,7 @@ export class Login {
       this.errorMessage = this.authService.getAuthErrorMessage(err);
     } finally {
       this.isSubmitting = false;
+      this.cdr.markForCheck();
     }
   }
 }

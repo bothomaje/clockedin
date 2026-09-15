@@ -10,7 +10,6 @@ import { MarkdownComponent } from 'ngx-markdown';
 @Component({
   imports: [AsyncPipe, FormsModule, DatePipe, MarkdownComponent],
   selector: 'app-dashboard',
-  // styleUrl: './dashboard.scss',
   templateUrl: './dashboard.html',
 })
 export class Dashboard {

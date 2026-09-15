@@ -123,7 +123,7 @@
               <td>{{ exp.role }}</td>
               <td>{{ exp.location }}</td>
               <td>{{ exp.startDate | date: 'MMM y' }} – {{ exp.endDate ? (exp.endDate | date: 'MMM y') : 'Present' }}</td>
-              <td>
+              <td class="text-end">
                 <section class="d-flex gap-2 justify-content-end">
                   <button class="btn btn-outline-secondary btn-sm" (click)="toggleExperienceDetails(exp)">
                     {{ expandedExperienceId === exp.id ? 'Hide Evidence' : 'Evidence' }}
@@ -135,7 +135,7 @@
             </tr>
             @if (expandedExperienceId === exp.id) {
               <tr>
-                <td colspan="4" class="bg-light">
+                <td colspan="5" class="bg-light">
                   <section class="p-2">
                     <section class="d-flex justify-content-between align-items-center">
                       <h5 class="mb-0">Evidence</h5>
@@ -179,7 +179,7 @@
               </tr>
             }
           } @empty {
-            <tr><td colspan="4">No experience added yet</td></tr>
+            <tr><td colspan="5">No experience added yet</td></tr>
           }
         </tbody>
       </table>
@@ -250,7 +250,7 @@
               <td>{{ edu.qualification }}</td>
               <td>{{ edu.field }}</td>
               <td>{{ edu.startDate | date: 'MMM y' }} – {{ edu.endDate ? (edu.endDate | date: 'MMM y') : 'Present' }}</td>
-              <td>
+              <td class="text-end">
                 <section class="d-flex gap-2 justify-content-end">
                   <button class="btn btn-secondary btn-sm" (click)="editEducation(edu)">Edit</button>
                   <button class="btn btn-danger btn-sm" (click)="deleteEducation(edu)">Delete</button>
@@ -258,7 +258,7 @@
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="4">No education added yet</td></tr>
+            <tr><td colspan="5">No education added yet</td></tr>
           }
         </tbody>
       </table>
@@ -310,9 +310,13 @@
           <button class="btn btn-primary" [disabled]="!editedProject.name" (click)="saveProject()">Save</button>
         </section>
       }
-      <table class="table table-striped">
+      <table class="table table-striped mt-3">
         <thead class="table-dark">
-          <tr><th>Name</th><th>Technologies</th><th></th></tr>
+          <tr>
+            <th>Name</th>
+            <th>Technologies</th>
+            <th></th>
+          </tr>
         </thead>
         <tbody>
           @for (proj of projects; track proj.id) {
@@ -360,8 +364,10 @@
                         @for (ev of proj.evidence; track ev.id) {
                           <li class="list-group-item d-flex justify-content-between align-items-center">
                             {{ ev.text }}
+                            <section class="d-flex justify-content-end gap-2">
                               <button class="btn btn-secondary btn-sm" (click)="editProjectEvidence(ev)">Edit</button>
                               <button class="btn btn-danger btn-sm" (click)="deleteProjectEvidence(proj, ev)">Delete</button>
+                            </section>
                           </li>
                         } @empty {
                           <li class="list-group-item">No evidence added yet</li>
@@ -408,7 +414,7 @@
           <button class="btn btn-primary" [disabled]="!editedSkill.name" (click)="saveSkill()">Save</button>
         </section>
       }
-      <table class="table table-striped">
+      <table class="table table-striped mt-3">
         <thead class="table-dark">
           <tr><th>Name</th><th>Category</th><th></th></tr>
         </thead>
@@ -471,7 +477,7 @@
           <button class="btn btn-primary" [disabled]="!editedCareerProfile.name" (click)="saveCareerProfile()">Save</button>
         </section>
       }
-      <table class="table table-striped">
+      <table class="table table-striped mt-3">
         <thead class="table-dark">
           <tr><th>Name</th><th>Description</th><th></th></tr>
         </thead>
@@ -480,8 +486,8 @@
             <tr>
               <td>{{ cp.name }}</td>
               <td>{{ cp.description }}</td>
-              <td class="d-flex gap-2 justify-content-end">
-                <section>
+              <td>
+                <section class="d-flex gap-2 justify-content-end">
                   <button class="btn btn-secondary btn-sm" (click)="editCareerProfile(cp)">Edit</button>
                   <button class="btn btn-danger btn-sm" (click)="deleteCareerProfile(cp)">Delete</button>
                 </section>

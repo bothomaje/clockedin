@@ -13,7 +13,6 @@ import { DatePipe } from '@angular/common';
 @Component({
   imports: [FormsModule, DatePipe],
   selector: 'app-profile',
-  // styleUrl: './profile.scss',
   templateUrl: './profile.html',
 })
 export class Profile implements OnInit {
@@ -80,8 +79,13 @@ export class Profile implements OnInit {
     return value ? new Date(value) : null;
   }
 
+  private updateUi() {
+    this.cdr.markForCheck();
+  }
+
   async saveInfo() {
     await this.userService.updateInfo(this.info);
+    this.updateUi();
   }
 
   // ---- Experience -----
@@ -110,12 +114,14 @@ export class Profile implements OnInit {
     }
 
     await this.userService.updateExperience(this.experience);
+    this.updateUi();
     this.editedExperience = undefined;
   }
 
   async deleteExperience(experience: Experience) {
     this.experience = this.experience.filter((e) => e.id !== experience.id);
     await this.userService.updateExperience(this.experience);
+    this.updateUi();
   }
 
   // ---- Experience evidence ----
@@ -153,6 +159,7 @@ export class Profile implements OnInit {
     );
 
     await this.userService.updateExperience(this.experience);
+    this.updateUi();
     this.editedExperienceEvidence = undefined;
   }
 
@@ -164,6 +171,7 @@ export class Profile implements OnInit {
     );
 
     await this.userService.updateExperience(this.experience);
+    this.updateUi();
   }
 
   // ---- Education ----
@@ -191,12 +199,14 @@ export class Profile implements OnInit {
     }
 
     await this.userService.updateEducation(this.education);
+    this.updateUi();
     this.editedEducation = undefined;
   }
 
   async deleteEducation(education: Education) {
     this.education = this.education.filter((e) => e.id !== education.id);
     await this.userService.updateEducation(this.education);
+    this.updateUi();
   }
 
   // ---- Projects ----
@@ -224,12 +234,14 @@ export class Profile implements OnInit {
     }
 
     await this.userService.updateProjects(this.projects);
+    this.updateUi();
     this.editedProject = undefined;
   }
 
   async deleteProject(project: Project) {
     this.projects = this.projects.filter((p) => p.id !== project.id);
     await this.userService.updateProjects(this.projects);
+    this.updateUi();
   }
 
   // ---- Project evidence ----
@@ -266,6 +278,7 @@ export class Profile implements OnInit {
     );
 
     await this.userService.updateProjects(this.projects);
+    this.updateUi();
     this.editedProjectEvidence = undefined;
   }
 
@@ -277,6 +290,7 @@ export class Profile implements OnInit {
     );
 
     await this.userService.updateProjects(this.projects);
+    this.updateUi();
   }
 
   // ---- Skills ----
@@ -318,12 +332,14 @@ export class Profile implements OnInit {
     }
 
     await this.userService.updateSkills(this.skills);
+    this.updateUi();
     this.editedSkill = undefined;
   }
 
   async deleteSkill(skill: Skill) {
     this.skills = this.skills.filter((s) => s.id !== skill.id);
     await this.userService.updateSkills(this.skills);
+    this.updateUi();
   }
 
   // ---- Career Profiles ----
@@ -354,11 +370,13 @@ export class Profile implements OnInit {
     }
 
     await this.userService.updateCareerProfiles(this.careerProfiles);
+    this.updateUi();
     this.editedCareerProfile = undefined;
   }
 
   async deleteCareerProfile(careerProfile: CareerProfile) {
     this.careerProfiles = this.careerProfiles.filter((c) => c.id !== careerProfile.id);
     await this.userService.updateCareerProfiles(this.careerProfiles);
+    this.updateUi();
   }
 }

@@ -1,5 +1,5 @@
 import { UserService } from './../../services/user-service';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { AuthService } from '../../services/auth-service';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -7,13 +7,13 @@ import { FormsModule } from '@angular/forms';
 @Component({
   imports: [FormsModule, RouterLink],
   selector: 'app-signup',
-  // styleUrl: './signup.scss',
   templateUrl: './signup.html',
 })
 export class Signup {
   private authService = inject(AuthService);
   private userService = inject(UserService);
   private router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   email = '';
   password = '';
@@ -56,6 +56,7 @@ export class Signup {
       this.errorMessage = this.authService.getAuthErrorMessage(err);
     } finally {
       this.isSubmitting = false;
+      this.cdr.markForCheck();
     }
   }
 }

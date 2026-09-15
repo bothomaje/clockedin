@@ -1,0 +1,460 @@
+<main class="container mt-4">
+  <h2>Profile</h2>
+
+  @if (isLoading) {
+    <p>Loading profile information...</p>
+  } @else if (errorMessage) {
+    <p class="alert alert-danger">{{ errorMessage }}</p>
+  } @else {
+
+    <!-- Information -->
+    <section class="mt-4">
+      <section class="d-flex justify-content-between align-items-center">
+        <h3>Information</h3>
+        <button class="btn btn-primary btn-sm" (click)="saveInfo()">Save Profile</button>
+      </section>
+      <hr />
+      <section class="d-flex gap-2">
+        <section class="flex-fill">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-control" [(ngModel)]="info.name">
+        </section>
+        <section class="flex-fill">
+          <label class="form-label">Phone</label>
+          <input type="text" class="form-control" [(ngModel)]="info.phone">
+        </section>
+      </section>
+      <section class="mt-2">
+        <label class="form-label">Location</label>
+        <input type="text" class="form-control" [(ngModel)]="info.location">
+      </section>
+      <section class="mt-2">
+        <label class="form-label">Summary</label>
+        <textarea class="form-control" rows="3" [(ngModel)]="info.summary"></textarea>
+      </section>
+    </section>
+
+        <!-- Experience -->
+    <section class="mt-5">
+      <section class="d-flex justify-content-between align-items-center">
+        <h3>Experience</h3>
+        @if (!editedExperience) {
+          <button class="btn btn-primary btn-sm" (click)="beginExperienceAdd()">Add Experience</button>
+        }
+      </section>
+      <hr />
+
+      @if (editedExperience) {
+        <section class="d-flex gap-2">
+          <section class="flex-fill">
+            <label class="form-label">Company *</label>
+            <input type="text" class="form-control" [(ngModel)]="editedExperience.company">
+          </section>
+          <section class="flex-fill">
+            <label class="form-label">Role *</label>
+            <input type="text" class="form-control" [(ngModel)]="editedExperience.role">
+          </section>
+        </section>
+        <section class="d-flex gap-2 mt-2">
+          <section class="flex-fill">
+            <label class="form-label">Location</label>
+            <input type="text" class="form-control" [(ngModel)]="editedExperience.location">
+          </section>
+          <section class="flex-fill">
+            <label class="form-label">Employment Type</label>
+            <input type="text" class="form-control" [(ngModel)]="editedExperience.employmentType">
+          </section>
+        </section>
+        <section class="mt-2">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="editedExperience.description"></textarea>
+        </section>
+        <section class="d-flex gap-2 mt-2">
+          <section class="flex-fill">
+            <label class="form-label">Relevant Skills</label>
+            <select class="form-select" multiple [(ngModel)]="editedExperience.skillIds">
+              @for (skill of skills; track skill.id) {
+                <option [value]="skill.id">{{ skill.name }}</option>
+              }
+            </select>
+          </section>
+          <section class="flex-fill">
+            <label class="form-label">Domains (comma-separated)</label>
+            <input type="text" class="form-control"
+              [ngModel]="toCsv(editedExperience.domains)"
+              (ngModelChange)="editedExperience.domains = fromCsv($event)">
+          </section>
+        </section>
+        <section class="d-flex gap-2 mt-3">
+          <button class="btn btn-danger" (click)="cancelExperienceEdit()">Cancel</button>
+          <button class="btn btn-primary" [disabled]="!editedExperience.company || !editedExperience.role" (click)="saveExperience()">Save</button>
+        </section>
+      }
+
+      <table class="table table-striped mt-3">
+        <thead class="table-dark">
+          <tr>
+            <th>Company</th>
+            <th>Role</th>
+            <th>Location</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (exp of experience; track exp.id) {
+            <tr>
+              <td>{{ exp.company }}</td>
+              <td>{{ exp.role }}</td>
+              <td>{{ exp.location }}</td>
+              <td>
+                <section class="d-flex gap-2 justify-content-end">
+                  <button class="btn btn-outline-secondary btn-sm" (click)="toggleExperienceDetails(exp)">
+                    {{ expandedExperienceId === exp.id ? 'Hide Evidence' : 'Evidence' }}
+                  </button>
+                  <button class="btn btn-secondary btn-sm" (click)="editExperience(exp)">Edit</button>
+                  <button class="btn btn-danger btn-sm" (click)="deleteExperience(exp)">Delete</button>
+                </section>
+              </td>
+            </tr>
+            @if (expandedExperienceId === exp.id) {
+              <tr>
+                <td colspan="4" class="bg-light">
+                  <section class="p-2">
+                    <section class="d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0">Evidence</h5>
+                      @if (!editedExperienceEvidence) {
+                        <button class="btn btn-primary btn-sm" (click)="beginExperienceEvidenceAdd()">Add Evidence</button>
+                      }
+                    </section>
+                    <hr />
+
+                    @if (editedExperienceEvidence) {
+                      <textarea class="form-control" rows="2" [(ngModel)]="editedExperienceEvidence.text" placeholder="e.g. Reduced deploy time from 40min to 8min by parallelising the CI pipeline"></textarea>
+                      <section class="mt-2">
+                        <label class="form-label">Linked Skills</label>
+                        <select class="form-select" multiple [(ngModel)]="editedExperienceEvidence.skillIds">
+                          @for (skill of skills; track skill.id) {
+                            <option [value]="skill.id">{{ skill.name }}</option>
+                          }
+                        </select>
+                      </section>
+                      <section class="d-flex gap-2 mt-2">
+                        <button class="btn btn-danger btn-sm" (click)="cancelExperienceEvidenceEdit()">Cancel</button>
+                        <button class="btn btn-primary btn-sm" [disabled]="!editedExperienceEvidence.text" (click)="saveExperienceEvidence(exp)">Save</button>
+                      </section>
+                    } @else {
+                      <ul class="list-group">
+                        @for (ev of exp.evidence; track ev.id) {
+                          <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ ev.text }}
+                            <section class="d-flex gap-2 mt-2">
+                              <button class="btn btn-secondary btn-sm" (click)="editExperienceEvidence(ev)">Edit</button>
+                              <button class="btn btn-danger btn-sm" (click)="deleteExperienceEvidence(exp, ev)">Delete</button>
+                            </section>
+                          </li>
+                        } @empty {
+                          <li class="list-group-item">No evidence added yet</li>
+                        }
+                      </ul>
+                    }
+                  </section>
+                </td>
+              </tr>
+            }
+          } @empty {
+            <tr><td colspan="4">No experience added yet</td></tr>
+          }
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Education -->
+    <section class="mt-5">
+      <section class="d-flex justify-content-between align-items-center">
+        <h3>Education</h3>
+        @if (!editedEducation) {
+          <button class="btn btn-primary btn-sm" (click)="beginEducationAdd()">Add Education</button>
+        }
+      </section>
+      <hr />
+
+      @if (editedEducation) {
+        <section class="d-flex gap-2">
+          <section class="flex-fill">
+            <label class="form-label">Institution *</label>
+            <input type="text" class="form-control" [(ngModel)]="editedEducation.institution">
+          </section>
+          <section class="flex-fill">
+            <label class="form-label">Qualification</label>
+            <input type="text" class="form-control" [(ngModel)]="editedEducation.qualification">
+          </section>
+        </section>
+        <section class="mt-2">
+          <label class="form-label">Field</label>
+          <input type="text" class="form-control" [(ngModel)]="editedEducation.field">
+        </section>
+        <section class="mt-2">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="editedEducation.description"></textarea>
+        </section>
+        <section class="d-flex gap-2 mt-3">
+          <button class="btn btn-danger" (click)="cancelEducationEdit()">Cancel</button>
+          <button class="btn btn-primary" [disabled]="!editedEducation.institution" (click)="saveEducation()">Save</button>
+        </section>
+      }
+      <table class="table table-striped mt-3">
+        <thead class="table-dark">
+          <tr><th>Institution</th><th>Qualification</th><th>Field</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (edu of education; track edu.id) {
+            <tr>
+              <td>{{ edu.institution }}</td>
+              <td>{{ edu.qualification }}</td>
+              <td>{{ edu.field }}</td>
+              <td>
+                <section class="d-flex gap-2 justify-content-end">
+                  <button class="btn btn-secondary btn-sm" (click)="editEducation(edu)">Edit</button>
+                  <button class="btn btn-danger btn-sm" (click)="deleteEducation(edu)">Delete</button>
+                </section>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="4">No education added yet</td></tr>
+          }
+        </tbody>
+      </table>
+    </section>
+
+        <!-- Projects -->
+    <section class="mt-5">
+      <section class="d-flex justify-content-between align-items-center">
+        <h3>Projects</h3>
+        @if (!editedProject) {
+          <button class="btn btn-primary btn-sm" (click)="beginProjectAdd()">Add Project</button>
+        }
+      </section>
+      <hr />
+
+      @if (editedProject) {
+        <section>
+          <label class="form-label">Name *</label>
+          <input type="text" class="form-control" [(ngModel)]="editedProject.name">
+        </section>
+        <section class="mt-2">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="editedProject.description"></textarea>
+        </section>
+        <section class="mt-2">
+          <label class="form-label">Technologies (comma-separated)</label>
+          <input type="text" class="form-control"
+            [ngModel]="toCsv(editedProject.technologies)"
+            (ngModelChange)="editedProject.technologies = fromCsv($event)">
+        </section>
+        <section class="d-flex gap-2 mt-2">
+          <section class="flex-fill">
+            <label class="form-label">Relevant Skills</label>
+            <select class="form-select" multiple [(ngModel)]="editedProject.skillIds">
+              @for (skill of skills; track skill.id) {
+                <option [value]="skill.id">{{ skill.name }}</option>
+              }
+            </select>
+          </section>
+          <section class="flex-fill">
+            <label class="form-label">Domains (comma-separated)</label>
+            <input type="text" class="form-control"
+              [ngModel]="toCsv(editedProject.domains)"
+              (ngModelChange)="editedProject.domains = fromCsv($event)">
+          </section>
+        </section>
+        <section class="d-flex gap-2 mt-3">
+          <button class="btn btn-danger" (click)="cancelProjectEdit()">Cancel</button>
+          <button class="btn btn-primary" [disabled]="!editedProject.name" (click)="saveProject()">Save</button>
+        </section>
+      }
+      <table class="table table-striped">
+        <thead class="table-dark">
+          <tr><th>Name</th><th>Technologies</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (proj of projects; track proj.id) {
+            <tr>
+              <td>{{ proj.name }}</td>
+              <td>{{ toCsv(proj.technologies) }}</td>
+              <td class="text-end">
+                <section class="d-flex gap-2 justify-content-end">
+                  <button class="btn btn-outline-secondary btn-sm" (click)="toggleProjectDetails(proj)">
+                    {{ expandedProjectId === proj.id ? 'Hide Evidence' : 'Evidence' }}
+                  </button>
+                  <button class="btn btn-secondary btn-sm" (click)="editProject(proj)">Edit</button>
+                  <button class="btn btn-danger btn-sm" (click)="deleteProject(proj)">Delete</button>
+                </section>
+              </td>
+            </tr>
+            @if (expandedProjectId === proj.id) {
+              <tr>
+                <td colspan="3" class="bg-light">
+                  <section class="p-2">
+                    <section class="d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0">Evidence</h5>
+                      @if (!editedProjectEvidence) {
+                        <button class="btn btn-primary btn-sm" (click)="beginProjectEvidenceAdd()">Add Evidence</button>
+                      }
+                    </section>
+                    <hr />
+
+                    @if (editedProjectEvidence) {
+                      <textarea class="form-control" rows="2" [(ngModel)]="editedProjectEvidence.text"></textarea>
+                      <section class="mt-2">
+                        <label class="form-label">Linked Skills</label>
+                        <select class="form-select" multiple [(ngModel)]="editedProjectEvidence.skillIds">
+                          @for (skill of skills; track skill.id) {
+                            <option [value]="skill.id">{{ skill.name }}</option>
+                          }
+                        </select>
+                      </section>
+                      <section class="d-flex gap-2 mt-2">
+                        <button class="btn btn-danger btn-sm" (click)="cancelProjectEvidenceEdit()">Cancel</button>
+                        <button class="btn btn-primary btn-sm" [disabled]="!editedProjectEvidence.text" (click)="saveProjectEvidence(proj)">Save</button>
+                      </section>
+                    } @else {
+                      <ul class="list-group">
+                        @for (ev of proj.evidence; track ev.id) {
+                          <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ ev.text }}
+                              <button class="btn btn-secondary btn-sm" (click)="editProjectEvidence(ev)">Edit</button>
+                              <button class="btn btn-danger btn-sm" (click)="deleteProjectEvidence(proj, ev)">Delete</button>
+                          </li>
+                        } @empty {
+                          <li class="list-group-item">No evidence added yet</li>
+                        }
+                      </ul>
+                    }
+                  </section>
+                </td>
+              </tr>
+            }
+          } @empty {
+            <tr><td colspan="3">No projects added yet</td></tr>
+          }
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Skills -->
+    <section class="mt-5">
+      <section class="d-flex justify-content-between align-items-center">
+        <h3>Skills</h3>
+        @if (!editedSkill) {
+          <button class="btn btn-primary btn-sm" (click)="beginSkillAdd()">Add Skill</button>
+        }
+      </section>
+      <hr />
+
+      @if (editedSkill) {
+        <section class="d-flex gap-2">
+          <section class="flex-fill">
+            <label class="form-label">Name *</label>
+            <input type="text" class="form-control" [(ngModel)]="editedSkill.name">
+          </section>
+          <section class="flex-fill">
+            <label class="form-label">Category</label>
+            <input type="text" class="form-control" [(ngModel)]="editedSkill.category" placeholder="e.g. Languages, Frameworks">
+          </section>
+        </section>
+        @if (skillError) {
+          <p class="text-danger mt-2">{{ skillError }}</p>
+        }
+        <section class="d-flex gap-2 mt-3">
+          <button class="btn btn-danger" (click)="cancelSkillEdit()">Cancel</button>
+          <button class="btn btn-primary" [disabled]="!editedSkill.name" (click)="saveSkill()">Save</button>
+        </section>
+      }
+      <table class="table table-striped">
+        <thead class="table-dark">
+          <tr><th>Name</th><th>Category</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (skill of skills; track skill.id) {
+            <tr>
+              <td>{{ skill.name }}</td>
+              <td>{{ skill.category }}</td>
+              <td>
+                <section class="d-flex gap-2 justify-content-end">
+                  <button class="btn btn-secondary btn-sm" (click)="editSkill(skill)">Edit</button>
+                  <button class="btn btn-danger btn-sm" (click)="deleteSkill(skill)">Delete</button>
+                </section>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="3">No skills added yet</td></tr>
+          }
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Career Profiles -->
+    <section class="mt-5">
+      <section class="d-flex justify-content-between align-items-center">
+        <h3>Career Profiles</h3>
+        @if (!editedCareerProfile) {
+          <button class="btn btn-primary btn-sm" (click)="beginCareerProfileAdd()">Add Career Profile</button>
+        }
+      </section>
+      <hr />
+
+      @if (editedCareerProfile) {
+        <section>
+          <label class="form-label">Name *</label>
+          <input type="text" class="form-control" [(ngModel)]="editedCareerProfile.name" placeholder="e.g. Frontend / Web">
+        </section>
+        <section class="mt-2">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" rows="2" [(ngModel)]="editedCareerProfile.description"></textarea>
+        </section>
+        <section class="d-flex gap-2 mt-2">
+          <section class="flex-fill">
+            <label class="form-label">Emphasized Skills</label>
+            <select class="form-select" multiple [(ngModel)]="editedCareerProfile.skillIds">
+              @for (skill of skills; track skill.id) {
+                <option [value]="skill.id">{{ skill.name }}</option>
+              }
+            </select>
+          </section>
+          <section class="flex-fill">
+            <label class="form-label">Domains (comma-separated)</label>
+            <input type="text" class="form-control"
+              [ngModel]="toCsv(editedCareerProfile.domains)"
+              (ngModelChange)="editedCareerProfile.domains = fromCsv($event)">
+          </section>
+        </section>
+        <section class="d-flex gap-2 mt-3">
+          <button class="btn btn-danger" (click)="cancelCareerProfileEdit()">Cancel</button>
+          <button class="btn btn-primary" [disabled]="!editedCareerProfile.name" (click)="saveCareerProfile()">Save</button>
+        </section>
+      }
+      <table class="table table-striped">
+        <thead class="table-dark">
+          <tr><th>Name</th><th>Description</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (cp of careerProfiles; track cp.id) {
+            <tr>
+              <td>{{ cp.name }}</td>
+              <td>{{ cp.description }}</td>
+              <td class="d-flex gap-2 justify-content-end">
+                <section>
+                  <button class="btn btn-secondary btn-sm" (click)="editCareerProfile(cp)">Edit</button>
+                  <button class="btn btn-danger btn-sm" (click)="deleteCareerProfile(cp)">Delete</button>
+                </section>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="3">No career profiles added yet</td></tr>
+          }
+        </tbody>
+      </table>
+    </section>
+
+  }
+</main>

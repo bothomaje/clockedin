@@ -7,14 +7,8 @@
         <button class="btn btn-danger" (click)="cancelJobEdit()">Cancel</button>
         <button class="btn btn-primary" (click)="saveJob()">Save</button>
       </section>
-    } @else if (editedUser) {
-      <section class="gap-2 d-flex">
-        <button class="btn btn-danger" (click)="cancelUserEdit()">Cancel</button>
-        <button class="btn btn-primary" (click)="saveUser()">Save</button>
-      </section>
     } @else {
       <section class="gap-2 d-flex">
-        <button class="btn btn-secondary" (click)="editUser()">Edit CV</button>
         <button class="btn btn-primary" (click)="beginJobEdit()">Add Job</button>
       </section>
     }
@@ -33,15 +27,7 @@
       <label class="form-label">Job Description</label>
       <textarea class="form-control" [(ngModel)]="editedJob.jobDescription" rows="10" placeholder="Please enter the job description..."></textarea>
     </section>
-  }
-
-  @if (editedUser) {
-    @if (editedUser | async; as user) {
-      <textarea class="form-control mt-2" [(ngModel)]="user.cv" rows="10" placeholder="Please enter your CV..."></textarea>
-    } @else {
-      <p>Loading...</p>
-    }
-  } @else if (viewedJob) {
+  } @if (viewedJob) {
     <table class="table table-striped mt-3">
       <thead class="table-dark">
         <tr>

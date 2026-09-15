@@ -4,7 +4,7 @@ import { Job, JobStatus, JobUpdate } from '../../models/job.model';
 import { UserService } from '../../services/user-service';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { User } from '../../models/user.model';
+import { User } from '../../models/user/user.model';
 import { MarkdownComponent } from 'ngx-markdown';
 
 @Component({
@@ -15,11 +15,9 @@ import { MarkdownComponent } from 'ngx-markdown';
 })
 export class Dashboard {
   private jobService = inject(JobService);
-  private userService = inject(UserService);
 
   editedJob?: Job;
   viewedJob?: Job;
-  editedUser?: Promise<User>;
 
   jobs = this.jobService.getJobs();
 
@@ -41,27 +39,6 @@ export class Dashboard {
     this.jobService.addJob(this.editedJob!);
     this.editedJob = undefined;
     this.jobs = this.jobService.getJobs();
-  }
-
-  editUser() {
-    this.editedUser = this.userService.getUser().then((user) => {
-      if (user) {
-        return user;
-      } else {
-        return { email: '', cv: '' };
-      }
-    });
-  }
-
-  cancelUserEdit() {
-    this.editedUser = undefined;
-  }
-
-  saveUser() {
-    this.editedUser?.then((user) => {
-      this.userService.updateUser(user);
-      this.editedUser = undefined;
-    });
   }
 
   toggleDetails(job: Job) {

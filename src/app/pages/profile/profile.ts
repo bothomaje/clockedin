@@ -8,9 +8,10 @@ import { Project } from '../../models/user/career/project.model';
 import { Skill } from '../../models/user/career/skill.model';
 import { CareerProfile } from '../../models/user/career/career-profile.model';
 import { Evidence } from '../../models/user/career/evidence.model';
+import { DatePipe } from '@angular/common';
 
 @Component({
-  imports: [FormsModule],
+  imports: [FormsModule, DatePipe],
   selector: 'app-profile',
   // styleUrl: './profile.scss',
   templateUrl: './profile.html',
@@ -68,6 +69,15 @@ export class Profile implements OnInit {
       .split(',')
       .map((v) => v.trim())
       .filter(Boolean);
+  }
+
+  toDateInput(date?: Date | null): string {
+    if (!date) return '';
+    return new Date(date).toISOString().slice(0, 10);
+  }
+
+  fromDateInput(value: string): Date | null {
+    return value ? new Date(value) : null;
   }
 
   async saveInfo() {

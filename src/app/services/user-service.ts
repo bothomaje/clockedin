@@ -1,7 +1,7 @@
 import { Service } from '@angular/core';
 import { User } from '../models/user/user.model';
 import { firebaseAuth, firestore } from '../firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import { Info } from '../models/user/info.model';
 import { Experience } from '../models/user/career/experience.model';
 import { Education } from '../models/user/career/education.model';
@@ -24,6 +24,21 @@ export class UserService {
       throw new Error('Cannot access user. No user is signed in.');
     }
     return uid;
+  }
+
+  private toDate(value: unknown): Date | null {
+    if (!value) return null;
+    return value instanceof Timestamp ? value.toDate() : (value as Date);
+  }
+
+  private normalizeDates<T extends { startDate?: unknown; endDate?: unknown }>(
+    items: T[] = [],
+  ): T[] {
+    return items.map((item) => ({
+      ...item,
+      startDate: this.toDate(item.startDate),
+      endDate: this.toDate(item.endDate),
+    }));
   }
 
   async createUserDoc(uid: string, email: string): Promise<void> {
@@ -54,7 +69,11 @@ export class UserService {
     return {
       id: snapshot.id,
       info: data['info'],
-      career: data['career'],
+      career: {
+        ...data['career'],
+        experience: this.normalizeDates(data['career']?.experience),
+        education: this.normalizeDates(data['career']?.education),
+      },
     };
   }
 

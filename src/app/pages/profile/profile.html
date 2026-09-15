@@ -85,6 +85,21 @@
               (ngModelChange)="editedExperience.domains = fromCsv($event)">
           </section>
         </section>
+        <section class="d-flex gap-2 mt-2">
+          <section class="flex-fill">
+            <label class="form-label">Start Date</label>
+            <input type="date" class="form-control"
+              [ngModel]="toDateInput(editedExperience.startDate)"
+              (ngModelChange)="editedExperience.startDate = fromDateInput($event) ?? editedExperience.startDate">
+          </section>
+          <section class="flex-fill">
+            <label class="form-label">End Date</label>
+            <input type="date" class="form-control"
+              [ngModel]="toDateInput(editedExperience.endDate)"
+              (ngModelChange)="editedExperience.endDate = fromDateInput($event)">
+            <div class="form-text">Leave blank if current</div>
+          </section>
+        </section>
         <section class="d-flex gap-2 mt-3">
           <button class="btn btn-danger" (click)="cancelExperienceEdit()">Cancel</button>
           <button class="btn btn-primary" [disabled]="!editedExperience.company || !editedExperience.role" (click)="saveExperience()">Save</button>
@@ -97,6 +112,7 @@
             <th>Company</th>
             <th>Role</th>
             <th>Location</th>
+            <th>Period</th>
             <th></th>
           </tr>
         </thead>
@@ -106,6 +122,7 @@
               <td>{{ exp.company }}</td>
               <td>{{ exp.role }}</td>
               <td>{{ exp.location }}</td>
+              <td>{{ exp.startDate | date: 'MMM y' }} – {{ exp.endDate ? (exp.endDate | date: 'MMM y') : 'Present' }}</td>
               <td>
                 <section class="d-flex gap-2 justify-content-end">
                   <button class="btn btn-outline-secondary btn-sm" (click)="toggleExperienceDetails(exp)">
@@ -197,6 +214,20 @@
           <label class="form-label">Description</label>
           <textarea class="form-control" rows="3" [(ngModel)]="editedEducation.description"></textarea>
         </section>
+        <section class="d-flex gap-2 mt-2">
+          <section class="flex-fill">
+            <label class="form-label">Start Date</label>
+            <input type="date" class="form-control"
+              [ngModel]="toDateInput(editedEducation.startDate)"
+              (ngModelChange)="editedEducation.startDate = fromDateInput($event) ?? editedEducation.startDate">
+          </section>
+          <section class="flex-fill">
+            <label class="form-label">End Date</label>
+            <input type="date" class="form-control"
+              [ngModel]="toDateInput(editedEducation.endDate)"
+              (ngModelChange)="editedEducation.endDate = fromDateInput($event)">
+          </section>
+        </section>
         <section class="d-flex gap-2 mt-3">
           <button class="btn btn-danger" (click)="cancelEducationEdit()">Cancel</button>
           <button class="btn btn-primary" [disabled]="!editedEducation.institution" (click)="saveEducation()">Save</button>
@@ -204,7 +235,13 @@
       }
       <table class="table table-striped mt-3">
         <thead class="table-dark">
-          <tr><th>Institution</th><th>Qualification</th><th>Field</th><th></th></tr>
+          <tr>
+            <th>Institution</th>
+            <th>Qualification</th>
+            <th>Field</th>
+            <th>Period</th>
+            <th></th>
+          </tr>
         </thead>
         <tbody>
           @for (edu of education; track edu.id) {
@@ -212,6 +249,7 @@
               <td>{{ edu.institution }}</td>
               <td>{{ edu.qualification }}</td>
               <td>{{ edu.field }}</td>
+              <td>{{ edu.startDate | date: 'MMM y' }} – {{ edu.endDate ? (edu.endDate | date: 'MMM y') : 'Present' }}</td>
               <td>
                 <section class="d-flex gap-2 justify-content-end">
                   <button class="btn btn-secondary btn-sm" (click)="editEducation(edu)">Edit</button>

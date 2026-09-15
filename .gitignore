@@ -39,6 +39,8 @@ testem.log
 /typings
 __screenshots__/
 environments/
+.env
+.env.*
 
 # System files
 .DS_Store

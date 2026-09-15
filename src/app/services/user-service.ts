@@ -16,6 +16,7 @@ import { Education } from '../models/user/career/education.model';
 import { Project } from '../models/user/career/project.model';
 import { Skill } from '../models/user/career/skill.model';
 import { CareerProfile } from '../models/user/career/career-profile.model';
+import { DocTemplates } from '../models/user/doc-templates.model';
 
 @Service()
 export class UserService {
@@ -77,6 +78,7 @@ export class UserService {
     return {
       id: snapshot.id,
       info: data['info'],
+      templates: data['templates'] ?? {},
       career: {
         ...data['career'],
         experience: this.normalizeDates(data['career']?.experience),
@@ -113,6 +115,11 @@ export class UserService {
   async updateCareerProfiles(careerProfiles: CareerProfile[]): Promise<void> {
     const uid = this.currentUid();
     await setDoc(this.userDoc(uid), { career: { careerProfiles } }, { merge: true });
+  }
+
+  async updateTemplates(templates: DocTemplates): Promise<void> {
+    const uid = this.currentUid();
+    await setDoc(this.userDoc(uid), { templates }, { merge: true });
   }
 
   async deleteAllUserData(uid: string): Promise<void> {

@@ -1,3 +1,5 @@
+import { JobAnalysis } from './job-analysis.model';
+
 export enum JobStatus {
   NEW = 'new',
   APPLIED = 'applied',
@@ -28,4 +30,6 @@ export interface Job {
   jobUpdates: JobUpdate[];
   generatedCoverLetter?: string;
   generatedCv?: string;
+  jobAnalysis?: JobAnalysis | null;
+  jobAnalysedAt?: Date | null;
 }

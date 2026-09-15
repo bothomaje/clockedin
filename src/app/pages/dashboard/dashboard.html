@@ -91,20 +91,147 @@
 
     <h3 class="mt-3">Job Description</h3>
     <hr />
-    <p>{{ viewedJob.jobDescription }}</p>
+    <p class="mb-4">{{ viewedJob.jobDescription }}</p>
 
-    <h3 class="mt-3">Notes</h3>
+    <section class="d-flex justify-content-between">
+      <h3>Notes</h3>
+      <button class="btn btn-primary btn-sm" (click)="saveNotes()">Save Notes</button>
+    </section>
     <hr />
-    <textarea class="form-control" rows="4" [(ngModel)]="notesDraft"></textarea>
-    <button class="btn btn-primary btn-sm mt-2" (click)="saveNotes()">Save Notes</button>
+    <textarea class="form-control mb-4" rows="4" [(ngModel)]="notesDraft"></textarea>
+
+    <section class="d-flex justify-content-between">
+      <h3>AI Job Analysis</h3>
+      <button class="btn btn-primary btn-sm" [disabled]="isAnalysing" (click)="analyseJob()">
+        {{ isAnalysing ? 'Analysing...' : 'Analyse Job' }}
+      </button>
+    </section>
+    <hr />
+    @if (aiError) { <p class="text-danger mt-2">{{ aiError }}</p> }
+    @if (jobAnalysis) { <pre class="bg-light p-2 mt-2">{{ jobAnalysis | json }}</pre> }
 
     <h3 class="mt-3">Cover Letter</h3>
     <hr />
-    <markdown [data]="viewedJob.generatedCoverLetter || 'No cover letter generated yet'"></markdown>
+
+    <section>
+      <button class="btn btn-primary" [disabled]="isGeneratingCoverLetter"
+        (click)="generateCoverLetter()">
+        {{ isGeneratingCoverLetter
+            ? 'Generating...'
+            : (coverLetterDocuments.length ? 'Regenerate Cover Letter' : 'Generate Cover Letter') }}
+      </button>
+    </section>
+
+    @if (coverLetterError) { <p class="text-danger mt-2">{{ coverLetterError }}</p> }
+
+    @if (coverLetterDocuments.length) {
+      <section class="btn-group mt-3">
+        @for (document of coverLetterDocuments; track document.id) {
+          <button class="btn btn-sm"
+            [class.btn-secondary]="activeCoverLetter?.id === document.id"
+            [class.btn-outline-secondary]="activeCoverLetter?.id !== document.id"
+            (click)="selectCoverLetterVersion(document)">
+            v{{ document.version }}
+          </button>
+        }
+      </section>
+    }
+
+    @if (activeCoverLetter) {
+      <p class="text-muted small mt-2">
+        Version {{ activeCoverLetter.version }} ·
+        {{ activeCoverLetter.generatedAt | date: 'medium' }} ·
+        {{ activeCoverLetter.model }}
+      </p>
+
+      @if (activeCoverLetter.structured) {
+        <button class="btn btn-outline-secondary btn-sm" [disabled]="isDownloading"
+          (click)="downloadPdf(activeCoverLetter)">
+          {{ isDownloading ? 'Building PDF...' : 'Download PDF' }}
+        </button>
+      }
+
+      @if (activeCoverLetter.validation && activeCoverLetter.validation.issues.length) {
+        <section class="mt-2">
+          @for (issue of activeCoverLetter.validation.issues; track $index) {
+            <p class="mb-1" [class.text-danger]="issue.severity === 'error'"
+              [class.text-warning]="issue.severity === 'warning'">
+              <strong>{{ issue.field }}:</strong> {{ issue.message }}
+            </p>
+          }
+        </section>
+      } @else if (activeCoverLetter.validation) {
+        <p class="text-success mt-2">Validation passed. No unsupported claims found.</p>
+      }
+
+      <markdown [data]="activeCoverLetter.content"></markdown>
+    } @else {
+      <p>No cover letter generated yet</p>
+    }
 
     <h3 class="mt-3">CV</h3>
     <hr />
-    <markdown [data]="viewedJob.generatedCv || 'No CV generated yet'"></markdown>
+
+    <section class="d-flex gap-2 align-items-end flex-wrap">
+      <section>
+        <label class="form-label">Career Profile</label>
+        <select class="form-select" [(ngModel)]="selectedProfileId">
+          <option value="">All career data</option>
+          @for (profile of careerProfiles; track profile.id) {
+            <option [value]="profile.id">{{ profile.name }}</option>
+          }
+        </select>
+      </section>
+      <button class="btn btn-primary" [disabled]="isGeneratingCv" (click)="generateCv()">
+        {{ isGeneratingCv ? 'Generating...' : (cvDocuments.length ? 'Regenerate CV' : 'Generate CV') }}
+      </button>
+    </section>
+
+    @if (cvError) { <p class="text-danger mt-2">{{ cvError }}</p> }
+
+    @if (cvDocuments.length) {
+      <section class="btn-group mt-3">
+        @for (document of cvDocuments; track document.id) {
+          <button class="btn btn-sm"
+            [class.btn-secondary]="activeCv?.id === document.id"
+            [class.btn-outline-secondary]="activeCv?.id !== document.id"
+            (click)="selectCvVersion(document)">
+            v{{ document.version }}
+          </button>
+        }
+      </section>
+    }
+
+    @if (activeCv) {
+      <p class="text-muted small mt-2">
+        Version {{ activeCv.version }} · {{ activeCv.generatedAt | date: 'medium' }} · {{ activeCv.model }}
+      </p>
+
+      @if (activeCv.structured) {
+        <button class="btn btn-outline-secondary btn-sm" [disabled]="isDownloading"
+          (click)="downloadPdf(activeCv)">
+          {{ isDownloading ? 'Building PDF...' : 'Download PDF' }}
+        </button>
+      }
+      @if (downloadError) { <p class="text-danger mt-2">{{ downloadError }}</p> }
+
+      @if (activeCv.validation && activeCv.validation.issues.length) {
+        <section class="mt-2">
+          @for (issue of activeCv.validation.issues; track $index) {
+            <p class="mb-1" [class.text-danger]="issue.severity === 'error'"
+              [class.text-warning]="issue.severity === 'warning'">
+              <strong>{{ issue.field }}:</strong> {{ issue.message }}
+            </p>
+          }
+        </section>
+      } @else if (activeCv.validation) {
+        <p class="text-success mt-2">Validation passed. No unsupported claims found.</p>
+      }
+
+      <markdown [data]="activeCv.content"></markdown>
+    } @else {
+      <p>No CV generated yet</p>
+    }
 
   } @else {
     <table class="table table-striped mt-3">

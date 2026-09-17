@@ -9,7 +9,7 @@
       </section>
     } @else {
       <section class="gap-2 d-flex">
-        <button class="btn btn-primary" (click)="beginJobEdit()">Add Job</button>
+        <button class="btn btn-primary" (click)="beginJobAdd()">Add Job</button>
       </section>
     }
   </section>
@@ -62,14 +62,20 @@
           <th>Role</th>
           <th>Status</th>
           <th>Updated At</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
-        <tr (click)="toggleDetails(viewedJob)">
+        <tr>
           <td>{{ viewedJob.company }}</td>
           <td>{{ viewedJob.role }}</td>
           <td><span class="badge bg-secondary">{{ getLatestJobUpdate(viewedJob).status }}</span></td>
           <td>{{ getLatestJobUpdate(viewedJob).updatedAt | date: 'medium' }}</td>
+          <td class="text-end">
+              <section class="d-flex gap-2 justify-content-end">
+                <button class="btn btn-outline-secondary btn-sm" (click)="toggleDetails(viewedJob)">{{ viewedJob ? 'Hide details' : 'Show details' }}</button>
+              </section>
+            </td>
         </tr>
       </tbody>
     </table>
@@ -241,15 +247,23 @@
           <th>Role</th>
           <th>Status</th>
           <th>Updated At</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         @for (job of jobs | async; track job.id) {
-          <tr (click)="toggleDetails(job)">
+          <tr>
             <td>{{ job.company }}</td>
             <td>{{ job.role }}</td>
             <td><span class="badge bg-secondary">{{ getLatestJobUpdate(job).status }}</span></td>
             <td>{{ getLatestJobUpdate(job).updatedAt | date: 'medium' }}</td>
+            <td class="text-end">
+              <section class="d-flex gap-2 justify-content-end">
+                <button class="btn btn-outline-secondary btn-sm" (click)="toggleDetails(job)">{{ viewedJob ? 'Hide details' : 'Show details' }}</button>
+                <button class="btn btn-secondary btn-sm" (click)="editJob(job)">Edit</button>
+                <button class="btn btn-primary btn-sm" (click)="openUrl(job)">Open URL</button>
+              </section>
+            </td>
           </tr>
         } @empty {
           <p class="mt-3">No jobs being tracked currently</p>

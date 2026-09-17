@@ -3,6 +3,7 @@ import { User } from '../models/user/user.model';
 import { firebaseAuth, firestore } from '../firebase';
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -79,6 +80,10 @@ export class UserService {
       id: snapshot.id,
       info: data['info'],
       templates: data['templates'] ?? {},
+      aiConsentAt:
+        data['aiConsentAt'] instanceof Timestamp
+          ? data['aiConsentAt'].toDate()
+          : (data['aiConsentAt'] ?? null),
       career: {
         ...data['career'],
         experience: this.normalizeDates(data['career']?.experience),
@@ -122,11 +127,26 @@ export class UserService {
     await setDoc(this.userDoc(uid), { templates }, { merge: true });
   }
 
-  async deleteAllUserData(uid: string): Promise<void> {
+  async deleteAllUserData(): Promise<void> {
+    const uid = this.currentUid();
     const jobsSnapshot = await getDocs(collection(this.db, 'users', uid, 'jobs'));
-    const batch = writeBatch(this.db);
-    jobsSnapshot.forEach((jobDoc) => batch.delete(jobDoc.ref));
-    batch.delete(this.userDoc(uid));
-    await batch.commit();
+
+    for (const jobDoc of jobsSnapshot.docs) {
+      const genDocsSnapshot = await getDocs(
+        collection(this.db, 'users', uid, 'jobs', jobDoc.id, 'generatedDocuments'),
+      );
+
+      const batch = writeBatch(this.db);
+      genDocsSnapshot.docs.forEach((d) => batch.delete(d.ref));
+      batch.delete(jobDoc.ref);
+      await batch.commit();
+    }
+
+    await deleteDoc(doc(this.db, 'users', uid));
+  }
+
+  async recordAiConsent(): Promise<void> {
+    const uid = this.currentUid();
+    await setDoc(this.userDoc(uid), { aiConsentAt: new Date() }, { merge: true });
   }
 }

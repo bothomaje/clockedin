@@ -1,4 +1,4 @@
-import { Service } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import {
   Auth,
   createUserWithEmailAndPassword,
@@ -15,10 +15,12 @@ import {
 } from 'firebase/auth';
 import { Observable, shareReplay } from 'rxjs';
 import { firebaseAuth } from '../firebase';
+import { UserService } from './user-service';
 
 @Service()
 export class AuthService {
   private auth: Auth = firebaseAuth;
+  private userService = inject(UserService);
 
   currentUser$ = new Observable<User | null>((subscriber) => {
     return onAuthStateChanged(this.auth, subscriber);
@@ -84,6 +86,7 @@ export class AuthService {
 
   async deleteAccount(currentPassword: string) {
     await this.reauthenticate(currentPassword);
+    await this.userService.deleteAllUserData();
     await deleteUser(this.auth.currentUser!);
   }
 }

@@ -110,7 +110,6 @@ export class Settings {
       const uid = this.authService.currentUserSnapshot()?.uid;
       if (!uid) throw new Error('No user is signed in.');
 
-      await this.userService.deleteAllUserData(uid);
       await this.authService.deleteAccount(this.deletePassword);
       this.router.navigate(['/']);
     } catch (err) {

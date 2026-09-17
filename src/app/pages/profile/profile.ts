@@ -9,6 +9,7 @@ import { Skill } from '../../models/user/career/skill.model';
 import { CareerProfile } from '../../models/user/career/career-profile.model';
 import { Evidence } from '../../models/user/career/evidence.model';
 import { DatePipe } from '@angular/common';
+import { Link } from '../../models/user/link.model';
 
 @Component({
   imports: [FormsModule, DatePipe],
@@ -86,6 +87,38 @@ export class Profile implements OnInit {
   async saveInfo() {
     await this.userService.updateInfo(this.info);
     this.updateUi();
+  }
+
+  addLink(): void {
+    this.info.links = [...(this.info.links ?? []), { type: '', url: '' }];
+  }
+
+  removeLink(index: number): void {
+    this.info.links = (this.info.links ?? []).filter((_, i) => i !== index);
+  }
+
+  readonly linkTypeOptions = ['GitHub', 'LinkedIn', 'Site', 'Portfolio', 'Personal'];
+  openLinkTypeIndex: number | null = null;
+
+  linkTypeSuggestions(link: Link): string[] {
+    const typed = (link.type ?? '').trim().toLowerCase();
+    if (!typed) return this.linkTypeOptions;
+    return this.linkTypeOptions.filter((opt) => opt.includes(typed));
+  }
+
+  showAddLinkType(link: Link): boolean {
+    const typed = (link.type ?? '').trim();
+    if (!typed) return false;
+    return !this.linkTypeOptions.some((opt) => opt === typed.toLowerCase());
+  }
+
+  selectLinkType(link: Link, value: string): void {
+    link.type = value.trim();
+    this.openLinkTypeIndex = null;
+  }
+
+  closeLinkTypeDropdown(): void {
+    this.openLinkTypeIndex = null;
   }
 
   // ---- Experience -----

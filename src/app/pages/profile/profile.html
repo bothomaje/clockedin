@@ -32,6 +32,42 @@
         <label class="form-label">Summary</label>
         <textarea class="form-control" rows="3" [(ngModel)]="info.summary"></textarea>
       </section>
+      <section class="mt-2">
+        <label class="form-label">Links</label>
+        @for (link of info.links; track $index) {
+          <div class="input-group mb-2">
+            <div class="position-relative flex-fill">
+              <input type="text" class="form-control" placeholder="Type (e.g. GitHub, Linkedin, Site)"
+                [(ngModel)]="link.type"
+                (focus)="openLinkTypeIndex = $index"
+                (blur)="closeLinkTypeDropdown()"
+                autocomplete="off">
+              @if (openLinkTypeIndex === $index) {
+                <ul class="list-group position-absolute w-100" style="z-index: 10; top: 100%;">
+                  @for (option of linkTypeSuggestions(link); track option) {
+                    <li class="list-group-item list-group-item-action"
+                      (mousedown)="$event.preventDefault(); selectLinkType(link, option)">
+                      {{ option }}
+                    </li>
+                  }
+                  @if (showAddLinkType(link)) {
+                    <li class="list-group-item list-group-item-action"
+                      (mousedown)="$event.preventDefault(); selectLinkType(link, link.type)">
+                      Add "{{ link.type }}"
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
+            <input type="text" class="form-control" placeholder="URL"
+              [(ngModel)]="link.url">
+            <button class="btn btn-outline-danger" type="button" (click)="removeLink($index)">Remove</button>
+          </div>
+        }
+        <section>
+          <button class="btn btn-outline-secondary btn-sm" type="button" (click)="addLink()">Add link</button>
+        </section>
+      </section>
     </section>
 
         <!-- Experience -->

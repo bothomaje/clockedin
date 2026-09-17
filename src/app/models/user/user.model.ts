@@ -6,4 +6,5 @@ export interface User {
   info: Info;
   career: Career;
   templates?: DocTemplates;
+  aiConsentAt?: Date | null;
 }

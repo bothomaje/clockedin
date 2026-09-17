@@ -20,6 +20,8 @@ import { DEFAULT_CV_TEMPLATE } from '../../templates/default-cv.typst';
 import { DEFAULT_COVER_LETTER_TEMPLATE } from '../../templates/default-cover-letter.typst';
 import { buildCvPayload } from '../../ai/cv-payload';
 import { GeneratedCoverLetter } from '../../models/ai/generated-cover-letter.model';
+import { AuthService } from '../../services/auth-service';
+import { AiUsageService } from '../../services/ai-usage-service';
 
 @Component({
   imports: [AsyncPipe, FormsModule, DatePipe, MarkdownComponent, JsonPipe],
@@ -30,7 +32,9 @@ export class Dashboard implements OnInit {
   private jobService = inject(JobService);
   private aiService = inject(AiService);
   private userService = inject(UserService);
+  private authService = inject(AuthService);
   private pdfService = inject(PdfService);
+  private aiUsageService = inject(AiUsageService);
   private cdr = inject(ChangeDetectorRef);
 
   editedJob?: Job;
@@ -71,13 +75,17 @@ export class Dashboard implements OnInit {
     return new Date(value);
   }
 
-  beginJobEdit() {
+  beginJobAdd() {
     this.editedJob = {
       company: '',
       role: '',
       jobDescription: '',
       jobUpdates: [],
     };
+  }
+
+  editJob(job: Job) {
+    this.editedJob = { ...job };
   }
 
   cancelJobEdit() {
@@ -111,6 +119,7 @@ export class Dashboard implements OnInit {
       await this.loadCvDocuments();
       await this.loadCoverLetterDocuments();
     }
+    this.cdr.markForCheck();
   }
 
   async saveNotes() {
@@ -132,12 +141,34 @@ export class Dashboard implements OnInit {
     job.jobUpdates.push({ status: newStatus, updatedAt: new Date() });
   }
 
+  openUrl(job: Job) {
+    if (!job.url) return;
+    window.open(job.url, '_blank');
+  }
+
   getStatuses() {
     return Object.values(JobStatus);
   }
 
+  private async ensureAiConsent(): Promise<boolean> {
+    if (this.user?.aiConsentAt) return true;
+
+    const accepted = confirm(
+      'Generating a CV or cover letter sends your career data and this job description ' +
+        'to Google Gemini for processing. Continue?',
+    );
+    if (!accepted) return false;
+
+    await this.userService.recordAiConsent();
+    if (this.user) this.user.aiConsentAt = new Date();
+    this.cdr.markForCheck();
+    return true;
+  }
+
   async analyseJob() {
-    if (!this.viewedJob) return;
+    if (!this.viewedJob || !this.requireVerifiedEmail()) return;
+    if (!(await this.ensureAiConsent())) return;
+
     this.aiError = '';
     this.isAnalysing = true;
     this.jobAnalysis = undefined;
@@ -175,7 +206,8 @@ export class Dashboard implements OnInit {
   }
 
   async generateCv() {
-    if (!this.viewedJob?.id || !this.user) return;
+    if (!this.viewedJob?.id || !this.user || !this.requireVerifiedEmail()) return;
+    if (!(await this.ensureAiConsent())) return;
 
     this.cvError = '';
     this.isGeneratingCv = true;
@@ -244,7 +276,8 @@ export class Dashboard implements OnInit {
   }
 
   async generateCoverLetter() {
-    if (!this.viewedJob?.id || !this.user) return;
+    if (!this.viewedJob?.id || !this.user || !this.requireVerifiedEmail()) return;
+    if (!(await this.ensureAiConsent())) return;
 
     this.coverLetterError = '';
     this.isGeneratingCoverLetter = true;
@@ -328,5 +361,17 @@ export class Dashboard implements OnInit {
       this.isDownloading = false;
       this.cdr.markForCheck();
     }
+  }
+
+  private requireVerifiedEmail(): boolean {
+    const verified = this.authService.currentUserSnapshot()?.emailVerified ?? false;
+
+    if (!verified) {
+      this.aiError = 'Verify your email before generating AI content.';
+      this.cvError = this.aiError;
+      this.coverLetterError = this.aiError;
+    }
+
+    return verified;
   }
 }

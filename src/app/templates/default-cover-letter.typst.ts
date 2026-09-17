@@ -5,17 +5,18 @@ export const DEFAULT_COVER_LETTER_TEMPLATE = String.raw`
 #let job = data.job
 
 #set document(title: info.name + " - Cover Letter", author: info.name)
-#set page(paper: "a4", margin: (x: 2.2cm, y: 2.2cm))
-#set text(font: ("Libertinus Serif", "New Computer Modern", "DejaVu Serif"), size: 11pt)
-#set par(justify: true, leading: 0.68em, first-line-indent: 0pt, spacing: 1.1em)
+#set page(paper: "a4", margin: (top: 0.45in, x: 1.8cm, bottom: 1.8cm))
+#set text(font: "New Computer Modern", size: 10.5pt)
+#set par(justify: true, leading: 0.65em, first-line-indent: 0pt, spacing: 1.1em)
 
 #align(right)[
-  #text(weight: "bold", size: 13pt)[#info.name]
-  #v(0.15em)
-  #text(size: 9pt)[#info.contact]
+  #text(weight: "bold", size: 19pt)[#info.name]
+  #v(0.2em)
+  #text(size: 9.2pt)[#info.contact]
 ]
 
-#v(1.2em)
+#line(length: 100%, stroke: 0.5pt)
+#v(1em)
 
 #if letter.recipient != "" [
   #letter.recipient \
@@ -30,6 +31,7 @@ export const DEFAULT_COVER_LETTER_TEMPLATE = String.raw`
 
 #for paragraph in letter.paragraphs [
   #paragraph.text
+  #parbreak()
 ]
 
 #v(0.6em)

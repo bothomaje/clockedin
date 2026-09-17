@@ -6,15 +6,19 @@ import { environment } from '../environments/environment';
 import { getAI, GoogleAIBackend } from 'firebase/ai';
 
 export const firebaseApp = initializeApp(environment);
-export const firebaseAuth = getAuth(firebaseApp);
-export const firestore = initializeFirestore(firebaseApp, {}, 'default');
 
-if (import.meta.env.DEV) {
+if (!environment.production) {
   (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN =
-    import.meta.env['VITE_FIREBASE_APPCHECK_DEBUG_TOKEN'] || true;
+    import.meta.env['VITE_FIREBASE_APPCHECK_DEBUG_TOKEN'] ?? true;
 }
 
-initializeAppCheck(firebaseApp, { provider: new ReCaptchaEnterpriseProvider('none') });
+initializeAppCheck(firebaseApp, {
+  provider: new ReCaptchaEnterpriseProvider(environment.recaptchaEnterpriseSiteKey),
+  isTokenAutoRefreshEnabled: true,
+});
+
+export const firebaseAuth = getAuth(firebaseApp);
+export const firestore = initializeFirestore(firebaseApp, {}, 'default');
 export const firebaseAi = getAI(firebaseApp, {
   backend: new GoogleAIBackend(),
   useLimitedUseAppCheckTokens: false,

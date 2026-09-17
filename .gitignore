@@ -41,6 +41,7 @@ __screenshots__/
 environments/
 .env
 .env.*
+.firebase/
 
 # System files
 .DS_Store

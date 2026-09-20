@@ -55,7 +55,6 @@ const environmentFile =
   environment === 'production' ? 'environment.ts' : `environment.${environment}.ts`;
 
 const outputPath = path.resolve('src', 'environments', environmentFile);
-fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 
 const config = {
   production,
@@ -68,7 +67,6 @@ const config = {
     storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.FIREBASE_APP_ID,
-    measurementId: process.env.FIREBASE_MEASUREMENT_ID,
   },
 };
 

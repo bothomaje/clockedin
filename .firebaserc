@@ -1,0 +1,10 @@
+{
+  "projects": {
+    "local": "my-app-local",
+    "staging": "clockedin-staging",
+    "production": "clockedin-prod",
+    "default": "clockedin-staging"
+  },
+  "targets": {},
+  "etags": {}
+}

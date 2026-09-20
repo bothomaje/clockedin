@@ -39,6 +39,16 @@ testem.log
 /typings
 __screenshots__/
 
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Generated Angular environment files
+src/environments/environment.ts
+src/environments/environment.development.ts
+src/environments/environment.staging.ts
+
 # System files
 .DS_Store
 Thumbs.db

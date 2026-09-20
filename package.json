@@ -2,10 +2,15 @@
   "name": "clockedin",
   "version": "0.0.0",
   "scripts": {
+    "env:development": "node --env-file=.env.development scripts/generate-environment.mjs development",
+    "env:staging": "node --env-file=.env.staging scripts/generate-environment.mjs staging",
+    "env:production": "node --env-file=.env.production scripts/generate-environment.mjs production",
     "ng": "ng",
-    "start": "ng serve",
+    "start": "npm run env:development && ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "build:staging": "npm run env:staging && ng build --configuration staging",
+    "build:production": "npm run env:production && ng build --configuration production",
     "test": "ng test"
   },
   "private": true,
@@ -20,6 +25,7 @@
     "@ng-bootstrap/ng-bootstrap": "^21.0.0",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.8",
+    "firebase": "^12.19.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

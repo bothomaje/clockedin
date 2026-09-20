@@ -1,0 +1,8 @@
+@use "../tokens";
+
+.navbar {
+  --bs-navbar-color: #{tokens.$color-text-secondary};
+  --bs-navbar-active-color: #{tokens.$color-signal};
+  background-color: tokens.$color-surface;
+  border-bottom: 1px solid tokens.$color-border;
+}

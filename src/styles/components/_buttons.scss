@@ -1,0 +1,11 @@
+@use "../tokens";
+
+.btn-primary {
+  --bs-btn-hover-bg: #{tokens.$color-signal-hover};
+  --bs-btn-active-bg: #{tokens.$color-signal-active};
+}
+
+.btn:disabled,
+.btn.disabled {
+  opacity: tokens.$opacity-disabled;
+}

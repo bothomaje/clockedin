@@ -1,0 +1,36 @@
+@use 'tokens';
+
+$utilities: map-merge(
+  $utilities,
+  (
+    'background-color': map-merge(
+        map-get($utilities, 'background-color'),
+        (
+          values: map-merge(
+              map-get(map-get($utilities, 'background-color'), 'values'),
+              (
+                'surface': tokens.$color-surface,
+                'surface-subtle': tokens.$color-surface-subtle,
+                'signal-subtle': tokens.$color-signal-subtle,
+                'success-subtle': tokens.$color-success-subtle,
+                'warning-subtle': tokens.$color-warning-subtle,
+                'error-subtle': tokens.$color-error-subtle,
+                'info-subtle': tokens.$color-info-subtle,
+              )
+            ),
+        )
+      ),
+    'color': map-merge(
+        map-get($utilities, 'color'),
+        (
+          values: map-merge(
+              map-get(map-get($utilities, 'color'), 'values'),
+              (
+                'tertiary': tokens.$color-text-tertiary,
+                'disabled': tokens.$color-text-disabled,
+              )
+            ),
+        )
+      ),
+  )
+);

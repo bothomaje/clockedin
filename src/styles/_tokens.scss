@@ -1,0 +1,176 @@
+// --- Primitive: Neutral ---
+$neutral-0: #ffffff;
+$neutral-50: #f7fafc;
+$neutral-100: #eff4f7;
+$neutral-200: #e1e9ee;
+$neutral-300: #cbd7de;
+$neutral-400: #a8b8c2;
+$neutral-500: #81939e;
+$neutral-600: #60737f;
+$neutral-700: #465863;
+$neutral-800: #2f414c;
+$neutral-900: #1e2d36;
+$neutral-950: #111b21;
+
+// --- Primitive: Signal (brand teal) ---
+$signal-50: #e8fbf8;
+$signal-100: #cff5ef;
+$signal-200: #a4e9df;
+$signal-300: #70d7c9;
+$signal-400: #3fc0af;
+$signal-500: #20a99a;
+$signal-600: #178d81;
+$signal-700: #117269;
+$signal-800: #0e5a54;
+$signal-900: #0a413e;
+
+// --- Semantic: surfaces & borders ---
+$color-background: #faf9f5;
+$color-surface: #ffffff;
+$color-surface-subtle: #f3f2ee;
+$color-surface-raised: #ffffff;
+$color-border: #e1e3e0;
+$color-border-subtle: #ecede9;
+
+// --- Semantic: text ---
+$color-text-primary: #1c1e21;
+$color-text-secondary: #5d6266;
+$color-text-tertiary: #8e9498;
+$color-text-disabled: #a9adaf;
+$color-text-inverse: #ffffff;
+
+// --- Semantic: signal (brand action) ---
+$color-signal: #0b7a75;
+$color-signal-hover: #096762;
+$color-signal-active: #07524e;
+$color-signal-subtle: #e6f4f3;
+
+// --- Semantic: feedback ---
+$color-success: #137333;
+$color-success-subtle: #e3f4ea;
+$color-warning: #b45309;
+$color-warning-subtle: #faf0e6;
+$color-error: #c5221f;
+$color-error-subtle: #fdf2f2;
+$color-info: #1d4ed8;
+$color-info-subtle: #eff6ff;
+
+// --- Misc ---
+$color-focus-ring: #28a39a;
+$color-overlay: rgba(0, 0, 0, 0.48); // #0000007a
+
+// --- Spacing scale (px source values, converted to rem for use) ---
+$spacing-1: 0.25rem; // 4px
+$spacing-2: 0.5rem; // 8px
+$spacing-3: 0.75rem; // 12px
+$spacing-4: 1rem; // 16px
+$spacing-5: 1.5rem; // 24px
+$spacing-6: 2rem; // 32px
+$spacing-7: 2.5rem; // 40px
+$spacing-8: 3rem; // 48px
+$spacing-9: 4rem; // 64px
+
+// --- Radius scale ---
+$radius-sm: 0.25rem; // 4px
+$radius-md: 0.375rem; // 6px
+$radius-lg: 0.5rem; // 8px
+$radius-xl: 0.75rem; // 12px
+$radius-2xl: 1rem; // 16px
+$radius-pill: 999px;
+
+// --- Control sizes ---
+$control-height-sm: 32px;
+$control-height-md: 36px;
+$control-height-lg: 44px;
+
+// --- Opacity ---
+$opacity-disabled: 0.4;
+$opacity-subdued: 0.64;
+
+// --- Elevation / shadows ---
+$shadow-elevation-1: 0px 1px 3px rgba(17, 19, 21, 0.08);
+$shadow-elevation-2: 0px 4px 12px rgba(17, 19, 21, 0.1);
+$shadow-elevation-3: 0px 12px 32px rgba(17, 19, 21, 0.14);
+
+// --- Typography ---
+$font-family-primary: 'Plus Jakarta Sans';
+
+$fw-regular: 400;
+$fw-semibold: 600;
+$fw-bold: 700;
+$fw-extrabold: 800;
+
+// name: (font-size, weight, letter-spacing)
+$type-styles: (
+  'display-xl': (
+    font-size: 2rem,
+    weight: $fw-bold,
+    letter-spacing: -0.4px,
+  ),
+  // 32px
+  'display-l': (
+      font-size: 1.75rem,
+      weight: $fw-bold,
+      letter-spacing: -0.3px,
+    ),
+  // 28px
+  'heading-l': (
+      font-size: 1.5rem,
+      weight: $fw-bold,
+      letter-spacing: -0.2px,
+    ),
+  // 24px
+  'heading-m': (
+      font-size: 1.25rem,
+      weight: $fw-bold,
+      letter-spacing: -0.1px,
+    ),
+  // 20px
+  'heading-s': (
+      font-size: 1.125rem,
+      weight: $fw-extrabold,
+      letter-spacing: 0,
+    ),
+  // 18px
+  'title-m': (
+      font-size: 1rem,
+      weight: $fw-bold,
+      letter-spacing: 0,
+    ),
+  // 16px
+  'body-l': (
+      font-size: 1rem,
+      weight: $fw-regular,
+      letter-spacing: 0,
+    ),
+  // 16px
+  'body-m': (
+      font-size: 0.875rem,
+      weight: $fw-regular,
+      letter-spacing: 0,
+    ),
+  // 14px
+  'body-s': (
+      font-size: 0.8125rem,
+      weight: $fw-regular,
+      letter-spacing: 0,
+    ),
+  // 13px
+  'label-m': (
+      font-size: 0.875rem,
+      weight: $fw-semibold,
+      letter-spacing: 0,
+    ),
+  // 14px
+  'label-s': (
+      font-size: 0.75rem,
+      weight: $fw-semibold,
+      letter-spacing: 0.1px,
+    ),
+  // 12px
+  'caption': (
+      font-size: 0.6875rem,
+      weight: $fw-semibold,
+      letter-spacing: 0.2px,
+    ), // 11px
+);

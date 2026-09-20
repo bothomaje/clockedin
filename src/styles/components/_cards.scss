@@ -1,0 +1,7 @@
+@use "../tokens";
+
+.card {
+  --bs-card-bg: #{tokens.$color-surface};
+  --bs-card-border-color: #{tokens.$color-border};
+  box-shadow: tokens.$shadow-elevation-1;
+}

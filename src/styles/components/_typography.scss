@@ -1,0 +1,14 @@
+@import '../tokens';
+
+@each $name, $style in $type-styles {
+  .text-#{$name} {
+    font-size: map-get($style, font-size);
+    font-weight: map-get($style, weight);
+    letter-spacing: map-get($style, letter-spacing);
+  }
+}
+
+h5,
+.h5 {
+  font-weight: $fw-extrabold;
+}

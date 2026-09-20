@@ -1,0 +1,11 @@
+@use "../tokens";
+
+.form-control:focus,
+.form-select:focus {
+  border-color: tokens.$color-focus-ring;
+}
+
+.form-control:disabled {
+  color: tokens.$color-text-disabled;
+  background-color: tokens.$color-surface-subtle;
+}

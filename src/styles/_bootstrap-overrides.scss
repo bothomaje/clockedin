@@ -1,0 +1,85 @@
+@use 'tokens';
+
+// Theme colors
+$primary: tokens.$color-signal;
+$secondary: tokens.$neutral-600;
+$success: tokens.$color-success;
+$warning: tokens.$color-warning;
+$danger: tokens.$color-error;
+$info: tokens.$color-info;
+$light: tokens.$color-surface-subtle;
+$dark: tokens.$color-text-primary;
+
+// Body & surfaces
+$body-bg: tokens.$color-background;
+$body-color: tokens.$color-text-primary;
+$body-secondary-color: tokens.$color-text-secondary;
+$body-secondary-bg: tokens.$color-surface-subtle;
+$body-tertiary-color: tokens.$color-text-tertiary;
+$body-tertiary-bg: tokens.$color-surface-subtle;
+
+// Borders
+$border-color: tokens.$color-border;
+$border-color-translucent: tokens.$color-border-subtle;
+
+// Links
+$link-color: tokens.$color-signal;
+$link-hover-color: tokens.$color-signal-hover;
+
+// Spacing
+$spacers: (
+  0: 0,
+  1: tokens.$spacing-1,
+  2: tokens.$spacing-2,
+  3: tokens.$spacing-3,
+  4: tokens.$spacing-4,
+  5: tokens.$spacing-5,
+  6: tokens.$spacing-6,
+  7: tokens.$spacing-7,
+  8: tokens.$spacing-8,
+  9: tokens.$spacing-9,
+);
+
+// Border radius
+$border-radius: tokens.$radius-md;
+$border-radius-sm: tokens.$radius-sm;
+$border-radius-lg: tokens.$radius-lg;
+$border-radius-xl: tokens.$radius-xl;
+$border-radius-xxl: tokens.$radius-2xl;
+$border-radius-pill: tokens.$radius-pill;
+
+// Shadows
+$box-shadow-sm: tokens.$shadow-elevation-1;
+$box-shadow: tokens.$shadow-elevation-2;
+$box-shadow-lg: tokens.$shadow-elevation-3;
+
+// Focus ring
+$focus-ring-color: rgba(tokens.$color-focus-ring, 0.35);
+
+// Typography
+$font-family-sans-serif:
+  tokens.$font-family-primary,
+  system-ui,
+  -apple-system,
+  'Segoe UI',
+  Roboto,
+  sans-serif;
+$font-size-base: map-get(map-get(tokens.$type-styles, 'body-l'), font-size); // 1rem, Body/L
+
+$h1-font-size: map-get(map-get(tokens.$type-styles, 'display-xl'), font-size);
+$h2-font-size: map-get(map-get(tokens.$type-styles, 'display-l'), font-size);
+$h3-font-size: map-get(map-get(tokens.$type-styles, 'heading-l'), font-size);
+$h4-font-size: map-get(map-get(tokens.$type-styles, 'heading-m'), font-size);
+$h5-font-size: map-get(map-get(tokens.$type-styles, 'heading-s'), font-size);
+$h6-font-size: map-get(map-get(tokens.$type-styles, 'title-m'), font-size);
+
+// Bootstrap only exposes one weight across all headings — h5 (ExtraBold) is
+// patched per-selector in components/_typography.scss
+$headings-font-weight: tokens.$fw-bold;
+
+// Disabled state opacity
+$btn-disabled-opacity: tokens.$opacity-disabled;
+
+// Overlay
+$modal-backdrop-bg: tokens.$color-text-primary;
+$modal-backdrop-opacity: 0.48;

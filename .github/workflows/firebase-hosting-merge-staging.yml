@@ -31,9 +31,6 @@ jobs:
           FIREBASE_USE_EMULATORS=${{ vars.FIREBASE_USE_EMULATORS }}
           EOF
 
-      - name: Generate Angular environment
-        run: npm run env:staging
-
       - name: Build Angular application
         run: npm run build:staging
 

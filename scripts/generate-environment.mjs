@@ -55,6 +55,7 @@ const environmentFile =
   environment === 'production' ? 'environment.ts' : `environment.${environment}.ts`;
 
 const outputPath = path.resolve('src', 'environments', environmentFile);
+fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 
 const config = {
   production,

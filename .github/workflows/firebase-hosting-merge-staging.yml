@@ -32,7 +32,7 @@ jobs:
           EOF
 
       - name: Build Angular application
-        run: npm run build:staging
+        run: npm run env:production && npm run build:staging
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:

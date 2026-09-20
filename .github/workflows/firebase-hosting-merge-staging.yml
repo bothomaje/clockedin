@@ -1,0 +1,44 @@
+name: Deploy to Firebase Hosting (Staging) on merge
+on:
+  push:
+    branches:
+      - staging
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+          cache: npm
+
+      - run: npm ci
+
+      - name: Create environment file
+        run: |
+          cat > .env.staging <<EOF
+          FIREBASE_API_KEY=${{ vars.FIREBASE_API_KEY }}
+          FIREBASE_AUTH_DOMAIN=${{ vars.FIREBASE_AUTH_DOMAIN }}
+          FIREBASE_PROJECT_ID=${{ vars.FIREBASE_PROJECT_ID }}
+          FIREBASE_MESSAGING_SENDER_ID=${{ vars.FIREBASE_MESSAGING_SENDER_ID }}
+          FIREBASE_APP_ID=${{ vars.FIREBASE_APP_ID }}
+          FIREBASE_MEASUREMENT_ID=${{ vars.FIREBASE_MEASUREMENT_ID }}
+          FIREBASE_USE_EMULATORS=${{ vars.FIREBASE_USE_EMULATORS }}
+          EOF
+
+      - name: Generate Angular environment
+        run: npm run env:staging
+
+      - name: Build Angular application
+        run: npm run build:staging
+
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CLOCKEDIN_STAGING }}
+          channelId: live
+          projectId: ${{ vars.FIREBASE_PROJECT_ID }}

@@ -1,0 +1,53 @@
+<section class="gap-2 d-flex justify-content-end">
+  <button class="btn btn-danger" (click)="cancel.emit()">Cancel</button>
+  <button class="btn btn-primary" (click)="save.emit(editedJob)">Save</button>
+</section>
+
+<section class="d-flex gap-2 mt-3">
+  <label class="form-label">Company</label>
+  <input type="text" class="form-control" [(ngModel)]="editedJob.company" />
+</section>
+<section class="d-flex gap-2 mt-2">
+  <label class="form-label">Role</label>
+  <input type="text" class="form-control" [(ngModel)]="editedJob.role" />
+</section>
+<section class="d-flex gap-2 mt-2">
+  <section class="flex-fill">
+    <label class="form-label">Location</label>
+    <input type="text" class="form-control" [(ngModel)]="editedJob.location" />
+  </section>
+  <section class="flex-fill">
+    <label class="form-label">Employment Type</label>
+    <input type="text" class="form-control" [(ngModel)]="editedJob.employmentType" />
+  </section>
+</section>
+<section class="d-flex gap-2 mt-2">
+  <section class="flex-fill">
+    <label class="form-label">Salary</label>
+    <input type="text" class="form-control" [(ngModel)]="editedJob.salary" />
+  </section>
+  <section class="flex-fill">
+    <label class="form-label">Application Deadline</label>
+    <input
+      type="date"
+      class="form-control"
+      [ngModel]="
+        editedJob.applicationDeadline ? (editedJob.applicationDeadline | date: 'yyyy-MM-dd') : ''
+      "
+      (ngModelChange)="editedJob.applicationDeadline = $event ? toDate($event) : null"
+    />
+  </section>
+</section>
+<section class="mt-2">
+  <label class="form-label">Job URL</label>
+  <input type="url" class="form-control" [(ngModel)]="editedJob.url" />
+</section>
+<section class="mt-2">
+  <label class="form-label">Job Description</label>
+  <textarea
+    class="form-control"
+    [(ngModel)]="editedJob.jobDescription"
+    rows="10"
+    placeholder="Please enter the job description..."
+  ></textarea>
+</section>

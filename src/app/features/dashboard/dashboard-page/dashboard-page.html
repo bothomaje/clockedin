@@ -1,0 +1,50 @@
+<main class="container mt-4">
+  <section class="d-flex justify-content-between">
+    <h2>Dashboard</h2>
+    @if (!editedJob()) {
+      <section class="gap-2 d-flex">
+        <button class="btn btn-primary" (click)="beginJobAdd()">Add Job</button>
+      </section>
+    }
+  </section>
+
+  @if (editedJob(); as editing) {
+    <app-job-form [job]="editing" (save)="onSaveJob($event)" (cancel)="cancelJobEdit()" />
+  }
+
+  @if (jobState.selectedJob(); as job) {
+    <app-job-detail
+      [job]="job"
+      (close)="onCloseDetail()"
+      (statusChange)="onStatusChange(job, $event)"
+      (notesSave)="onNotesSave(job, $event)"
+    />
+
+    @if (!profileState.loading()) {
+      <app-job-analysis-panel
+        [job]="job"
+        [user]="profileState.user()"
+        (analysed)="jobAnalysis.set($event)"
+      />
+
+      <app-cover-letter-panel
+        [job]="job"
+        [user]="profileState.user()"
+        [analysis]="jobAnalysis()"
+        [cv]="generatedCv()"
+        (analysisUpdated)="jobAnalysis.set($event)"
+      />
+
+      <app-cv-generation-panel
+        [job]="job"
+        [user]="profileState.user()"
+        [careerProfiles]="profileState.careerProfiles()"
+        [analysis]="jobAnalysis()"
+        (analysisUpdated)="jobAnalysis.set($event)"
+        (cvGenerated)="generatedCv.set($event)"
+      />
+    }
+  } @else {
+    <app-job-list (view)="onViewJob($event)" (edit)="onEditJob($event)" />
+  }
+</main>

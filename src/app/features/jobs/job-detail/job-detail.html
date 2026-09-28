@@ -1,0 +1,55 @@
+<table class="table table-striped mt-3">
+  <thead class="table-dark">
+    <tr>
+      <th>Company</th>
+      <th>Role</th>
+      <th>Status</th>
+      <th>Updated At</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{ job().company }}</td>
+      <td>{{ job().role }}</td>
+      <td>
+        <span class="badge bg-secondary">{{ getLatestJobUpdate(job()).status }}</span>
+      </td>
+      <td>{{ getLatestJobUpdate(job()).updatedAt | date: 'medium' }}</td>
+      <td class="text-end">
+        <section class="d-flex gap-2 justify-content-end">
+          <button class="btn btn-outline-secondary btn-sm" (click)="close.emit()">
+            Hide details
+          </button>
+        </section>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Status</h3>
+<hr />
+@for (status of statuses; track status) {
+  <section class="form-check form-check-inline">
+    <input
+      type="radio"
+      class="form-check-input"
+      name="statusRadioOptions"
+      id="statusRadio{{ status }}"
+      [checked]="getLatestJobUpdate(job()).status === status"
+      (change)="statusChange.emit(status)"
+    />
+    <label for="statusRadio{{ status }}" class="form-check-label">{{ status }}</label>
+  </section>
+}
+
+<h3 class="mt-3">Job Description</h3>
+<hr />
+<p class="mb-4">{{ job().jobDescription }}</p>
+
+<section class="d-flex justify-content-between">
+  <h3>Notes</h3>
+  <button class="btn btn-primary btn-sm" (click)="notesSave.emit(notesDraft)">Save Notes</button>
+</section>
+<hr />
+<textarea class="form-control mb-4" rows="4" [(ngModel)]="notesDraft"></textarea>

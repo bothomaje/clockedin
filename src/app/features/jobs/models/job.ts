@@ -1,4 +1,4 @@
-import { JobAnalysis } from './job-analysis.model';
+import { JobAnalysis } from './job-analysis';
 
 export enum JobStatus {
   NEW = 'new',
@@ -32,4 +32,10 @@ export interface Job {
   generatedCv?: string;
   jobAnalysis?: JobAnalysis | null;
   jobAnalysedAt?: Date | null;
+}
+
+export function getLatestJobUpdate(job: Job): JobUpdate {
+  return job.jobUpdates.reduce((latest, current) =>
+    current.updatedAt > latest.updatedAt ? current : latest,
+  );
 }

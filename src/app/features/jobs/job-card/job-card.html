@@ -1,0 +1,15 @@
+<td>{{ job().company }}</td>
+<td>{{ job().role }}</td>
+<td>
+  <span class="badge bg-secondary">{{ getLatestJobUpdate(job()).status }}</span>
+</td>
+<td>{{ getLatestJobUpdate(job()).updatedAt | date: 'medium' }}</td>
+<td class="text-end">
+  <section class="d-flex gap-2 justify-content-end">
+    <button class="btn btn-outline-secondary btn-sm" (click)="view.emit(job())">
+      Show details
+    </button>
+    <button class="btn btn-secondary btn-sm" (click)="edit.emit(job())">Edit</button>
+    <button class="btn btn-primary btn-sm" (click)="openUrl()">Open URL</button>
+  </section>
+</td>

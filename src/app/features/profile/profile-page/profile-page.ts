@@ -1,35 +1,24 @@
-import { Experience } from '../../models/user/career/experience.model';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { UserService } from '../../services/user-service';
-import { Info } from '../../models/user/info.model';
-import { Education } from '../../models/user/career/education.model';
-import { Project } from '../../models/user/career/project.model';
-import { Skill } from '../../models/user/career/skill.model';
-import { CareerProfile } from '../../models/user/career/career-profile.model';
-import { Evidence } from '../../models/user/career/evidence.model';
 import { DatePipe } from '@angular/common';
-import { Link } from '../../models/user/link.model';
+import { ProfileState } from '../state/profile-state';
+import { Experience } from '../models/experience';
+import { Education } from '../models/education';
+import { Project } from '../models/project';
+import { Skill } from '../models/skill';
+import { CareerProfile } from '../models/career-profile';
+import { Evidence } from '../models/evidence';
+import { Link } from '../models/link';
 
 @Component({
   imports: [FormsModule, DatePipe],
   selector: 'app-profile',
-  templateUrl: './profile.html',
+  templateUrl: './profile-page.html',
 })
 export class Profile implements OnInit {
-  private userService = inject(UserService);
-  private cdr = inject(ChangeDetectorRef);
+  private profileState = inject(ProfileState);
 
-  isLoading = true;
-  errorMessage = '';
   skillError = '';
-
-  info: Info = { email: '' };
-  experience: Experience[] = [];
-  education: Education[] = [];
-  projects: Project[] = [];
-  skills: Skill[] = [];
-  careerProfiles: CareerProfile[] = [];
 
   editedExperience?: Experience;
   editedEducation?: Education;
@@ -43,21 +32,40 @@ export class Profile implements OnInit {
   expandedProjectId?: string;
   editedProjectEvidence?: Evidence;
 
-  async ngOnInit() {
-    try {
-      const user = await this.userService.getUser();
-      this.info = user?.info ?? { email: '' };
-      this.experience = user?.career.experience ?? [];
-      this.education = user?.career?.education ?? [];
-      this.projects = user?.career?.projects ?? [];
-      this.skills = user?.career?.skills ?? [];
-      this.careerProfiles = user?.career?.careerProfiles ?? [];
-    } catch {
-      this.errorMessage = 'Could not load your career data.';
-    } finally {
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    }
+  get isLoading() {
+    return this.profileState.loading();
+  }
+
+  get errorMessage() {
+    return this.profileState.error();
+  }
+
+  get info() {
+    return this.profileState.info();
+  }
+
+  get experience() {
+    return this.profileState.experience();
+  }
+
+  get education() {
+    return this.profileState.education();
+  }
+
+  get projects() {
+    return this.profileState.projects();
+  }
+
+  get skills() {
+    return this.profileState.skills();
+  }
+
+  get careerProfiles() {
+    return this.profileState.careerProfiles();
+  }
+
+  ngOnInit() {
+    this.profileState.load();
   }
 
   toCsv(values?: string[]): string {
@@ -80,13 +88,8 @@ export class Profile implements OnInit {
     return value ? new Date(value) : null;
   }
 
-  private updateUi() {
-    this.cdr.markForCheck();
-  }
-
   async saveInfo() {
-    await this.userService.updateInfo(this.info);
-    this.updateUi();
+    await this.profileState.saveInfo(this.info);
   }
 
   addLink(): void {
@@ -138,23 +141,19 @@ export class Profile implements OnInit {
   async saveExperience() {
     if (!this.editedExperience) return;
 
-    if (this.editedExperience.id) {
-      this.experience = this.experience.map((e) =>
-        e.id === this.editedExperience!.id ? this.editedExperience! : e,
-      );
-    } else {
-      this.experience = [...this.experience, { ...this.editedExperience, id: crypto.randomUUID() }];
-    }
+    const updated = this.editedExperience.id
+      ? this.experience.map((e) =>
+          e.id === this.editedExperience!.id ? this.editedExperience! : e,
+        )
+      : [...this.experience, { ...this.editedExperience, id: crypto.randomUUID() }];
 
-    await this.userService.updateExperience(this.experience);
-    this.updateUi();
+    await this.profileState.saveExperience(updated);
     this.editedExperience = undefined;
   }
 
   async deleteExperience(experience: Experience) {
-    this.experience = this.experience.filter((e) => e.id !== experience.id);
-    await this.userService.updateExperience(this.experience);
-    this.updateUi();
+    const updated = this.experience.filter((e) => e.id !== experience.id);
+    await this.profileState.saveExperience(updated);
   }
 
   // ---- Experience evidence ----
@@ -181,30 +180,28 @@ export class Profile implements OnInit {
     if (!this.editedExperienceEvidence?.text) return;
 
     const existing = experience.evidence ?? [];
-    const updated = this.editedExperienceEvidence.id
+    const updatedEvidence = this.editedExperienceEvidence.id
       ? existing.map((ev) =>
           ev.id === this.editedExperienceEvidence!.id ? this.editedExperienceEvidence! : ev,
         )
       : [...existing, { ...this.editedExperienceEvidence, id: crypto.randomUUID() }];
 
-    this.experience = this.experience.map((e) =>
-      e.id === experience.id ? { ...e, evidence: updated } : e,
+    const updated = this.experience.map((e) =>
+      e.id === experience.id ? { ...e, evidence: updatedEvidence } : e,
     );
 
-    await this.userService.updateExperience(this.experience);
-    this.updateUi();
+    await this.profileState.saveExperience(updated);
     this.editedExperienceEvidence = undefined;
   }
 
   async deleteExperienceEvidence(experience: Experience, evidence: Evidence) {
-    const updated = (experience.evidence ?? []).filter((ev) => ev.id !== evidence.id);
+    const updatedEvidence = (experience.evidence ?? []).filter((ev) => ev.id !== evidence.id);
 
-    this.experience = this.experience.map((e) =>
-      e.id === experience.id ? { ...e, evidence: updated } : e,
+    const updated = this.experience.map((e) =>
+      e.id === experience.id ? { ...e, evidence: updatedEvidence } : e,
     );
 
-    await this.userService.updateExperience(this.experience);
-    this.updateUi();
+    await this.profileState.saveExperience(updated);
   }
 
   // ---- Education ----
@@ -223,23 +220,17 @@ export class Profile implements OnInit {
   async saveEducation() {
     if (!this.editedEducation) return;
 
-    if (this.editedEducation.id) {
-      this.education = this.education.map((e) =>
-        e.id === this.editedEducation!.id ? this.editedEducation! : e,
-      );
-    } else {
-      this.education = [...this.education, { ...this.editedEducation, id: crypto.randomUUID() }];
-    }
+    const updated = this.editedEducation.id
+      ? this.education.map((e) => (e.id === this.editedEducation!.id ? this.editedEducation! : e))
+      : [...this.education, { ...this.editedEducation, id: crypto.randomUUID() }];
 
-    await this.userService.updateEducation(this.education);
-    this.updateUi();
+    await this.profileState.saveEducation(updated);
     this.editedEducation = undefined;
   }
 
   async deleteEducation(education: Education) {
-    this.education = this.education.filter((e) => e.id !== education.id);
-    await this.userService.updateEducation(this.education);
-    this.updateUi();
+    const updated = this.education.filter((e) => e.id !== education.id);
+    await this.profileState.saveEducation(updated);
   }
 
   // ---- Projects ----
@@ -258,23 +249,17 @@ export class Profile implements OnInit {
   async saveProject() {
     if (!this.editedProject) return;
 
-    if (this.editedProject.id) {
-      this.projects = this.projects.map((p) =>
-        p.id === this.editedProject!.id ? this.editedProject! : p,
-      );
-    } else {
-      this.projects = [...this.projects, { ...this.editedProject, id: crypto.randomUUID() }];
-    }
+    const updated = this.editedProject.id
+      ? this.projects.map((p) => (p.id === this.editedProject!.id ? this.editedProject! : p))
+      : [...this.projects, { ...this.editedProject, id: crypto.randomUUID() }];
 
-    await this.userService.updateProjects(this.projects);
-    this.updateUi();
+    await this.profileState.saveProjects(updated);
     this.editedProject = undefined;
   }
 
   async deleteProject(project: Project) {
-    this.projects = this.projects.filter((p) => p.id !== project.id);
-    await this.userService.updateProjects(this.projects);
-    this.updateUi();
+    const updated = this.projects.filter((p) => p.id !== project.id);
+    await this.profileState.saveProjects(updated);
   }
 
   // ---- Project evidence ----
@@ -300,30 +285,28 @@ export class Profile implements OnInit {
     if (!this.editedProjectEvidence?.text) return;
 
     const existing = project.evidence ?? [];
-    const updated = this.editedProjectEvidence.id
+    const updatedEvidence = this.editedProjectEvidence.id
       ? existing.map((ev) =>
           ev.id === this.editedProjectEvidence!.id ? this.editedProjectEvidence! : ev,
         )
       : [...existing, { ...this.editedProjectEvidence, id: crypto.randomUUID() }];
 
-    this.projects = this.projects.map((p) =>
-      p.id === project.id ? { ...p, evidence: updated } : p,
+    const updated = this.projects.map((p) =>
+      p.id === project.id ? { ...p, evidence: updatedEvidence } : p,
     );
 
-    await this.userService.updateProjects(this.projects);
-    this.updateUi();
+    await this.profileState.saveProjects(updated);
     this.editedProjectEvidence = undefined;
   }
 
   async deleteProjectEvidence(project: Project, evidence: Evidence) {
-    const updated = (project.evidence ?? []).filter((ev) => ev.id !== evidence.id);
+    const updatedEvidence = (project.evidence ?? []).filter((ev) => ev.id !== evidence.id);
 
-    this.projects = this.projects.map((p) =>
-      p.id === project.id ? { ...p, evidence: updated } : p,
+    const updated = this.projects.map((p) =>
+      p.id === project.id ? { ...p, evidence: updatedEvidence } : p,
     );
 
-    await this.userService.updateProjects(this.projects);
-    this.updateUi();
+    await this.profileState.saveProjects(updated);
   }
 
   // ---- Skills ----
@@ -358,21 +341,17 @@ export class Profile implements OnInit {
 
     this.skillError = '';
 
-    if (this.editedSkill.id) {
-      this.skills = this.skills.map((s) => (s.id === this.editedSkill!.id ? this.editedSkill! : s));
-    } else {
-      this.skills = [...this.skills, { ...this.editedSkill, id: crypto.randomUUID() }];
-    }
+    const updated = this.editedSkill.id
+      ? this.skills.map((s) => (s.id === this.editedSkill!.id ? this.editedSkill! : s))
+      : [...this.skills, { ...this.editedSkill, id: crypto.randomUUID() }];
 
-    await this.userService.updateSkills(this.skills);
-    this.updateUi();
+    await this.profileState.saveSkills(updated);
     this.editedSkill = undefined;
   }
 
   async deleteSkill(skill: Skill) {
-    this.skills = this.skills.filter((s) => s.id !== skill.id);
-    await this.userService.updateSkills(this.skills);
-    this.updateUi();
+    const updated = this.skills.filter((s) => s.id !== skill.id);
+    await this.profileState.saveSkills(updated);
   }
 
   // ---- Career Profiles ----
@@ -391,25 +370,18 @@ export class Profile implements OnInit {
   async saveCareerProfile() {
     if (!this.editedCareerProfile) return;
 
-    if (this.editedCareerProfile.id) {
-      this.careerProfiles = this.careerProfiles.map((c) =>
-        c.id === this.editedCareerProfile!.id ? this.editedCareerProfile! : c,
-      );
-    } else {
-      this.careerProfiles = [
-        ...this.careerProfiles,
-        { ...this.editedCareerProfile, id: crypto.randomUUID() },
-      ];
-    }
+    const updated = this.editedCareerProfile.id
+      ? this.careerProfiles.map((c) =>
+          c.id === this.editedCareerProfile!.id ? this.editedCareerProfile! : c,
+        )
+      : [...this.careerProfiles, { ...this.editedCareerProfile, id: crypto.randomUUID() }];
 
-    await this.userService.updateCareerProfiles(this.careerProfiles);
-    this.updateUi();
+    await this.profileState.saveCareerProfiles(updated);
     this.editedCareerProfile = undefined;
   }
 
   async deleteCareerProfile(careerProfile: CareerProfile) {
-    this.careerProfiles = this.careerProfiles.filter((c) => c.id !== careerProfile.id);
-    await this.userService.updateCareerProfiles(this.careerProfiles);
-    this.updateUi();
+    const updated = this.careerProfiles.filter((c) => c.id !== careerProfile.id);
+    await this.profileState.saveCareerProfiles(updated);
   }
 }

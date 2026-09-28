@@ -1,4 +1,4 @@
-import { Link } from './link.model';
+import { Link } from './link';
 
 export interface Info {
   name?: string;

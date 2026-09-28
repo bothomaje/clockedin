@@ -1,5 +1,5 @@
-import { Evidence } from './evidence.model';
-import { Skill } from './skill.model';
+import { Evidence } from './evidence';
+import { Skill } from './skill';
 
 export interface Experience {
   id?: string;

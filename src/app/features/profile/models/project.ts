@@ -1,6 +1,6 @@
-import { Evidence } from './evidence.model';
-import { Link } from '../link.model';
-import { Skill } from './skill.model';
+import { Evidence } from './evidence';
+import { Link } from './link';
+import { Skill } from './skill';
 
 export interface Project {
   id?: string;

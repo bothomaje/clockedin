@@ -1,6 +1,6 @@
 import { Service } from '@angular/core';
-import { User } from '../models/user/user.model';
-import { firebaseAuth, firestore } from '../firebase';
+import { User } from '../models/user';
+import { firebaseAuth, firestore } from '../../../core/firebase/firebase';
 import {
   collection,
   deleteDoc,
@@ -11,16 +11,16 @@ import {
   Timestamp,
   writeBatch,
 } from 'firebase/firestore';
-import { Info } from '../models/user/info.model';
-import { Experience } from '../models/user/career/experience.model';
-import { Education } from '../models/user/career/education.model';
-import { Project } from '../models/user/career/project.model';
-import { Skill } from '../models/user/career/skill.model';
-import { CareerProfile } from '../models/user/career/career-profile.model';
-import { DocTemplates } from '../models/user/doc-templates.model';
+import { Info } from '../models/info';
+import { Experience } from '../models/experience';
+import { Education } from '../models/education';
+import { Project } from '../models/project';
+import { Skill } from '../models/skill';
+import { CareerProfile } from '../models/career-profile';
+import { DocTemplates } from '../models/doc-templates';
 
 @Service()
-export class UserService {
+export class ProfileRepository {
   private db = firestore;
 
   private userDoc(uid: string) {

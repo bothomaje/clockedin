@@ -1,6 +1,6 @@
-import { CareerFact } from '../models/ai/career-fact.model';
-import { Career } from '../models/user/career/career.model';
-import { CareerProfile } from '../models/user/career/career-profile.model';
+import { CareerFact } from '../../models/career-fact';
+import { Career } from '../../../profile/models/career';
+import { CareerProfile } from '../../../profile/models/career-profile';
 
 function yearMonth(value?: Date | null): string {
   if (!value) return '';

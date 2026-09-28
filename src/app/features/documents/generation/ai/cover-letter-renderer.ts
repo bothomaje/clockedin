@@ -1,6 +1,6 @@
-import { GeneratedCoverLetter } from '../models/ai/generated-cover-letter.model';
-import { Job } from '../models/job.model';
-import { Info } from '../models/user/info.model';
+import { GeneratedCoverLetter } from '../../models/generated-cover-letter';
+import { Job } from '../../../jobs/models/job';
+import { Info } from '../../../profile/models/info';
 
 export function renderCoverLetterMarkdown(
   letter: GeneratedCoverLetter,

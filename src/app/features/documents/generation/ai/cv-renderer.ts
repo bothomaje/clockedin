@@ -1,6 +1,6 @@
-import { GeneratedCv } from '../models/ai/generated-cv.model';
-import { Career } from '../models/user/career/career.model';
-import { Info } from '../models/user/info.model';
+import { GeneratedCv } from '../../models/generated-cv';
+import { Career } from '../../../profile/models/career';
+import { Info } from '../../../profile/models/info';
 import { groupSkills } from './cv-payload';
 
 export function renderCvMarkdown(cv: GeneratedCv, info: Info, career: Career): string {

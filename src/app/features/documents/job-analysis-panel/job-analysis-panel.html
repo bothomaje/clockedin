@@ -1,0 +1,13 @@
+<section class="d-flex justify-content-between">
+  <h3>AI Job Analysis</h3>
+  <button class="btn btn-primary btn-sm" [disabled]="isAnalysing()" (click)="analyse()">
+    {{ isAnalysing() ? 'Analysing...' : 'Analyse Job' }}
+  </button>
+</section>
+<hr />
+@if (error()) {
+  <p class="text-danger mt-2">{{ error() }}</p>
+}
+@if (analysis(); as analysis) {
+  <pre class="bg-light p-2 mt-2">{{ analysis | json }}</pre>
+}

@@ -1,7 +1,7 @@
-import { GeneratedCv } from '../models/ai/generated-cv.model';
-import { Career } from '../models/user/career/career.model';
-import { Info } from '../models/user/info.model';
-import { Link } from '../models/user/link.model';
+import { GeneratedCv } from '../../models/generated-cv';
+import { Career } from '../../../profile/models/career';
+import { Info } from '../../../profile/models/info';
+import { Link } from '../../../profile/models/link';
 
 export interface SkillGroup {
   category: string;

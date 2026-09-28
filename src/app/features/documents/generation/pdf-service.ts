@@ -7,7 +7,7 @@ const RENDERER_WASM = `https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-rend
 const DATA_PATH = '/data.json';
 
 @Service()
-export class PdfService {
+export class PdfCompiler {
   private typstPromise?: Promise<any>;
 
   private typst(): Promise<any> {

@@ -1,17 +1,17 @@
 import { inject, Service } from '@angular/core';
 import { GenerativeModel, getGenerativeModel, Schema } from 'firebase/ai';
-import { firebaseAi } from '../firebase';
-import { JobAnalysis } from '../models/job-analysis.model';
-import { Info } from '../models/user/info.model';
-import { Career } from '../models/user/career/career.model';
-import { Job } from '../models/job.model';
-import { CareerProfile } from '../models/user/career/career-profile.model';
-import { GeneratedCv } from '../models/ai/generated-cv.model';
-import { EvidenceSelection } from '../models/ai/evidence-selection.model';
-import { CareerFact } from '../models/ai/career-fact.model';
-import { buildCareerFacts, summariseProfile } from '../ai/career-context';
-import { GeneratedCoverLetter } from '../models/ai/generated-cover-letter.model';
-import { AiUsageService } from './ai-usage-service';
+import { firebaseAi } from '../../../../core/firebase/firebase';
+import { JobAnalysis } from '../../../jobs/models/job-analysis';
+import { Info } from '../../../profile/models/info';
+import { Career } from '../../../profile/models/career';
+import { Job } from '../../../jobs/models/job';
+import { CareerProfile } from '../../../profile/models/career-profile';
+import { GeneratedCv } from '../../models/generated-cv';
+import { EvidenceSelection } from '../../models/evidence-selection';
+import { CareerFact } from '../../models/career-fact';
+import { buildCareerFacts, summariseProfile } from './career-context';
+import { GeneratedCoverLetter } from '../../models/generated-cover-letter';
+import { AiUsageRepository } from '../../data/ai-usage.repository';
 
 const MODEL_NAME = 'gemini-3.5-flash-lite';
 const MAX_JOB_DESCRIPTION_CHARS = 12000;
@@ -138,10 +138,10 @@ export interface GenerateCoverLetterResult {
 }
 
 @Service()
-export class AiService {
+export class AiGenerator {
   readonly modelName = MODEL_NAME;
   private modelCache = new Map<string, GenerativeModel>();
-  private usage = inject(AiUsageService);
+  private usage = inject(AiUsageRepository);
 
   private jsonModel(
     key: string,

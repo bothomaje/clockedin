@@ -1,7 +1,7 @@
-import { CvValidationResult } from './cv-validation.model';
-import { GeneratedCv } from './generated-cv.model';
-import { JobAnalysis } from '../job-analysis.model';
-import { GeneratedCoverLetter } from './generated-cover-letter.model';
+import { CvValidationResult } from './cv-validation';
+import { GeneratedCv } from './generated-cv';
+import { JobAnalysis } from '../../jobs/models/job-analysis';
+import { GeneratedCoverLetter } from './generated-cover-letter';
 
 export type GeneratedDocumentType = 'cv' | 'coverLetter';
 

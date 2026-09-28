@@ -1,12 +1,12 @@
-import { Service, inject } from '@angular/core';
+import { firebaseAuth, firestore } from '../../../core/firebase/firebase';
+import { Service } from '@angular/core';
 import { doc, getDoc, runTransaction, Timestamp } from 'firebase/firestore';
-import { firestore, firebaseAuth } from '../firebase';
 
 const WINDOW_MS = 60 * 60 * 1000;
 const MAX_PER_WINDOW = 20;
 
 @Service()
-export class AiUsageService {
+export class AiUsageRepository {
   private db = firestore;
 
   private usageDoc() {

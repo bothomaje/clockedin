@@ -1,6 +1,6 @@
-import { CvValidationIssue, CvValidationResult } from '../models/ai/cv-validation.model';
-import { GeneratedCv } from '../models/ai/generated-cv.model';
-import { Career } from '../models/user/career/career.model';
+import { CvValidationIssue, CvValidationResult } from '../../models/cv-validation';
+import { GeneratedCv } from '../../models/generated-cv';
+import { Career } from '../../../profile/models/career';
 import { allowedSkillTerms, buildCareerFacts, indexFacts } from './career-context';
 
 const NUMBER_PATTERN = /\d[\d.,]*%?/g;

@@ -1,24 +1,11 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './guards/auth-guard';
-import { guestGuard } from './guards/guest-guard';
+import { authGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./pages/home/home').then((m) => m.Home) },
   {
-    path: 'login',
-    loadComponent: () => import('./pages/login/login').then((m) => m.Login),
-    canActivate: [guestGuard],
-  },
-  {
-    path: 'signup',
-    loadComponent: () => import('./pages/signup/signup').then((m) => m.Signup),
-    canActivate: [guestGuard],
-  },
-  {
-    path: 'forgot-password',
-    loadComponent: () =>
-      import('./pages/forgot-password/forgot-password').then((m) => m.ForgotPassword),
-    canActivate: [guestGuard],
+    path: '',
+    loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
   },
   {
     path: 'settings',

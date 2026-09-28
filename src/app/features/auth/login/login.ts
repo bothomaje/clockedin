@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
-import { AuthService } from '../../services/auth-service';
+import { AuthService } from '../../../core/auth/auth.service';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
@@ -11,26 +11,24 @@ import { FormsModule } from '@angular/forms';
 export class Login {
   private authService = inject(AuthService);
   private router = inject(Router);
-  private readonly cdr = inject(ChangeDetectorRef);
 
   email = '';
   password = '';
 
-  errorMessage = '';
-  isSubmitting = false;
+  errorMessage = signal('');
+  isSubmitting = signal(false);
 
   async onSubmit() {
-    this.errorMessage = '';
-    this.isSubmitting = true;
+    this.errorMessage.set('');
+    this.isSubmitting.set(true);
 
     try {
       await this.authService.signIn(this.email, this.password);
       this.router.navigate(['/dashboard']);
     } catch (err) {
-      this.errorMessage = this.authService.getAuthErrorMessage(err);
+      this.errorMessage.set(this.authService.getAuthErrorMessage(err));
     } finally {
-      this.isSubmitting = false;
-      this.cdr.markForCheck();
+      this.isSubmitting.set(false);
     }
   }
 }

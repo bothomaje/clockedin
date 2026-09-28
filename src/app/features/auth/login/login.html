@@ -1,8 +1,8 @@
 <main class="container mt-5">
   <h2 class="mb-4">Sign In</h2>
 
-  @if (errorMessage) {
-    <p class="alert alert-danger">{{ errorMessage }}</p>
+  @if (errorMessage()) {
+    <p class="alert alert-danger">{{ errorMessage() }}</p>
   }
 
   <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
@@ -16,12 +16,10 @@
       <p class="mt-2">Forgot password? <a routerLink="/forgot-password">Reset</a></p>
     </section>
 
-    <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || loginForm.invalid">
-      {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
+    <button type="submit" class="btn btn-primary" [disabled]="isSubmitting() || loginForm.invalid">
+      {{ isSubmitting() ? 'Signing In...' : 'Sign In' }}
     </button>
   </form>
 
-  <p class="mt-3 text-center">
-    Don't have an account? <a routerLink="/signup">Sign Up</a>
-  </p>
+  <p class="mt-3 text-center">Don't have an account? <a routerLink="/signup">Sign Up</a></p>
 </main>

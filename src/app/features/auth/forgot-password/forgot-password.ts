@@ -1,8 +1,7 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../services/auth-service';
-
+import { AuthService } from '../../../core/auth/auth.service';
 @Component({
   imports: [FormsModule, RouterLink],
   selector: 'app-forgot-password',
@@ -10,33 +9,32 @@ import { AuthService } from '../../services/auth-service';
 })
 export class ForgotPassword {
   private authService = inject(AuthService);
-  private readonly cdr = inject(ChangeDetectorRef);
 
   email = '';
-  message = '';
-  errorMessage = '';
-  isSubmitting = false;
+  message = signal('');
+  errorMessage = signal('');
+  isSubmitting = signal(false);
 
   async onSubmit() {
-    this.message = '';
-    this.errorMessage = '';
-    this.isSubmitting = true;
+    this.message.set('');
+    this.errorMessage.set('');
+    this.isSubmitting.set(true);
 
     try {
       await this.authService.sendPasswordReset(this.email);
-      this.message = 'If an account exists for that email, a reset link has been sent.';
+      this.message.set('If an account exists for that email, a reset link has been sent.');
     } catch (err) {
       const code = (err as { code?: string })?.code;
-      this.message =
+      const fallbackMessage =
         code === 'auth/user-not-found'
           ? 'If an account exists for that email, a reset link has been sent.'
           : '';
-      if (!this.message) {
-        this.errorMessage = this.authService.getAuthErrorMessage(err);
+      this.message.set(fallbackMessage);
+      if (!fallbackMessage) {
+        this.errorMessage.set(this.authService.getAuthErrorMessage(err));
       }
     } finally {
-      this.isSubmitting = false;
-      this.cdr.markForCheck();
+      this.isSubmitting.set(false);
     }
   }
 }

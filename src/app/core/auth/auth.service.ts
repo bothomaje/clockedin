@@ -14,13 +14,11 @@ import {
   User,
 } from 'firebase/auth';
 import { Observable, shareReplay } from 'rxjs';
-import { firebaseAuth } from '../firebase';
-import { UserService } from './user-service';
+import { firebaseAuth } from '../firebase/firebase';
 
 @Service()
 export class AuthService {
   private auth: Auth = firebaseAuth;
-  private userService = inject(UserService);
 
   currentUser$ = new Observable<User | null>((subscriber) => {
     return onAuthStateChanged(this.auth, subscriber);
@@ -72,7 +70,7 @@ export class AuthService {
     return sendEmailVerification(this.auth.currentUser);
   }
 
-  private async reauthenticate(currentPassword: string) {
+  async reauthenticate(currentPassword: string) {
     const user = this.auth.currentUser;
     if (!user?.email) throw new Error('No user is signed in.');
     const credential = EmailAuthProvider.credential(user.email, currentPassword);
@@ -84,9 +82,7 @@ export class AuthService {
     await updatePassword(this.auth.currentUser!, newPassword);
   }
 
-  async deleteAccount(currentPassword: string) {
-    await this.reauthenticate(currentPassword);
-    await this.userService.deleteAllUserData();
+  async deleteAuthAccount(): Promise<void> {
     await deleteUser(this.auth.currentUser!);
   }
 }

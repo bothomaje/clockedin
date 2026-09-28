@@ -2,7 +2,7 @@ import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-ch
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { initializeFirestore } from 'firebase/firestore';
-import { environment } from '../environments/environment';
+import { environment } from '../../../environments/environment';
 import { getAI, GoogleAIBackend } from 'firebase/ai';
 
 export const firebaseApp = initializeApp(environment);

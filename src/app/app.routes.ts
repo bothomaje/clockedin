@@ -9,17 +9,20 @@ export const routes: Routes = [
   },
   {
     path: 'settings',
-    loadComponent: () => import('./pages/settings/settings').then((m) => m.Settings),
+    loadComponent: () =>
+      import('./features/settings/settings-page/settings-page').then((m) => m.Settings),
     canActivate: [authGuard],
   },
   {
     path: 'dashboard',
-    loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.Dashboard),
+    loadComponent: () =>
+      import('./features/dashboard/dashboard-page/dashboard-page').then((m) => m.Dashboard),
     canActivate: [authGuard],
   },
   {
     path: 'profile',
-    loadComponent: () => import('./pages/profile/profile').then((m) => m.Profile),
+    loadComponent: () =>
+      import('./features/profile/profile-page/profile-page').then((m) => m.Profile),
     canActivate: [authGuard],
   },
   { path: '**', redirectTo: '' },

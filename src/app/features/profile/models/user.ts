@@ -7,4 +7,5 @@ export interface User {
   career: Career;
   templates?: DocTemplates;
   aiConsentAt?: Date | null;
+  onboardingComplete?: boolean;
 }

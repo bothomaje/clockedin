@@ -21,6 +21,7 @@ export class ProfileState {
   private careerProfilesSignal = signal<CareerProfile[]>([]);
   private templatesSignal = signal<DocTemplates | undefined>(undefined);
   private aiConsentAtSignal = signal<Date | null>(null);
+  private onboardingCompleteSignal = signal(false);
   private loadingSignal = signal(false);
   private errorSignal = signal('');
 
@@ -32,6 +33,7 @@ export class ProfileState {
   careerProfiles = this.careerProfilesSignal.asReadonly();
   loading = this.loadingSignal.asReadonly();
   error = this.errorSignal.asReadonly();
+  onboardingComplete = this.onboardingCompleteSignal.asReadonly();
 
   user = computed<User>(() => ({
     info: this.infoSignal(),
@@ -60,6 +62,7 @@ export class ProfileState {
       this.careerProfilesSignal.set(user?.career?.careerProfiles ?? []);
       this.templatesSignal.set(user?.templates);
       this.aiConsentAtSignal.set(user?.aiConsentAt ?? null);
+      this.onboardingCompleteSignal.set(user?.onboardingComplete ?? false);
     } catch {
       this.errorSignal.set('Could not load your career data.');
     } finally {
@@ -67,13 +70,18 @@ export class ProfileState {
     }
   }
 
+  async completeOnboarding(): Promise<void> {
+    await this.profileRepository.markOnboardingComplete();
+    this.onboardingCompleteSignal.set(true);
+  }
+
   async recordAiConsent(): Promise<void> {
     await this.profileRepository.recordAiConsent();
     this.aiConsentAtSignal.set(new Date());
   }
 
-  async createProfile(uid: string, email: string): Promise<void> {
-    await this.profileRepository.createUserDoc(uid, email);
+  async createProfile(uid: string, email: string, name?: string): Promise<void> {
+    await this.profileRepository.createUserDoc(uid, email, name);
   }
 
   async deleteAllData(): Promise<void> {

@@ -16,10 +16,12 @@ export class Login {
   password = '';
 
   errorMessage = signal('');
+  credentialError = signal(false);
   isSubmitting = signal(false);
 
   async onSubmit() {
     this.errorMessage.set('');
+    this.credentialError.set(false);
     this.isSubmitting.set(true);
 
     try {
@@ -27,6 +29,14 @@ export class Login {
       this.router.navigate(['/dashboard']);
     } catch (err) {
       this.errorMessage.set(this.authService.getAuthErrorMessage(err));
+      const code = (err as { code?: string })?.code ?? '';
+      this.credentialError.set(
+        [
+          'auth/invalid-credential',
+          'auth/wrong-password',
+          'auth/invalid-login-credentials',
+        ].includes(code),
+      );
     } finally {
       this.isSubmitting.set(false);
     }

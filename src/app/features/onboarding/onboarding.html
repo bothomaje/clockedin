@@ -1,0 +1,388 @@
+<section class="clk-wizard">
+  <app-auth-brand-panel
+    variant="wizard"
+    [headline]="brand().headline"
+    [description]="brand().description"
+    [features]="brand().features"
+  />
+
+  <section class="clk-wizard__area">
+    <header class="clk-wizard__header">
+      <span class="clk-wizard__progress-label">Setup Progress</span>
+      <nav class="clk-stepper" aria-label="Setup progress">
+        @for (label of stepLabels; track label; let i = $index; let last = $last) {
+          <section
+            class="clk-stepper__step"
+            [class.is-done]="i < step()"
+            [class.is-current]="i === step()"
+          >
+            <span class="clk-stepper__circle">
+              @if (i < step()) {
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="m9 12 2 2 4-4" />
+                </svg>
+              } @else {
+                {{ i + 1 }}
+              }
+            </span>
+            <span class="clk-stepper__label">{{ label }}</span>
+            @if (!last) {
+              <span class="clk-stepper__line"></span>
+            }
+          </section>
+        }
+      </nav>
+    </header>
+
+    <section class="clk-wizard__main">
+      @switch (step()) {
+        @case (0) {
+          <header class="clk-wizard__title clk-wizard__title--lg">
+            <h1>Set up your profile</h1>
+            <p>
+              Tell us a little about yourself, your experience, and what you're looking for. We'll
+              use this information to personalise your job search and help you prepare for
+              applications. You can always come back and add more later.
+            </p>
+          </header>
+          <section class="clk-wizard__card">
+            <h3>We'll start with a few basics:</h3>
+            <ul>
+              <li>Where you're based and how to reach you online</li>
+              <li>The roles you're interested in</li>
+              <li>A snapshot of your recent experience</li>
+            </ul>
+          </section>
+          <section class="clk-wizard__buttons">
+            <button type="button" class="btn btn-primary btn-lg" (click)="next()">
+              Get started
+            </button>
+          </section>
+        }
+
+        @case (1) {
+          <header class="clk-wizard__title">
+            <h1>Tell us about yourself</h1>
+            <p>
+              Add the details you'd like us to use when organising your job search and preparing
+              applications.
+            </p>
+          </header>
+          <form class="clk-wizard__form" (ngSubmit)="saveProfile()" #profileForm="ngForm">
+            <section class="clk-field">
+              <label class="form-label" for="name">Full Name</label>
+              <input id="name" class="form-control" name="name" [(ngModel)]="name" required />
+            </section>
+            <section class="clk-field">
+              <label class="form-label" for="jobTitle">Current or Target Role</label>
+              <input id="jobTitle" class="form-control" name="jobTitle" [(ngModel)]="jobTitle" />
+              <p class="clk-field__hint">
+                Example: Marketing Manager, Software Engineer, Graphic Designer
+              </p>
+            </section>
+            <section class="clk-field">
+              <label class="form-label" for="location">Location</label>
+              <input id="location" class="form-control" name="location" [(ngModel)]="location" />
+              <p class="clk-field__hint">Example: Johannesburg, South Africa</p>
+            </section>
+            <section class="clk-field">
+              <label class="form-label" for="summary">About You</label>
+              <textarea
+                id="summary"
+                class="form-control"
+                rows="4"
+                name="summary"
+                [(ngModel)]="summary"
+              ></textarea>
+              <p class="clk-field__hint">
+                A short introduction about your experience, strengths and what you're looking for.
+              </p>
+            </section>
+
+            <section class="clk-wizard__buttons">
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg"
+                [disabled]="saving() || profileForm.invalid"
+              >
+                {{ saving() ? 'Saving...' : 'Save and continue' }}
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-lg"
+                (click)="back()"
+                [disabled]="saving()"
+              >
+                Back
+              </button>
+            </section>
+          </form>
+        }
+
+        @case (2) {
+          <header class="clk-wizard__title">
+            <h1>Tell us about your experience</h1>
+            <p>
+              Add your skills and a recent role. This information helps us organise your profile and
+              prepare you for future applications.
+            </p>
+          </header>
+          <form class="clk-wizard__form clk-wizard__form--roomy" (ngSubmit)="initialize()">
+            <section class="clk-field">
+              <label class="form-label" for="skills">Skills</label>
+              <input
+                id="skills"
+                class="form-control"
+                name="skills"
+                [(ngModel)]="skillsDraft"
+                placeholder="React, Figma, Project Management"
+              />
+              <p class="clk-field__hint">Separate each skill with a comma</p>
+            </section>
+
+            <section class="clk-wizard__group">
+              <h3>Most recent role</h3>
+              <section class="clk-wizard__row">
+                <section class="clk-field">
+                  <label class="form-label" for="company">Company name</label>
+                  <input
+                    id="company"
+                    class="form-control"
+                    name="company"
+                    [(ngModel)]="expCompany"
+                  />
+                </section>
+                <section class="clk-field">
+                  <label class="form-label" for="exp-start">Employment period</label>
+                  <section class="clk-wizard__period">
+                    <input
+                      id="exp-start"
+                      type="month"
+                      class="form-control"
+                      name="exp-start"
+                      aria-label="Start month"
+                      [(ngModel)]="expStartMonth"
+                    />
+                    <input
+                      type="month"
+                      class="form-control"
+                      name="exp-end"
+                      aria-label="End month"
+                      [(ngModel)]="expEndMonth"
+                    />
+                  </section>
+                </section>
+              </section>
+              <p class="clk-field__hint mt-0">
+                Leave the end month empty if this is your current role.
+              </p>
+              <section class="clk-field">
+                <label class="form-label" for="role">Job Title</label>
+                <input id="role" class="form-control" name="role" [(ngModel)]="expRole" />
+              </section>
+              <section class="clk-field">
+                <label class="form-label" for="impact">What did you do?</label>
+                <textarea
+                  id="impact"
+                  class="form-control"
+                  rows="3"
+                  name="impact"
+                  [(ngModel)]="expDescription"
+                ></textarea>
+              </section>
+              <p class="clk-field__hint">
+                Briefly describe your responsibilities, achievements or work you're proud of.
+              </p>
+            </section>
+
+            <section class="clk-wizard__buttons">
+              <button type="submit" class="btn btn-primary btn-lg" [disabled]="saving()">
+                {{ saving() ? 'Saving...' : 'Save and continue' }}
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-lg"
+                (click)="back()"
+                [disabled]="saving()"
+              >
+                Back
+              </button>
+            </section>
+          </form>
+        }
+
+        @case (3) {
+          <header class="clk-wizard__title">
+            <h1>Tell us about your education</h1>
+            <p>
+              Add an education or learning experience you'd like to include in your profile. You can
+              add more later.
+            </p>
+          </header>
+          <form class="clk-wizard__form clk-wizard__form--roomy" (ngSubmit)="initialize()">
+            <section class="clk-field">
+              <label class="form-label" for="institution">Institution</label>
+              <input
+                id="institution"
+                class="form-control"
+                name="institution"
+                [(ngModel)]="institution"
+                placeholder="University of Johannesburg"
+              />
+            </section>
+
+            <section class="clk-field">
+              <label class="form-label" for="qualification">Qualification</label>
+              <input
+                id="qualification"
+                class="form-control"
+                name="qualification"
+                [(ngModel)]="qualification"
+                placeholder="Bachelor of Science"
+              />
+            </section>
+
+            <section class="clk-field">
+              <label class="form-label" for="field-of-study">Field of Study</label>
+              <input
+                id="field-of-study"
+                class="form-control"
+                name="field-of-study"
+                [(ngModel)]="fieldOfStudy"
+                placeholder="Computer Science"
+              />
+            </section>
+
+            <section class="clk-wizard__group">
+              <section class="clk-field">
+                <label class="form-label" for="edu-start">Dates attended</label>
+                <section class="clk-wizard__period">
+                  <input
+                    id="edu-start"
+                    type="month"
+                    class="form-control"
+                    name="start"
+                    aria-label="Start month"
+                    [(ngModel)]="eduStartMonth"
+                  />
+                  <input
+                    type="month"
+                    class="form-control"
+                    name="edu-end"
+                    aria-label="End month"
+                    [(ngModel)]="eduEndMonth"
+                  />
+                </section>
+              </section>
+            </section>
+            <p class="clk-field__hint mt-0">
+              Leave the end month empty if this is your current role.
+            </p>
+
+            <section class="clk-field">
+              <label class="form-label" for="edu-description">Additional details</label>
+              <textarea
+                id="edu-description"
+                class="form-control"
+                rows="3"
+                name="edu-description"
+                [(ngModel)]="eduDescription"
+              ></textarea>
+            </section>
+            <p class="clk-field__hint">
+              Add anything you'd like to highlight, such as achievements, relevant coursework, or
+              specialisation.
+            </p>
+
+            <section class="clk-wizard__buttons">
+              <button type="submit" class="btn btn-primary btn-lg" [disabled]="saving()">
+                {{ saving() ? 'Saving...' : 'Save and continue' }}
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-lg"
+                (click)="back()"
+                [disabled]="saving()"
+              >
+                Back
+              </button>
+            </section>
+          </form>
+        }
+
+        @case (4) {
+          <header class="clk-wizard__title clk-wizard__title--lg">
+            <h1>You're all clocked in{{ firstName() ? ', ' + firstName() : '' }}.</h1>
+            <p>
+              Your profile is ready. You can now start organising your job search, adding
+              applications and building out your profile whenever you need to.
+            </p>
+          </header>
+
+          <section class="clk-wizard__card">
+            <header class="clk-wizard__card-head">
+              <h3>Your profile is off to a good start. You can add more details anytime.</h3>
+            </header>
+            <section class="clk-wizard__points">
+              @if (info().name) {
+                <section>
+                  <p>Info</p>
+                  <p>
+                    {{ info().name }}
+                    @if (info().title) {
+                      • {{ info().title }}
+                    }
+                    @if (latestExperience()?.company) {
+                      &#64; {{ latestExperience()?.company }}
+                    }
+                  </p>
+                </section>
+              }
+              @if (skills().length) {
+                <section>
+                  <p>Skills</p>
+                  <p>{{ skillNames() }}</p>
+                </section>
+              }
+            </section>
+          </section>
+
+          <section class="clk-wizard__buttons">
+            <button type="button" class="btn btn-primary btn-lg" (click)="goTo('/dashboard')">
+              Continue to dashboard
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-lg"
+              (click)="goTo('/profile')"
+            >
+              Review profile
+            </button>
+          </section>
+        }
+      }
+    </section>
+
+    <footer class="clk-wizard__footer">
+      @if (step() < 3) {
+        <button type="button" class="clk-wizard__skip" (click)="skip()" [disabled]="saving()">
+          Skip for now
+        </button>
+      } @else {
+        <span></span>
+      }
+      <span>You can refine your profile anytime.</span>
+    </footer>
+  </section>
+</section>

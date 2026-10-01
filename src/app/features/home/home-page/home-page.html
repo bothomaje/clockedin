@@ -1,0 +1,61 @@
+<main class="clk-home">
+  <section class="clk-home__hero">
+    <section class="clk-home__copy">
+      <section class="clk-home__title">
+        <h1>Your job search, dialed in.</h1>
+        <p>
+          Keep your applications, interviews, opportunities and offers organised in one calm
+          workspace. clockedin helps you see where things stand, what needs your attention and where
+          you're headed next.
+        </p>
+      </section>
+
+      <section class="clk-home__actions">
+        <a routerLink="/signup" class="btn btn-primary">Get Started</a>
+      </section>
+    </section>
+
+    <section class="clk-home__preview" #preview>
+      <header class="clk-home__chrome">
+        <svg width="54" height="12" viewBox="0 0 54 12" aria-hidden="true">
+          <circle id="close" cx="8" cy="6" r="6" fill="#ff605c" />
+          <circle id="minimise" cx="28" cy="6" r="6" fill="#ffbd44" />
+          <circle id="maximise" cx="48" cy="6" r="6" fill="#00ca4e" />
+        </svg>
+        <span>Dashboard</span>
+        <span class="clk-home__chrome-spacer"></span>
+      </header>
+
+      <section class="clk-home__canvas">
+        <article class="clk-home__targets">
+          <h3>Job Search Goals</h3>
+          <p>Looking for product and creative roles with room to grow.</p>
+          <dl class="clk-kv clk-home__kv">
+            <dt>Salary Range</dt>
+            <dd>ZAR 180k - ZAR 220k</dd>
+            <dt>Preferred Industries</dt>
+            <dd>Technology, Media, Creative</dd>
+          </dl>
+        </article>
+
+        <section>
+          <section class="clk-home__pipeline-head">
+            <h3>Applications & Interviews</h3>
+            <span>+ Add Application</span>
+          </section>
+
+          @for (row of rows; track row.company) {
+            <article class="clk-home__row" [class.clk-home__row--divider]="row.divider">
+              <p class="clk-home__company">{{ row.company }}</p>
+              <p class="clk-home__role">{{ row.role }}</p>
+              <p class="clk-home__status">
+                <span [class]="'clk-chip ' + row.chipClass">{{ row.chipLabel }}</span>
+              </p>
+              <p class="clk-home__next">{{ row.next }}</p>
+            </article>
+          }
+        </section>
+      </section>
+    </section>
+  </section>
+</main>

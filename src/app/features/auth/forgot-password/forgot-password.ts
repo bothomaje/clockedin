@@ -12,6 +12,7 @@ export class ForgotPassword {
 
   email = '';
   message = signal('');
+  sentTo = signal('');
   errorMessage = signal('');
   isSubmitting = signal(false);
 
@@ -34,6 +35,7 @@ export class ForgotPassword {
         this.errorMessage.set(this.authService.getAuthErrorMessage(err));
       }
     } finally {
+      if (this.message()) this.sentTo.set(this.email);
       this.isSubmitting.set(false);
     }
   }

@@ -51,9 +51,9 @@ export class ProfileRepository {
     }));
   }
 
-  async createUserDoc(uid: string, email: string): Promise<void> {
+  async createUserDoc(uid: string, email: string, name?: string): Promise<void> {
     const initialUser: Omit<User, 'id'> = {
-      info: { email },
+      info: { email, ...(name?.trim() ? { name: name.trim() } : {}) },
       career: {
         experience: [],
         education: [],
@@ -80,6 +80,7 @@ export class ProfileRepository {
       id: snapshot.id,
       info: data['info'],
       templates: data['templates'] ?? {},
+      onboardingComplete: data['onboardingComplete'] ?? false,
       aiConsentAt:
         data['aiConsentAt'] instanceof Timestamp
           ? data['aiConsentAt'].toDate()
@@ -148,5 +149,10 @@ export class ProfileRepository {
   async recordAiConsent(): Promise<void> {
     const uid = this.currentUid();
     await setDoc(this.userDoc(uid), { aiConsentAt: new Date() }, { merge: true });
+  }
+
+  async markOnboardingComplete(): Promise<void> {
+    const uid = this.currentUid();
+    await setDoc(this.userDoc(uid), { onboardingComplete: true }, { merge: true });
   }
 }

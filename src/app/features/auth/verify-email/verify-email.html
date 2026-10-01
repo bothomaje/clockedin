@@ -1,0 +1,179 @@
+<section class="clk-auth-card">
+  @switch (view()) {
+    @case ('confirm') {
+      <header class="clk-auth-card__header">
+        <h2>Verify your email</h2>
+        <p>Confirm your email address to finish setting up your clockedin account.</p>
+      </header>
+
+      @if (errorMessage()) {
+        <section class="clk-banner clk-banner--error" role="alert">
+          <p class="clk-banner__text">{{ errorMessage() }}</p>
+        </section>
+      }
+
+      <section class="clk-auth-card__actions">
+        <button type="button" class="btn btn-primary" (click)="verify()" [disabled]="verifying()">
+          {{ verifying() ? 'Verifying...' : 'Verify email' }}
+        </button>
+      </section>
+    }
+    @case ('invalid') {
+      <header class="clk-auth-card__header">
+        <h2>This link is no longer valid</h2>
+        <p>It may have expired or already been used.</p>
+      </header>
+
+      @if (errorMessage()) {
+        <section class="clk-banner clk-banner--error" role="alert">
+          <p class="clk-banner__text">{{ errorMessage() }}</p>
+        </section>
+      }
+      @if (sent()) {
+        <section class="clk-banner" role="status">
+          <p class="clk-banner__title mb-0">Verification email sent.</p>
+        </section>
+      }
+
+      <section class="clk-auth-card__actions">
+        @if (user()) {
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="resend()"
+            [disabled]="sending() || cooldown() > 0"
+          >
+            {{
+              cooldown() > 0
+                ? 'Resend available in ' + cooldown() + 's'
+                : 'Send a new verification email'
+            }}
+          </button>
+        } @else {
+          <a routerLink="/login" class="btn btn-primary">Log in to request a new email</a>
+        }
+      </section>
+    }
+    @case ('success') {
+      <header class="clk-auth-card__header">
+        <h2>Email verified</h2>
+        <p>Your email address has been successfully verified.</p>
+      </header>
+
+      <section class="clk-banner" role="status">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+
+        <p class="clk-banner__title mb-0">Your email address is verified.</p>
+      </section>
+
+      <section class="clk-auth-card__actions">
+        <button type="button" class="btn btn-primary" (click)="continueAfterVerification()">
+          Continue
+        </button>
+      </section>
+    }
+    @default {
+      <header class="clk-auth-card__header">
+        <h2>Check your inbox</h2>
+        <p>
+          We have sent a verification email to <strong>{{ email() }}</strong
+          >. Click the link in the email to confirm your address and continue to clockedin.
+        </p>
+      </header>
+
+      @if (sent()) {
+        <section class="clk-banner" role="status">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="m9 12 2 2 4-4" />
+          </svg>
+          <p class="clk-banner__title mb-0">Verification email sent.</p>
+        </section>
+      }
+      @if (errorMessage()) {
+        <section class="clk-banner clk-banner--error" role="alert">
+          <p class="clk-banner__text">{{ errorMessage() }}</p>
+        </section>
+      }
+
+      <section class="clk-verify">
+        <section class="clk-verify__step">
+          <span class="clk-verify__done">
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m5 12 5 5L20 7" />
+            </svg>
+          </span>
+          <p>1. Verification email sent</p>
+        </section>
+        <hr />
+        <section class="clk-verify__step clk-verify__step--pending">
+          <span class="clk-verify__spinner"></span>
+          <p>2. Confirm your email address</p>
+        </section>
+      </section>
+
+      <p class="clk-verify__note">
+        Click the verification link in your email. This page will update automatically once your
+        email has been confirmed. You can also skip for now and verify later. AI features stay
+        locked until then.
+      </p>
+
+      <section class="clk-auth-card__actions clk-auth-card__actions--start">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="resend()"
+          [disabled]="sending() || cooldown() > 0"
+        >
+          {{
+            cooldown() > 0
+              ? 'Resend available in ' + cooldown() + 's'
+              : sending()
+                ? 'Sending...'
+                : 'Resend verification email'
+          }}
+        </button>
+        <button type="button" class="btn btn-outline-secondary" (click)="skip()">
+          Skip for now
+        </button>
+        <p class="clk-auth-card__redirect">
+          <span class="clk-verify__alt">Wrong email address?</span>
+          <a href="#" (click)="$event.preventDefault(); logOut()">Change email address</a>
+        </p>
+      </section>
+    }
+  }
+</section>

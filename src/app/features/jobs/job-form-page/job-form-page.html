@@ -1,0 +1,11 @@
+@if (draft(); as job) {
+  <app-page-header [eyebrow]="heading().eyebrow" [title]="heading().title" [compact]="true" />
+  <app-job-form
+    [job]="job"
+    [pipeline]="pipeline()"
+    [showStatus]="isApplication && !isEditing"
+    [submitLabel]="heading().submit"
+    (save)="onSave($event)"
+    (cancel)="onCancel()"
+  />
+}

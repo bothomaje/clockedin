@@ -1,0 +1,30 @@
+@if (jobState.selectedJob(); as job) {
+  <app-job-detail
+    [job]="job"
+    section="applications"
+    (statusChange)="onStatusChange($event)"
+    (notesSave)="onNotesSave($event)"
+    (deleteRequested)="beginDelete()"
+  >
+    @if (!profileState.loading()) {
+      <app-associated-assets
+        assets
+        [job]="job"
+        [user]="profileState.user()"
+        basePath="applications"
+      />
+    }
+  </app-job-detail>
+
+  <app-confirm-dialog
+    [open]="confirmingDelete()"
+    title="Delete this application?"
+    confirmLabel="Delete permanently"
+    cancelLabel="Cancel"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()"
+  >
+    This will permanently delete your application details for <strong>{{ job.company }}</strong
+    >, including notes and documents associated with it. This can't be undone.
+  </app-confirm-dialog>
+}

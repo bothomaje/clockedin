@@ -1,0 +1,35 @@
+<app-page-header eyebrow="Applications" title="All Applications" [compact]="true">
+  <a
+    actions
+    routerLink="/applications/new"
+    class="btn btn-primary d-inline-flex align-items-center gap-2"
+  >
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      aria-hidden="true"
+    >
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+    Add application
+  </a>
+</app-page-header>
+
+<app-job-list
+  [statuses]="statuses"
+  defaultSort="dateApplied"
+  allStatusesLabel="All statuses"
+  errorTitle="Failed to load applications"
+  emptyTitle="No applications yet"
+  emptyDescription="Keep your applications here so you can see where things stand, keep track of next steps and stay on top of your job search."
+  emptyHint="Found a role you're interested in? Save it from the Jobs tab and track it here when you're ready to apply."
+  (view)="onView($event)"
+>
+  <a routerLink="/applications/new" class="btn btn-primary btn-lg">Add your first application</a>
+  <a routerLink="/jobs/new" class="btn btn-outline-secondary btn-lg">Save a job for later</a>
+</app-job-list>

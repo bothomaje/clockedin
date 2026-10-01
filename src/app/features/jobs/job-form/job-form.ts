@@ -1,7 +1,8 @@
 import { Component, effect, input, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Job } from '../models/job';
+import { APPLICATION_STATUSES, Job, JobStatus } from '../models/job';
+import { statusLabel } from '../../../shared/ui/status-chip/status-chip';
 
 @Component({
   selector: 'app-job-form',
@@ -10,15 +11,30 @@ import { Job } from '../models/job';
 })
 export class JobForm {
   job = input.required<Job>();
+  pipeline = input(true);
+  showStatus = input(false);
+  submitLabel = input('Save');
   save = output<Job>();
   cancel = output<void>();
 
   editedJob!: Job;
+  status = JobStatus.APPLIED;
+  statusOptions = APPLICATION_STATUSES;
+  statusLabel = statusLabel;
 
   constructor() {
     effect(() => {
       this.editedJob = { ...this.job() };
     });
+  }
+
+  onSubmit(): void {
+    const job = { ...this.editedJob };
+    if (!job.id && this.showStatus()) {
+      job.jobUpdates = [{ status: this.status, updatedAt: new Date() }];
+      if (!job.dateApplied) job.dateApplied = new Date();
+    }
+    this.save.emit(job);
   }
 
   toDate(value: string): Date {

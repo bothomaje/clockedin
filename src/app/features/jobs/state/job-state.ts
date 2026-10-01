@@ -59,17 +59,26 @@ export class JobState {
     );
   }
 
-  async updateJobStatus(jobId: string, newStatus: JobStatus): Promise<void> {
-    await this.jobRepository.updateJobStatus(jobId, newStatus);
+  async updateJobStatus(jobId: string, newStatus: JobStatus, note?: string): Promise<void> {
+    await this.jobRepository.updateJobStatus(jobId, newStatus, note);
     this.jobsSignal.update((jobs) =>
       jobs.map((job) =>
         job.id === jobId
           ? {
               ...job,
-              jobUpdates: [...job.jobUpdates, { status: newStatus, updatedAt: new Date() }],
+              jobUpdates: [
+                ...job.jobUpdates,
+                { status: newStatus, updatedAt: new Date(), ...(note ? { note } : {}) },
+              ],
             }
           : job,
       ),
     );
+  }
+
+  async deleteJob(jobId: string): Promise<void> {
+    await this.jobRepository.deleteJob(jobId);
+    this.jobsSignal.update((jobs) => jobs.filter((job) => job.id !== jobId));
+    if (this.selectedJobIdSignal() === jobId) this.selectedJobIdSignal.set(undefined);
   }
 }

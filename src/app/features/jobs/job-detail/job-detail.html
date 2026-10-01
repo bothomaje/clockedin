@@ -1,55 +1,152 @@
-<table class="table table-striped mt-3">
-  <thead class="table-dark">
-    <tr>
-      <th>Company</th>
-      <th>Role</th>
-      <th>Status</th>
-      <th>Updated At</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>{{ job().company }}</td>
-      <td>{{ job().role }}</td>
-      <td>
-        <span class="badge bg-secondary">{{ getLatestJobUpdate(job()).status }}</span>
-      </td>
-      <td>{{ getLatestJobUpdate(job()).updatedAt | date: 'medium' }}</td>
-      <td class="text-end">
-        <section class="d-flex gap-2 justify-content-end">
-          <button class="btn btn-outline-secondary btn-sm" (click)="close.emit()">
-            Hide details
+<app-breadcrumbs [items]="crumbs()" />
+
+<header class="clk-detail__header">
+  <section class="clk-detail__heading">
+    <section class="clk-detail__title">
+      <h1>{{ job().role }}</h1>
+      <app-status-chip [status]="latest().status" />
+    </section>
+    <section class="clk-detail__meta">
+      <span class="clk-detail__company">{{ job().company }}</span>
+      @if (job().location) {
+        <span class="clk-detail__sep"></span>
+        <span class="clk-detail__location">{{ job().location }}</span>
+      }
+      @if (job().url) {
+        <span class="clk-detail__sep"></span>
+        <a [href]="job().url" target="_blank" rel="noopener">{{ urlLabel() }} ↗</a>
+      }
+    </section>
+  </section>
+
+  <section class="clk-detail__actions">
+    <button type="button" class="btn btn-outline-secondary" (click)="openModal('status')">
+      Update Status
+    </button>
+    <button type="button" class="btn btn-outline-secondary" (click)="openModal('event')">
+      Add to history
+    </button>
+    <a class="btn btn-outline-secondary" [routerLink]="editLink()">Edit</a>
+    <button type="button" class="btn btn-danger-soft" (click)="deleteRequested.emit()">
+      Delete
+    </button>
+  </section>
+</header>
+
+<section class="clk-detail__body">
+  <section class="clk-detail__main">
+    <article class="clk-widget">
+      <h3 class="clk-widget__title">Application Information</h3>
+      <dl class="clk-kv">
+        <dt>Date Applied</dt>
+        <dd>{{ job().dateApplied ? (job().dateApplied | date: 'longDate') : '—' }}</dd>
+        <dt>Source</dt>
+        <dd>{{ job().source || '—' }}</dd>
+        <dt>Salary</dt>
+        <dd>{{ job().salary || '—' }}</dd>
+        <dt>Contact</dt>
+        <dd>{{ job().keyContact || '—' }}</dd>
+        <dt>Next Step</dt>
+        <dd>{{ job().nextAction || '—' }}</dd>
+        <dt>Employment Type</dt>
+        <dd>{{ job().employmentType || '—' }}</dd>
+        <dt>Department</dt>
+        <dd>{{ job().department || '—' }}</dd>
+        <dt>Deadline</dt>
+        <dd>
+          {{ job().applicationDeadline ? (job().applicationDeadline | date: 'longDate') : '—' }}
+        </dd>
+      </dl>
+    </article>
+
+    <ng-content select="[assets]" />
+
+    <article class="clk-widget">
+      <header class="clk-widget__head">
+        <h3 class="clk-widget__title">Notes</h3>
+        @if (!editingNotes()) {
+          <button type="button" class="clk-link-action" (click)="editingNotes.set(true)">
+            Edit Notes
+          </button>
+        }
+      </header>
+      @if (editingNotes()) {
+        <textarea
+          class="form-control"
+          rows="5"
+          name="notes"
+          aria-label="Notes"
+          [(ngModel)]="notesDraft"
+        ></textarea>
+        <section class="clk-detail__notes-actions">
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="cancelNotes()">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" (click)="saveNotes()">
+            Save Notes
           </button>
         </section>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<h3>Status</h3>
-<hr />
-@for (status of statuses; track status) {
-  <section class="form-check form-check-inline">
-    <input
-      type="radio"
-      class="form-check-input"
-      name="statusRadioOptions"
-      id="statusRadio{{ status }}"
-      [checked]="getLatestJobUpdate(job()).status === status"
-      (change)="statusChange.emit(status)"
-    />
-    <label for="statusRadio{{ status }}" class="form-check-label">{{ status }}</label>
+      } @else {
+        <p class="clk-detail__notes">{{ job().notes || 'No notes yet.' }}</p>
+      }
+    </article>
   </section>
-}
 
-<h3 class="mt-3">Job Description</h3>
-<hr />
-<p class="mb-4">{{ job().jobDescription }}</p>
-
-<section class="d-flex justify-content-between">
-  <h3>Notes</h3>
-  <button class="btn btn-primary btn-sm" (click)="notesSave.emit(notesDraft)">Save Notes</button>
+  <aside class="clk-widget clk-detail__timeline">
+    <h3 class="clk-widget__title">Application history</h3>
+    <ol class="clk-timeline">
+      @for (u of timeline(); track $index; let last = $last) {
+        <li class="clk-timeline__item" [class.is-current]="last">
+          <span class="clk-timeline__dot"></span>
+          <section class="clk-timeline__body">
+            <p class="clk-timeline__date">{{ u.updatedAt | date: 'MMM d' }}</p>
+            <p class="clk-timeline__title">{{ statusLabel(u.status) }}</p>
+            @if (u.note) {
+              <p class="clk-timeline__note">{{ u.note }}</p>
+            }
+          </section>
+        </li>
+      }
+    </ol>
+  </aside>
 </section>
-<hr />
-<textarea class="form-control mb-4" rows="4" [(ngModel)]="notesDraft"></textarea>
+
+<app-modal
+  [open]="modal() !== null"
+  [title]="modal() === 'event' ? 'Add to history' : 'Update status'"
+  (closed)="modal.set(null)"
+>
+  <form class="clk-detail__modal" (ngSubmit)="submitModal()">
+    @if (modal() === 'status') {
+      <section class="clk-field">
+        <label class="form-label" for="nextStatus">Update status</label>
+        <select id="nextStatus" class="form-select" name="nextStatus" [(ngModel)]="nextStatus">
+          @for (s of statuses; track s) {
+            <option [value]="s">{{ statusLabel(s) }}</option>
+          }
+        </select>
+      </section>
+    }
+    <section class="clk-field">
+      <label class="form-label" for="eventNote">
+        {{ modal() === 'event' ? 'What happened?' : 'Note (optional)' }}
+      </label>
+      <textarea
+        id="eventNote"
+        class="form-control"
+        rows="3"
+        name="eventNote"
+        [(ngModel)]="eventNote"
+        [required]="modal() === 'event'"
+      ></textarea>
+    </section>
+    <section class="clk-detail__notes-actions">
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.set(null)">
+        Cancel
+      </button>
+      <button type="submit" class="btn btn-primary">
+        {{ modal() === 'event' ? 'Add to history' : 'Update status' }}
+      </button>
+    </section>
+  </form>
+</app-modal>

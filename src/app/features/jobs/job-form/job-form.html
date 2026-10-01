@@ -1,53 +1,186 @@
-<section class="gap-2 d-flex justify-content-end">
-  <button class="btn btn-danger" (click)="cancel.emit()">Cancel</button>
-  <button class="btn btn-primary" (click)="save.emit(editedJob)">Save</button>
-</section>
+<form class="clk-form" (ngSubmit)="onSubmit()" #jobForm="ngForm">
+  <section class="clk-form__section">
+    <h3>{{ pipeline() ? '1. ' : '' }}Job details</h3>
+    <section class="clk-form__grid">
+      <section class="clk-field">
+        <label class="form-label" for="company">Company Name *</label>
+        <input
+          id="company"
+          class="form-control"
+          name="company"
+          placeholder="e.g., Stripe, Watershed"
+          [(ngModel)]="editedJob.company"
+          required
+        />
+      </section>
+      <section class="clk-field">
+        <label class="form-label" for="role">Job Title *</label>
+        <input
+          id="role"
+          class="form-control"
+          name="role"
+          placeholder="e.g., Senior Product Designer"
+          [(ngModel)]="editedJob.role"
+          required
+        />
+      </section>
+      <section class="clk-field">
+        <label class="form-label" for="url">Job URL</label>
+        <input
+          id="url"
+          type="url"
+          class="form-control"
+          name="url"
+          placeholder="https://company.com/careers/spec"
+          [(ngModel)]="editedJob.url"
+        />
+      </section>
+      <section class="clk-field">
+        <label class="form-label" for="location">Location</label>
+        <input
+          id="location"
+          class="form-control"
+          name="location"
+          placeholder="San Francisco (Hybrid)"
+          [(ngModel)]="editedJob.location"
+        />
+      </section>
+      <section class="clk-field">
+        <label class="form-label" for="employmentType">Employment Type</label>
+        <input
+          id="employmentType"
+          class="form-control"
+          name="employmentType"
+          placeholder="Full-time"
+          [(ngModel)]="editedJob.employmentType"
+        />
+      </section>
+      <section class="clk-field">
+        <label class="form-label" for="salary">Salary</label>
+        <input
+          id="salary"
+          class="form-control"
+          name="salary"
+          placeholder="e.g., $180k – $220k"
+          [(ngModel)]="editedJob.salary"
+        />
+      </section>
+      <section class="clk-field">
+        <label class="form-label" for="deadline">Application Deadline</label>
+        <input
+          id="deadline"
+          type="date"
+          class="form-control"
+          name="deadline"
+          [ngModel]="
+            editedJob.applicationDeadline
+              ? (editedJob.applicationDeadline | date: 'yyyy-MM-dd')
+              : ''
+          "
+          (ngModelChange)="editedJob.applicationDeadline = $event ? toDate($event) : null"
+        />
+      </section>
+      <section class="clk-field">
+        <label class="form-label" for="department">Department</label>
+        <input
+          id="department"
+          class="form-control"
+          name="department"
+          placeholder="e.g., Product Design"
+          [(ngModel)]="editedJob.department"
+        />
+      </section>
+    </section>
 
-<section class="d-flex gap-2 mt-3">
-  <label class="form-label">Company</label>
-  <input type="text" class="form-control" [(ngModel)]="editedJob.company" />
-</section>
-<section class="d-flex gap-2 mt-2">
-  <label class="form-label">Role</label>
-  <input type="text" class="form-control" [(ngModel)]="editedJob.role" />
-</section>
-<section class="d-flex gap-2 mt-2">
-  <section class="flex-fill">
-    <label class="form-label">Location</label>
-    <input type="text" class="form-control" [(ngModel)]="editedJob.location" />
+    <section class="clk-field">
+      <label class="form-label" for="jobDescription">Job Description</label>
+      <textarea
+        id="jobDescription"
+        class="form-control"
+        rows="8"
+        name="jobDescription"
+        placeholder="Paste the job description. It is used to tailor your CV and cover letter."
+        [(ngModel)]="editedJob.jobDescription"
+      ></textarea>
+    </section>
   </section>
-  <section class="flex-fill">
-    <label class="form-label">Employment Type</label>
-    <input type="text" class="form-control" [(ngModel)]="editedJob.employmentType" />
+
+  @if (pipeline()) {
+    <hr class="clk-form__rule" />
+    <section class="clk-form__section">
+      <h3>2. Application details</h3>
+      <section class="clk-form__grid">
+        @if (showStatus()) {
+          <section class="clk-field">
+            <label class="form-label" for="status">Status</label>
+            <select id="status" class="form-select" name="status" [(ngModel)]="status">
+              @for (s of statusOptions; track s) {
+                <option [value]="s">{{ statusLabel(s) }}</option>
+              }
+            </select>
+          </section>
+        }
+        <section class="clk-field">
+          <label class="form-label" for="keyContact">Contact</label>
+          <input
+            id="keyContact"
+            class="form-control"
+            name="keyContact"
+            placeholder="Hiring Manager, Recruiter name"
+            [(ngModel)]="editedJob.keyContact"
+          />
+        </section>
+        <section class="clk-field">
+          <label class="form-label" for="source">Where you found it</label>
+          <input
+            id="source"
+            class="form-control"
+            name="source"
+            placeholder="Referral, LinkedIn..."
+            [(ngModel)]="editedJob.source"
+          />
+        </section>
+        <section class="clk-field">
+          <label class="form-label" for="dateApplied">Date Applied</label>
+          <input
+            id="dateApplied"
+            type="date"
+            class="form-control"
+            name="dateApplied"
+            [ngModel]="editedJob.dateApplied ? (editedJob.dateApplied | date: 'yyyy-MM-dd') : ''"
+            (ngModelChange)="editedJob.dateApplied = $event ? toDate($event) : null"
+          />
+        </section>
+        <section class="clk-field">
+          <label class="form-label" for="nextAction">Next Step</label>
+          <input
+            id="nextAction"
+            class="form-control"
+            name="nextAction"
+            [(ngModel)]="editedJob.nextAction"
+          />
+        </section>
+      </section>
+      <section class="clk-field">
+        <label class="form-label" for="notes">Notes &amp; Challenges</label>
+        <textarea
+          id="notes"
+          class="form-control"
+          name="notes"
+          placeholder="e.g., Clinical trial reporting dashboard redesign priority. Tailor portfolio presentation deck to showcase data density."
+          [(ngModel)]="editedJob.notes"
+        ></textarea>
+      </section>
+    </section>
+  }
+
+  <hr class="clk-form__rule" />
+  <section class="clk-form__actions">
+    <button type="button" class="btn btn-outline-secondary btn-md px-3" (click)="cancel.emit()">
+      Cancel
+    </button>
+    <button type="submit" class="btn btn-primary btn-md px-4" [disabled]="jobForm.invalid">
+      {{ submitLabel() }}
+    </button>
   </section>
-</section>
-<section class="d-flex gap-2 mt-2">
-  <section class="flex-fill">
-    <label class="form-label">Salary</label>
-    <input type="text" class="form-control" [(ngModel)]="editedJob.salary" />
-  </section>
-  <section class="flex-fill">
-    <label class="form-label">Application Deadline</label>
-    <input
-      type="date"
-      class="form-control"
-      [ngModel]="
-        editedJob.applicationDeadline ? (editedJob.applicationDeadline | date: 'yyyy-MM-dd') : ''
-      "
-      (ngModelChange)="editedJob.applicationDeadline = $event ? toDate($event) : null"
-    />
-  </section>
-</section>
-<section class="mt-2">
-  <label class="form-label">Job URL</label>
-  <input type="url" class="form-control" [(ngModel)]="editedJob.url" />
-</section>
-<section class="mt-2">
-  <label class="form-label">Job Description</label>
-  <textarea
-    class="form-control"
-    [(ngModel)]="editedJob.jobDescription"
-    rows="10"
-    placeholder="Please enter the job description..."
-  ></textarea>
-</section>
+</form>

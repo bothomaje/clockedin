@@ -1,0 +1,100 @@
+@if (jobState.selectedJob(); as job) {
+  <section class="clk-spec__top">
+    <app-breadcrumbs [items]="crumbs()" />
+    <section class="clk-spec__actions">
+      @if (linked()) {
+        <a class="clk-spec__linked" [routerLink]="['/applications', job.id]">
+          View application →
+        </a>
+      } @else {
+        <button type="button" class="btn btn-primary" (click)="applyNow()">Mark as applied</button>
+      }
+      <a class="btn btn-outline-secondary" [routerLink]="['/jobs', job.id, 'edit']">Edit</a>
+      <button type="button" class="btn btn-danger-soft" (click)="beginDelete()">Delete</button>
+    </section>
+  </section>
+
+  <header class="clk-widget clk-spec__header">
+    <div>
+      <h1>{{ job.role }}</h1>
+      <p>{{ job.company }}</p>
+    </div>
+    <dl class="clk-spec__facts">
+      <div>
+        <dt>Location</dt>
+        <dd>{{ job.location || '—' }}</dd>
+      </div>
+      <div>
+        <dt>Type</dt>
+        <dd>{{ job.employmentType || '—' }}</dd>
+      </div>
+      <div>
+        <dt>Salary Range</dt>
+        <dd>{{ job.salary || '—' }}</dd>
+      </div>
+    </dl>
+  </header>
+
+  <section class="clk-spec__body">
+    <article class="clk-widget">
+      <h3 class="clk-widget__title">Job Description</h3>
+      <p class="clk-spec__text">{{ job.jobDescription || 'No job description saved.' }}</p>
+    </article>
+
+    <aside class="clk-spec__side">
+      @if (job.jobAnalysis; as analysis) {
+        @if (analysis.requiredSkills.length) {
+          <article class="clk-widget">
+            <h3 class="clk-widget__title">Required skills</h3>
+            <ul class="clk-spec__chips">
+              @for (s of analysis.requiredSkills; track s) {
+                <li>{{ s }}</li>
+              }
+            </ul>
+          </article>
+        }
+        @if (analysis.preferredSkills.length) {
+          <article class="clk-widget">
+            <h3 class="clk-widget__title">Preferred skills</h3>
+            <ul class="clk-spec__checks">
+              @for (s of analysis.preferredSkills; track s) {
+                <li><span class="clk-spec__tick" aria-hidden="true">✓</span>{{ s }}</li>
+              }
+            </ul>
+          </article>
+        }
+      }
+
+      <article class="clk-widget clk-spec__meta">
+        <p>Saved on: {{ savedAt() | date: 'MMM d, y' }}</p>
+        <p>
+          Application Deadline:
+          {{ job.applicationDeadline ? (job.applicationDeadline | date: 'MMM d, y') : 'Not set' }}
+        </p>
+      </article>
+
+      @if (!profileState.loading()) {
+        <app-associated-assets [job]="job" [user]="profileState.user()" basePath="jobs" />
+      }
+    </aside>
+  </section>
+
+  <app-confirm-dialog
+    [open]="confirmingDelete()"
+    title="Delete saved job?"
+    confirmLabel="Delete permanently"
+    cancelLabel="Cancel, keep job"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()"
+  >
+    This will permanently delete your saved details for <strong>{{ job.company }}</strong
+    >. This cannot be undone.
+  </app-confirm-dialog>
+} @else if (!jobState.loading()) {
+  <app-empty-state
+    title="Job not found"
+    description="It may have been deleted, or the link is wrong."
+  >
+    <a routerLink="/jobs" class="btn btn-primary">Back to Jobs</a>
+  </app-empty-state>
+}

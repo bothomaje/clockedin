@@ -1,18 +1,38 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/auth/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ProfileState } from '../../profile/state/profile-state';
+import { PageHeader } from '../../../shared/ui/page-header/page-header';
+import { DatePipe } from '@angular/common';
+import { DataExportService } from '../data-export.service';
+
+type Pane = 'account' | 'security' | 'ai' | 'data';
 
 @Component({
-  imports: [FormsModule],
+  imports: [FormsModule, DatePipe, RouterLink, PageHeader],
   selector: 'app-settings',
   templateUrl: './settings-page.html',
+  styleUrl: './settings-page.scss',
 })
 export class Settings {
   private authService = inject(AuthService);
   private profileState = inject(ProfileState);
-  private router = inject(Router);
+  private exporter = inject(DataExportService);
+
+  readonly panes: { id: Pane; label: string }[] = [
+    { id: 'account', label: 'Account Information' },
+    { id: 'security', label: 'Password & Security' },
+    { id: 'ai', label: 'AI Document Settings' },
+    { id: 'data', label: 'Data Export / Backup' },
+  ];
+  pane = signal<Pane>('account');
+
+  name = computed(() => this.profileState.info().name ?? '');
+  consentAt = computed(() => this.profileState.user().aiConsentAt ?? null);
+  revoking = signal(false);
+  exporting = signal(false);
+  exportError = signal('');
 
   email = this.authService.currentUserSnapshot()?.email ?? '';
   emailVerified = this.authService.isEmailVerified;
@@ -26,11 +46,6 @@ export class Settings {
   passwordMessage = signal('');
   passwordError = signal('');
   isSavingPassword = signal(false);
-
-  confirmingDelete = signal(false);
-  deletePassword = '';
-  deleteError = signal('');
-  isDeleting = signal(false);
 
   get newPasswordValid(): boolean {
     return (
@@ -90,32 +105,24 @@ export class Settings {
     }
   }
 
-  beginDelete() {
-    this.confirmingDelete.set(true);
-    this.deleteError.set('');
-  }
-
-  cancelDelete() {
-    this.confirmingDelete.set(false);
-    this.deletePassword = '';
-  }
-
-  async deleteAccount() {
-    this.deleteError.set('');
-    this.isDeleting.set(true);
-
+  async revokeConsent() {
+    this.revoking.set(true);
     try {
-      const uid = this.authService.currentUserSnapshot()?.uid;
-      if (!uid) throw new Error('No user is signed in.');
-
-      await this.authService.reauthenticate(this.deletePassword);
-      await this.profileState.deleteAllData();
-      await this.authService.deleteAuthAccount();
-      this.router.navigate(['/']);
-    } catch (err) {
-      this.deleteError.set(this.authService.getAuthErrorMessage(err));
+      await this.profileState.revokeAiConsent();
     } finally {
-      this.isDeleting.set(false);
+      this.revoking.set(false);
+    }
+  }
+
+  async exportData() {
+    this.exportError.set('');
+    this.exporting.set(true);
+    try {
+      await this.exporter.download();
+    } catch {
+      this.exportError.set('Could not export your data. Try again.');
+    } finally {
+      this.exporting.set(false);
     }
   }
 }

@@ -80,6 +80,11 @@ export class ProfileState {
     this.aiConsentAtSignal.set(new Date());
   }
 
+  async revokeAiConsent(): Promise<void> {
+    await this.profileRepository.revokeAiConsent();
+    this.aiConsentAtSignal.set(null);
+  }
+
   async createProfile(uid: string, email: string, name?: string): Promise<void> {
     await this.profileRepository.createUserDoc(uid, email, name);
   }

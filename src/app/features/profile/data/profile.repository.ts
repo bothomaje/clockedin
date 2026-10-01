@@ -151,6 +151,11 @@ export class ProfileRepository {
     await setDoc(this.userDoc(uid), { aiConsentAt: new Date() }, { merge: true });
   }
 
+  async revokeAiConsent(): Promise<void> {
+    const uid = this.currentUid();
+    await setDoc(this.userDoc(uid), { aiConsentAt: null }, { merge: true });
+  }
+
   async markOnboardingComplete(): Promise<void> {
     const uid = this.currentUid();
     await setDoc(this.userDoc(uid), { onboardingComplete: true }, { merge: true });

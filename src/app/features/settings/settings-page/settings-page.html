@@ -1,113 +1,165 @@
-<main class="container mt-4">
-  <h2>Account</h2>
+<app-page-header eyebrow="Control Panel" title="Account &amp; Preference Settings" />
 
-  <section class="mt-4">
-    <h3>Email</h3>
-    <hr />
-    <p>{{ email }}</p>
-    @if (emailVerified()) {
-      <span class="badge bg-success">Verified</span>
-    } @else {
-      <span class="badge bg-warning text-dark">Not Verified</span>
-      @if (!verificationSent()) {
-        <button
-          type="button"
-          class="btn btn-link btn-sm"
-          [disabled]="isSendingVerification() || verificationSent()"
-          (click)="resendVerification()"
-        >
-          {{ isSendingVerification() ? 'Sending…' : 'Send verification email' }}
-        </button>
+<section class="clk-settings">
+  <nav class="clk-settings__nav" aria-label="Settings sections">
+    @for (p of panes; track p.id) {
+      <button type="button" [class.active]="pane() === p.id" (click)="pane.set(p.id)">
+        {{ p.label }}
+      </button>
+    }
+  </nav>
 
-        @if (verificationError()) {
-          <p class="text-danger mt-2">{{ verificationError() }}</p>
-        }
-      } @else {
-        <p class="text-success mt-2">Verification email sent. Check your inbox.</p>
+  <section class="clk-settings__content">
+    @switch (pane()) {
+      @case ('account') {
+        <article class="clk-card">
+          <h3>Account Credentials</h3>
+          <label class="clk-field">
+            <span>Full Name</span>
+            <input class="form-control" [value]="name()" readonly />
+          </label>
+          <label class="clk-field">
+            <span>Email Address</span>
+            <input class="form-control" [value]="email" readonly />
+          </label>
+          <p class="form-text m-0">Edit your name in <a routerLink="/profile">Profile</a>.</p>
+
+          @if (emailVerified()) {
+            <span class="badge bg-success align-self-start">Verified</span>
+          } @else {
+            <span class="badge bg-warning text-dark align-self-start">Not Verified</span>
+            @if (!verificationSent()) {
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm align-self-start"
+                [disabled]="isSendingVerification()"
+                (click)="resendVerification()"
+              >
+                {{ isSendingVerification() ? 'Sending…' : 'Send verification email' }}
+              </button>
+              @if (verificationError()) {
+                <p class="text-danger m-0">{{ verificationError() }}</p>
+              }
+            } @else {
+              <p class="text-success m-0">Verification email sent. Check your inbox.</p>
+            }
+          }
+        </article>
+
+        <article class="clk-card clk-danger">
+          <h3>Danger Zone</h3>
+          <section class="clk-danger__row">
+            <section>
+              <strong>Delete Account Database</strong>
+              <p>
+                Permanently purge your active tracking, document dossier, and credential metrics.
+                This cannot be undone.
+              </p>
+            </section>
+            <a routerLink="/settings/delete" class="btn btn-outline-danger">Delete profile</a>
+          </section>
+        </article>
+      }
+
+      @case ('security') {
+        <article class="clk-card">
+          <h3>Change Password</h3>
+          @if (passwordMessage()) {
+            <p class="alert alert-success m-0">{{ passwordMessage() }}</p>
+          }
+          @if (passwordError()) {
+            <p class="alert alert-danger m-0">{{ passwordError() }}</p>
+          }
+          <form class="d-flex flex-column gap-3" (ngSubmit)="changePassword()">
+            <label class="clk-field">
+              <span>Current Password</span>
+              <input
+                type="password"
+                class="form-control"
+                name="current-password"
+                [(ngModel)]="currentPassword"
+                required
+              />
+            </label>
+            <label class="clk-field">
+              <span>New Password</span>
+              <input
+                type="password"
+                class="form-control"
+                name="new-password"
+                [(ngModel)]="newPassword"
+                required
+              />
+            </label>
+            <label class="clk-field">
+              <span>Confirm New Password</span>
+              <input
+                type="password"
+                class="form-control"
+                name="confirm-new-password"
+                [(ngModel)]="confirmNewPassword"
+                required
+              />
+            </label>
+            <p class="form-text m-0">At least 8 characters, with a letter and a number.</p>
+            <button
+              type="submit"
+              class="btn btn-primary align-self-start"
+              [disabled]="
+                isSavingPassword() || !currentPassword || !newPasswordValid || !newPasswordsMatch
+              "
+            >
+              {{ isSavingPassword() ? 'Saving...' : 'Update Password' }}
+            </button>
+          </form>
+        </article>
+      }
+
+      @case ('ai') {
+        <article class="clk-card">
+          <h3>AI Document Settings</h3>
+          @if (consentAt(); as at) {
+            <p class="m-0">AI processing consent granted on {{ at | date: 'mediumDate' }}.</p>
+            <p class="form-text m-0">
+              If you revoke it, you will be asked again before your next CV or cover letter is
+              generated.
+            </p>
+            <button
+              type="button"
+              class="btn btn-outline-secondary align-self-start"
+              [disabled]="revoking()"
+              (click)="revokeConsent()"
+            >
+              {{ revoking() ? 'Revoking…' : 'Revoke consent' }}
+            </button>
+          } @else {
+            <p class="m-0">
+              No consent recorded. You will be asked before your first document generation.
+            </p>
+          }
+        </article>
+      }
+
+      @case ('data') {
+        <article class="clk-card">
+          <h3>Data Export / Backup</h3>
+          <p class="m-0">
+            Download your profile and saved jobs as a human-readable JSON file. Generated documents
+            are not included.
+          </p>
+          @if (exportError()) {
+            <p class="text-danger m-0">{{ exportError() }}</p>
+          }
+          <button
+            type="button"
+            class="btn btn-outline-secondary align-self-start"
+            [disabled]="exporting()"
+            (click)="exportData()"
+          >
+            {{ exporting() ? 'Preparing…' : 'Download Data Package (JSON)' }}
+          </button>
+        </article>
       }
     }
   </section>
-
-  <section class="mt-5">
-    <h3>Change password</h3>
-    <hr />
-    @if (passwordMessage()) {
-      <p class="alert alert-success">{{ passwordMessage() }}</p>
-    }
-    @if (passwordError()) {
-      <p class="alert alert-danger">{{ passwordError() }}</p>
-    }
-
-    <form (ngSubmit)="changePassword()">
-      <section>
-        <label class="form-label">Current Password</label>
-        <input
-          type="password"
-          class="form-control"
-          name="current-password"
-          [(ngModel)]="currentPassword"
-          required
-        />
-      </section>
-      <section class="mt-2">
-        <label class="form-label">New Password</label>
-        <input
-          type="password"
-          class="form-control"
-          name="new-password"
-          [(ngModel)]="newPassword"
-          required
-        />
-      </section>
-      <section class="mt-2">
-        <label class="form-label">Confirm New Password</label>
-        <input
-          type="password"
-          class="form-control"
-          name="confirm-new-password"
-          [(ngModel)]="confirmNewPassword"
-          required
-        />
-      </section>
-      <p class="form-text">At least 8 characters, with a letter and a number.</p>
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="
-          isSavingPassword() || !currentPassword || !newPasswordValid || !newPasswordsMatch
-        "
-      >
-        {{ isSavingPassword() ? 'Saving...' : 'Update Password' }}
-      </button>
-    </form>
-  </section>
-
-  <section class="mt-5 mb-5">
-    <h3 class="text-danger">Delete Account</h3>
-    <hr />
-    @if (deleteError()) {
-      <p class="alert alert-danger">{{ deleteError() }}</p>
-    }
-
-    @if (!confirmingDelete()) {
-      <button class="btn btn-outline-danger" (click)="beginDelete()">Delete My Account</button>
-    } @else {
-      <p class="text-danger">
-        This permanently deletes your clockedin account and all associated data. This can't be
-        undone.
-      </p>
-      <label class="form-label">Confirm your password</label>
-      <input type="password" class="form-control" [(ngModel)]="deletePassword" />
-      <section class="d-flex gap-2 mt-3">
-        <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
-        <button
-          class="btn btn-danger"
-          [disabled]="isDeleting() || !deletePassword"
-          (click)="deleteAccount()"
-        >
-          {{ isDeleting() ? 'Deleting...' : 'Permanently delete account' }}
-        </button>
-      </section>
-    }
-  </section>
-</main>
+</section>

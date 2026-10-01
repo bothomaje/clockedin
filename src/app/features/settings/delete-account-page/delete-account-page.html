@@ -1,0 +1,66 @@
+<app-page-header eyebrow="Security & Privacy" title="Account Deletion Management" />
+
+<article class="clk-card clk-delete">
+  <section class="clk-delete__intro">
+    <h2>We are sorry to see you go</h2>
+    <p>
+      Deleting your clockedin account will permanently wipe
+      {{ name() ? name() + "'s" : 'your' }} professional summary, experience history, saved jobs,
+      and generated document versions. These details cannot be recovered.
+    </p>
+  </section>
+
+  <section class="clk-delete__export">
+    <strong>Export your structured professional profile data first</strong>
+    <p>
+      Download your profile and saved jobs in human-readable JSON format so you can use them in
+      other systems.
+    </p>
+    @if (exportError()) {
+      <p class="text-danger m-0">{{ exportError() }}</p>
+    }
+    <button
+      type="button"
+      class="btn btn-outline-primary btn-sm align-self-start"
+      [disabled]="exporting()"
+      (click)="exportData()"
+    >
+      {{ exporting() ? 'Preparing…' : 'Download Data Package (JSON)' }}
+    </button>
+  </section>
+
+  <section class="clk-delete__confirm">
+    <strong>Confirm permanent action</strong>
+    <label class="form-check d-flex align-items-center gap-2">
+      <input class="form-check-input m-0" type="checkbox" [(ngModel)]="understood" />
+      <span>
+        I understand that this action is irreversible and my clockedin database will be deleted
+        permanently.
+      </span>
+    </label>
+    <label class="clk-delete__password">
+      <span>Confirm your password</span>
+      <input
+        type="password"
+        class="form-control"
+        [(ngModel)]="password"
+        autocomplete="current-password"
+      />
+    </label>
+    @if (error()) {
+      <p class="alert alert-danger m-0">{{ error() }}</p>
+    }
+  </section>
+
+  <section class="d-flex gap-3">
+    <button
+      type="button"
+      class="btn btn-danger"
+      [disabled]="isDeleting() || !understood || !password"
+      (click)="deleteAccount()"
+    >
+      {{ isDeleting() ? 'Deleting...' : 'Permanently delete account' }}
+    </button>
+    <a routerLink="/settings" class="btn btn-outline-secondary">Cancel and return to Settings</a>
+  </section>
+</article>

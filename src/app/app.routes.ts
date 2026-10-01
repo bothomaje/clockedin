@@ -46,6 +46,13 @@ export const routes: Routes = [
           import('./features/settings/settings-page/settings-page').then((m) => m.Settings),
       },
       {
+        path: 'settings/delete',
+        loadComponent: () =>
+          import('./features/settings/delete-account-page/delete-account-page').then(
+            (m) => m.DeleteAccountPage,
+          ),
+      },
+      {
         path: 'applications',
         loadChildren: () =>
           import('./features/applications/applications.routes').then((m) => m.applicationsRoutes),

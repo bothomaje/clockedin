@@ -1,0 +1,54 @@
+.clk-toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px var(--clk-gutter);
+  background: var(--clk-color-success-subtle);
+  border-bottom: 1px solid var(--clk-color-success-border);
+  color: var(--clk-color-success);
+}
+
+.clk-toast__message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  p {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+}
+
+.clk-toast__icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 20px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--clk-color-success);
+  color: #fff;
+}
+
+.clk-toast__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  a {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--clk-color-primary);
+    text-decoration: underline;
+    text-underline-position: from-font;
+  }
+
+  button {
+    display: grid;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+  }
+}

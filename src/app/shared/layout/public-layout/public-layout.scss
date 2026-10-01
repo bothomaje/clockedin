@@ -1,0 +1,21 @@
+.clk-public-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 12px clamp(16px, 5vw, 80px);
+}
+
+.clk-public-header__brand {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--clk-color-primary);
+  text-decoration: none;
+  letter-spacing: -0.04rem;
+}
+
+.clk-public-header__nav {
+  display: flex;
+  gap: 12px;
+}

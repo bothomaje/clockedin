@@ -1,0 +1,14 @@
+<section class="clk-empty-state" [class.clk-empty-state--compact]="compact()">
+  <section class="clk-empty-state__text">
+    <h3>{{ title() }}</h3>
+    @if (description()) {
+      <p>{{ description() }}</p>
+    }
+  </section>
+  <section class="clk-empty-state__actions">
+    <ng-content />
+  </section>
+  @if (hint()) {
+    <p class="clk-empty-state__hint">{{ hint() }}</p>
+  }
+</section>

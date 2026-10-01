@@ -1,0 +1,24 @@
+.clk-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--clk-color-surface);
+  border: 1px solid var(--clk-color-border);
+  border-radius: var(--clk-radius);
+  padding: 24px;
+}
+
+.clk-stat-card__label {
+  color: var(--clk-color-text-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.clk-stat-card__value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: normal;
+  margin: 0;
+}

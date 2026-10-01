@@ -1,0 +1,15 @@
+<section class="clk-page-header" [class.clk-page-header--compact]="compact()">
+  <section class="clk-page-header__text">
+    @if (eyebrow()) {
+      <p class="clk-page-header__eyebrow">{{ eyebrow() }}</p>
+    }
+
+    <h1>{{ title() }}</h1>
+    @if (subtitle()) {
+      <p class="clk-page-header__subtitle">{{ subtitle() }}</p>
+    }
+  </section>
+  <section class="clk-page-header__actions">
+    <ng-content select="[actions]" />
+  </section>
+</section>

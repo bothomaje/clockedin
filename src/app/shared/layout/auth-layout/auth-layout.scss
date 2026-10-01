@@ -1,0 +1,29 @@
+.clk-auth-layout {
+  display: grid;
+  grid-template-columns: clamp(440px, 30.5vw, 560px) 1fr;
+  min-height: 100vh;
+  background: var(--clk-color-surface);
+}
+
+.clk-auth-layout__form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--clk-gutter);
+}
+
+@media (max-width: 991px) {
+  .clk-auth-layout {
+    grid-template-columns: 1fr;
+  }
+
+  app-auth-brand-panel {
+    display: none;
+  }
+}
+
+@media (max-width: 575px) {
+  .clk-auth-layout__form {
+    padding: 24px 16px;
+  }
+}

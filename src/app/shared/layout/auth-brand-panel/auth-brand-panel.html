@@ -1,0 +1,26 @@
+<aside class="clk-brand" [class.clk-brand--wizard]="variant() === 'wizard'">
+  <section class="clk-brand__top">
+    <a routerLink="/" class="clk-brand__logo">clockedin</a>
+    <section class="clk-brand__statement">
+      <h2>{{ headline() }}</h2>
+      <p>{{ description() }}</p>
+    </section>
+  </section>
+
+  <section class="clk-brand__features">
+    @for (f of features(); track f.n + f.title) {
+      <article class="clk-brand__feature">
+        <span class="clk-brand__badge">{{ f.n }}</span>
+        <section>
+          <h3>{{ f.title }}</h3>
+          <p>{{ f.text }}</p>
+        </section>
+      </article>
+    }
+  </section>
+
+  <footer class="clk-brand__footer">
+    <span>clockedin</span>
+    <span>© {{ year }}</span>
+  </footer>
+</aside>

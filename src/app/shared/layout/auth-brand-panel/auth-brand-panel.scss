@@ -1,0 +1,94 @@
+:host {
+  display: flex;
+}
+
+.clk-brand {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 48px;
+  background: var(--clk-color-canvas);
+  border-right: 1px solid var(--clk-color-border);
+}
+
+.clk-brand__top {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.clk-brand__logo {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--clk-color-primary);
+  text-decoration: none;
+  letter-spacing: -0.04rem;
+}
+
+.clk-brand__statement {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--clk-color-text-muted);
+  }
+}
+
+.clk-brand--wizard .clk-brand__statement p {
+  font-size: 0.875rem;
+}
+
+.clk-brand__features {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.clk-brand__feature {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+
+  h3 {
+    margin: 0 0 4px;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--clk-color-text-muted);
+  }
+}
+
+.clk-brand__badge {
+  padding: 4px 8px;
+  border-radius: var(--clk-radius-chip);
+  background: var(--clk-color-tint);
+  color: var(--clk-color-primary);
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.clk-brand__footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--clk-color-text-tertiary);
+}

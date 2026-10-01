@@ -1,0 +1,46 @@
+<dialog
+  #dialog
+  class="clk-confirm"
+  (cancel)="$event.preventDefault(); cancelled.emit()"
+  (click)="$event.target === $event.currentTarget && cancelled.emit()"
+>
+  <section class="clk-confirm__body">
+    <span class="clk-confirm__icon" [class.clk-confirm__icon--neutral]="!destructive()">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path
+          d="m10.29 3.86-8.18 14.14A2 2 0 0 0 3.82 21h16.36a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+        />
+        <path d="M12 9v4M12 17h.01" />
+      </svg>
+    </span>
+    <section class="clk-confirm__text">
+      <h2>{{ title() }}</h2>
+      <p><ng-content /></p>
+    </section>
+  </section>
+  <footer class="clk-confirm__actions">
+    <button type="button" class="btn btn-outline-secondary" (click)="cancelled.emit()">
+      {{ cancelLabel() }}
+    </button>
+    <button
+      type="button"
+      class="btn"
+      [class.btn-danger]="destructive()"
+      [class.btn-primary]="!destructive()"
+      [disabled]="busy()"
+      (click)="confirmed.emit()"
+    >
+      {{ confirmLabel() }}
+    </button>
+  </footer>
+</dialog>

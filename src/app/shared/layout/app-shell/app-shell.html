@@ -1,0 +1,57 @@
+<header class="clk-header">
+  <section class="clk-header__left">
+    <a class="clk-header__brand" routerLink="/dashboard">clockedin</a>
+    <nav class="clk-header__tabs">
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/applications" routerLinkActive="active">Applications</a>
+      <a routerLink="/jobs" routerLinkActive="active">Jobs</a>
+      <a routerLink="/profile" routerLinkActive="active">Profile</a>
+    </nav>
+  </section>
+
+  <section class="clk-header__right">
+    <button type="button" class="clk-header__search" disabled>
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.3-4.3" />
+      </svg>
+      Quick search
+    </button>
+
+    @if (currentUser()) {
+      <span class="clk-header__divider"></span>
+      <section class="clk-header__user">
+        <button
+          type="button"
+          class="clk-header__chip"
+          (click)="toggleMenu()"
+          [attr.aria-expanded]="menuOpen()"
+          aria-haspopup="menu"
+        >
+          <span class="clk-header__avatar">{{ initials() }}</span>
+          <span class="clk-header__name">{{ displayName() }}</span>
+        </button>
+        @if (menuOpen()) {
+          <nav class="clk-header__menu" role="menu">
+            <a routerLink="/settings" role="menuitem" (click)="menuOpen.set(false)">Settings</a>
+            <button type="button" role="menuitem" (click)="logOut()">Log out</button>
+          </nav>
+        }
+      </section>
+    }
+  </section>
+</header>
+<app-toast-banner />
+<main class="clk-app-content">
+  <router-outlet />
+</main>

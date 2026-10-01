@@ -1,0 +1,34 @@
+<section class="clk-error-state" role="alert">
+  <section class="clk-error-state__row">
+    <span class="clk-error-state__icon">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path
+          d="m10.29 3.86-8.18 14.14A2 2 0 0 0 3.82 21h16.36a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+        />
+        <path d="M12 9v4M12 17h.01" />
+      </svg>
+    </span>
+    <section class="clk-error-state__text">
+      <h3>{{ title() }}</h3>
+      @if (message()) {
+        <p>{{ message() }}</p>
+      }
+      @if (details()) {
+        <p class="clk-error-state__details">{{ details() }}</p>
+      }
+    </section>
+  </section>
+  <section class="clk-error-state__actions">
+    <ng-content />
+  </section>
+</section>

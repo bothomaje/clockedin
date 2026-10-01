@@ -1,0 +1,14 @@
+<dialog
+  #dialog
+  class="clk-modal"
+  (cancel)="$event.preventDefault(); closed.emit()"
+  (click)="$event.target === $event.currentTarget && closed.emit()"
+>
+  <header class="clk-modal__header">
+    <h2>{{ title() }}</h2>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closed.emit()"></button>
+  </header>
+  <section class="clk-modal__body">
+    <ng-content />
+  </section>
+</dialog>

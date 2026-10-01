@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  margin-bottom: 28px;
+}
+
+.clk-crumbs {
+  display: flex;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--clk-color-text-muted);
+
+  a {
+    color: var(--clk-color-text-muted);
+    &:hover {
+      color: var(--clk-color-primary);
+    }
+  }
+
+  .is-current {
+    font-weight: 600;
+    color: var(--clk-color-text);
+  }
+
+  &__sep {
+    color: var(--clk-color-text-tertiary);
+  }
+}

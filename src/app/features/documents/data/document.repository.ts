@@ -7,6 +7,8 @@ import {
   orderBy,
   Timestamp,
   DocumentData,
+  updateDoc,
+  doc,
 } from 'firebase/firestore';
 import { firestore, firebaseAuth } from '../../../core/firebase/firebase';
 import {
@@ -60,10 +62,34 @@ export class DocumentRepository {
       jobAnalysis: input.jobAnalysis ?? null,
       model: input.model,
       generatedAt: new Date(),
+      options: input.options ?? null,
+      editedAt: null,
     };
 
     const docRef = await addDoc(this.generatedDocumentsCollection(jobId), payload);
     return { ...payload, id: docRef.id };
+  }
+
+  async updateGeneratedDocument(
+    jobId: string,
+    documentId: string,
+    changes: Pick<GeneratedDocument, 'content' | 'structured' | 'validation'>,
+  ): Promise<Date> {
+    const editedAt = new Date();
+
+    await updateDoc(doc(this.generatedDocumentsCollection(jobId), documentId), {
+      content: changes.content,
+      structured: changes.structured ?? null,
+      validation: changes.validation ?? null,
+      editedAt,
+    });
+
+    return editedAt;
+  }
+
+  private toDate(value: unknown): Date | null {
+    if (!value) return null;
+    return value instanceof Timestamp ? value.toDate() : (value as Date);
   }
 
   private toGeneratedDocument(id: string, data: DocumentData): GeneratedDocument {
@@ -78,10 +104,9 @@ export class DocumentRepository {
       evidenceFactIds: data['evidenceFactIds'] ?? [],
       jobAnalysis: data['jobAnalysis'] ?? null,
       model: data['model'] ?? '',
-      generatedAt:
-        data['generatedAt'] instanceof Timestamp
-          ? data['generatedAt'].toDate()
-          : data['generatedAt'],
+      generatedAt: this.toDate(data['generatedAt']) ?? new Date(),
+      options: data['options'] ?? null,
+      editedAt: this.toDate(data['editedAt']),
     };
   }
 }

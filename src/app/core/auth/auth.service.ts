@@ -1,16 +1,21 @@
-import { inject, Service } from '@angular/core';
+import { Service, signal } from '@angular/core';
 import {
+  applyActionCode,
   Auth,
   createUserWithEmailAndPassword,
   deleteUser,
   EmailAuthProvider,
+  getIdToken,
   onAuthStateChanged,
+  onIdTokenChanged,
   reauthenticateWithCredential,
+  reload,
   sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
   updatePassword,
+  updateProfile,
   User,
 } from 'firebase/auth';
 import { Observable, shareReplay } from 'rxjs';
@@ -24,8 +29,21 @@ export class AuthService {
     return onAuthStateChanged(this.auth, subscriber);
   }).pipe(shareReplay(1));
 
-  signUp(email: string, password: string) {
-    return createUserWithEmailAndPassword(this.auth, email, password);
+  private emailVerifiedSignal = signal(false);
+  readonly isEmailVerified = this.emailVerifiedSignal.asReadonly();
+
+  constructor() {
+    onIdTokenChanged(this.auth, (user) => {
+      this.emailVerifiedSignal.set(user?.emailVerified === true);
+    });
+  }
+
+  async signUp(email: string, password: string, name?: string) {
+    const credential = await createUserWithEmailAndPassword(this.auth, email, password);
+    if (name?.trim()) {
+      await updateProfile(credential.user, { displayName: name.trim() });
+    }
+    return credential;
   }
 
   signIn(email: string, password: string) {
@@ -52,6 +70,10 @@ export class AuthService {
         return 'Incorrect email or password.';
       case 'auth/too-many-requests':
         return 'Too many attempts. Try again in a few minutes.';
+      case 'auth/invalid-action-code':
+        return 'This verification link is invalid or has already been used. Please request a new one.';
+      case 'auth/expired-action-code':
+        return 'This verification link has expired. Please request a new one.';
       default:
         return 'Something went wrong. Please try again.';
     }
@@ -61,13 +83,31 @@ export class AuthService {
     return this.auth.currentUser;
   }
 
+  async refreshCurrentUser(): Promise<User | null> {
+    const user = this.auth.currentUser;
+    if (user) {
+      await reload(user);
+
+      if (user.emailVerified) await getIdToken(user, true);
+      this.emailVerifiedSignal.set(user.emailVerified);
+    }
+    return user;
+  }
+
   sendPasswordReset(email: string) {
     return sendPasswordResetEmail(this.auth, email);
   }
 
   sendVerificationEmail() {
     if (!this.auth.currentUser) throw new Error('No user is signed in.');
-    return sendEmailVerification(this.auth.currentUser);
+    return sendEmailVerification(this.auth.currentUser, {
+      url: `${window.location.origin}/onboarding`,
+    });
+  }
+
+  async verifyEmail(actionCode: string): Promise<void> {
+    await applyActionCode(this.auth, actionCode);
+    await this.refreshCurrentUser();
   }
 
   async reauthenticate(currentPassword: string) {

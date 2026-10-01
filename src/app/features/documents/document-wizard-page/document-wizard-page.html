@@ -1,0 +1,363 @@
+@if (!ready()) {
+  <p class="text-muted">Loading...</p>
+} @else if (jobState.selectedJob(); as job) {
+  <app-breadcrumbs [items]="crumbs()" />
+
+  <app-page-header [title]="title()">
+    @if (view() === 'preview' && active(); as doc) {
+      <section actions class="clk-actions">
+        @if (!editing() && doc.structured) {
+          <button type="button" class="btn btn-outline-secondary" (click)="beginEdit()">
+            Edit
+          </button>
+        }
+        <button type="button" class="btn btn-outline-secondary" (click)="regenerate()">
+          Regenerate
+        </button>
+        <app-document-actions
+          [document]="doc"
+          [user]="profileState.user()"
+          [job]="job"
+          [label]="isCv ? 'Export Tailored CV (PDF)' : 'Export PDF'"
+          buttonClass="btn btn-primary"
+        />
+      </section>
+    }
+  </app-page-header>
+
+  <!-- ===== SETUP ===== -->
+  @if (view() === 'setup') {
+    <section class="clk-two-col">
+      <section class="clk-col">
+        <article class="clk-card">
+          <header class="clk-card__header">
+            <h3>Job you're applying for</h3>
+            <span class="clk-muted">
+              {{ job.company }}{{ job.location ? ' (' + job.location + ')' : '' }}
+            </span>
+          </header>
+          <p class="clk-strong">{{ job.role }}</p>
+          <p class="clk-body clk-clamp">{{ job.jobDescription }}</p>
+          @if (analysis(); as a) {
+            @if (a.keywords.length) {
+              <p class="clk-strong mt-3 mb-2">Key focus areas</p>
+              <section class="clk-chips">
+                @for (kw of a.keywords.slice(0, 8); track kw) {
+                  <span class="clk-chip">{{ kw }}</span>
+                }
+              </section>
+            }
+          }
+        </article>
+
+        <article class="clk-card">
+          <header class="clk-card__header">
+            <h3>Your profile</h3>
+            <a routerLink="/profile" class="btn btn-ghost btn-sm">Edit profile</a>
+          </header>
+          <dl class="clk-kv">
+            <dt>Experience</dt>
+            <dd>{{ sourceSummary().roles }}</dd>
+            <dt>Experience details</dt>
+            <dd>{{ sourceSummary().evidence }}</dd>
+            <dt>Skills</dt>
+            <dd>{{ sourceSummary().skills }}</dd>
+          </dl>
+        </article>
+      </section>
+
+      <article class="clk-card">
+        <header class="clk-card__header">
+          <h3>Document options</h3>
+        </header>
+
+        @if (isCv) {
+          <label class="form-label">Career profile</label>
+          <select class="form-select" [(ngModel)]="selectedProfileId">
+            <option value="">All profile information</option>
+            @for (profile of profileState.careerProfiles(); track profile.id) {
+              <option [value]="profile.id">{{ profile.name }}</option>
+            }
+          </select>
+
+          <label class="form-label mt-3">Tone / voice</label>
+          <section class="clk-segment">
+            @for (opt of cvTones; track opt.value) {
+              <button
+                type="button"
+                [class.active]="cvOptions().tone === opt.value"
+                (click)="patchCv({ tone: opt.value })"
+              >
+                {{ opt.label }}
+              </button>
+            }
+          </section>
+
+          <label class="form-label mt-3">Length & format</label>
+          <section class="clk-segment">
+            @for (opt of cvLengths; track opt.value) {
+              <button
+                type="button"
+                [class.active]="cvOptions().length === opt.value"
+                (click)="patchCv({ length: opt.value })"
+              >
+                {{ opt.label }}
+              </button>
+            }
+          </section>
+        } @else {
+          <label class="form-label">Tone</label>
+          <section class="clk-segment">
+            @for (opt of letterTones; track opt.value) {
+              <button
+                type="button"
+                [class.active]="letterOptions().tone === opt.value"
+                (click)="patchLetter({ tone: opt.value })"
+              >
+                {{ opt.label }}
+              </button>
+            }
+          </section>
+
+          <label class="form-label mt-3">Length</label>
+          <section class="clk-segment">
+            @for (opt of letterLengths; track opt.value) {
+              <button
+                type="button"
+                [class.active]="letterOptions().length === opt.value"
+                (click)="patchLetter({ length: opt.value })"
+              >
+                {{ opt.label }}
+              </button>
+            }
+          </section>
+
+          <label class="form-label mt-3">Recipient</label>
+          <input
+            type="text"
+            class="form-control"
+            maxlength="80"
+            placeholder='Leave blank for "Hiring Manager"'
+            [ngModel]="letterOptions().recipient"
+            (ngModelChange)="patchLetter({ recipient: $event })"
+          />
+          @if (!documentState.activeCv()) {
+            <p class="form-text">Generate a CV first to give your cover letter more context.</p>
+          }
+        }
+
+        <label class="form-label mt-3"> What to hightlight </label>
+        @if (emphasisChoices().length) {
+          <ul class="clk-toggles">
+            @for (term of emphasisChoices(); track term) {
+              <li>
+                <label class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    [checked]="selectedEmphasis().includes(term)"
+                    (change)="toggleEmphasis(term)"
+                  />
+                  <span class="form-check-label">{{ term }}</span>
+                </label>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="form-text">
+            Emphasis options appear once this job has been analysed, after the first generation.
+          </p>
+        }
+
+        <hr />
+        <p class="clk-fineprint">
+          * AI can make mistakes. Review and edit your document before using it. We use your profile
+          and job details and won't intentionally invent experience, skills, or achievements.
+        </p>
+
+        @if (!canGenerate()) {
+          <p class="text-danger small">
+            Add some experience to your profile before creating a document.
+            <a routerLink="/profile">Go to profile</a>
+          </p>
+        }
+
+        @if (!aiAllowed()) {
+          <p class="text-danger small">
+            Verify your email before using document generation.
+            <a routerLink="/verify-email">Verify email</a>
+          </p>
+        }
+
+        <button
+          type="button"
+          class="btn btn-primary w-100"
+          [disabled]="!canGenerate()"
+          (click)="generate()"
+        >
+          {{ documents().length ? 'Regenerate' : 'Generate' }} tailored {{ label }}
+        </button>
+      </article>
+    </section>
+  }
+
+  <!-- ===== PROCESSING ===== -->
+  @if (view() === 'processing') {
+    <section class="clk-two-col">
+      <article class="clk-card clk-center">
+        <span class="spinner-border text-primary" role="status" aria-label="Generating"></span>
+        <h2 class="clk-center__title">Preparing your {{ label }} for this role</h2>
+        <p class="clk-body">
+          Comparing your experience and skills with the job description. This can take a moment.
+        </p>
+        <ol class="clk-steps">
+          @for (step of steps(); track step.id) {
+            <li [class.done]="step.state === 'done'" [class.active]="step.state === 'active'">
+              {{ step.label }}
+            </li>
+          }
+        </ol>
+        <a class="btn btn-outline-secondary" [routerLink]="[basePath, jobId]">
+          Back to application
+        </a>
+      </article>
+
+      <article class="clk-card">
+        <header class="clk-card__header">
+          <h3>Safe to navigate away</h3>
+        </header>
+        <p class="clk-body">
+          You can browse other pages while this runs, but keep this tab open. Your document will be
+          saved to this application when it's ready.
+        </p>
+      </article>
+    </section>
+  }
+
+  <!-- ===== ERROR ===== -->
+  @if (view() === 'error') {
+    <section class="clk-two-col">
+      <section class="clk-col">
+        <article class="clk-alert" role="alert">
+          <strong>We couldn't create your document</strong>
+          <p class="clk-body">{{ error() }}</p>
+        </article>
+      </section>
+
+      <article class="clk-card">
+        <header class="clk-card__header">
+          <h3>What you can do</h3>
+        </header>
+        <section class="d-grid gap-2">
+          <button type="button" class="btn btn-primary" (click)="dismissError()">Try again</button>
+          <a class="btn btn-outline-secondary" routerLink="/profile">Edit profile</a>
+          <a class="btn btn-ghost" [routerLink]="[basePath, jobId]">Back to application</a>
+        </section>
+      </article>
+    </section>
+  }
+
+  <!-- ===== PREVIEW ===== -->
+  @if (view() === 'preview' && active(); as doc) {
+    <section class="clk-two-col">
+      <section class="clk-col clk-col--center">
+        <section class="clk-card clk-toolbar">
+          <strong>Preview</strong>
+          <span class="clk-muted">
+            v{{ doc.version }} · {{ doc.generatedAt | date: 'medium' }}
+            @if (doc.editedAt) {
+              · Edited {{ doc.editedAt | date: 'medium' }}
+            }
+          </span>
+          @if (documents().length > 1) {
+            <section class="btn-group ms-auto">
+              @for (d of documents(); track d.id) {
+                <button
+                  type="button"
+                  class="btn btn-sm"
+                  [disabled]="editing()"
+                  [class.btn-secondary]="d.id === doc.id"
+                  [class.btn-outline-secondary]="d.id !== doc.id"
+                  (click)="selectVersion(d)"
+                >
+                  v{{ d.version }}
+                </button>
+              }
+            </section>
+          }
+        </section>
+
+        @if (cvDraft(); as draft) {
+          <app-cv-editor
+            [draft]="draft"
+            [ownedSkills]="ownedSkillNames()"
+            [saving]="saving()"
+            (save)="saveEdit()"
+            (cancel)="cancelEdit()"
+          />
+        } @else if (letterDraft(); as draft) {
+          <app-cover-letter-editor
+            [draft]="draft"
+            [saving]="saving()"
+            (save)="saveEdit()"
+            (cancel)="cancelEdit()"
+          />
+        } @else {
+          <article class="clk-paper">
+            <markdown [data]="doc.content"></markdown>
+          </article>
+        }
+        @if (saveError()) {
+          <p class="text-danger">{{ saveError() }}</p>
+        }
+      </section>
+
+      <article class="clk-card">
+        <header class="clk-card__header">
+          <h3>Document Summary</h3>
+        </header>
+
+        @if (tailoringSummary(); as s) {
+          <section class="clk-callout">
+            <dl class="clk-kv">
+              <dt>Information used</dt>
+              <dd>{{ s.evidenceCount }} items</dd>
+              @if (s.profile) {
+                <dt>Career profile</dt>
+                <dd>{{ s.profile }}</dd>
+              }
+              @if (s.requiredTotal) {
+                <dt>Required skills found in your profile</dt>
+                <dd>{{ s.requiredMatched }} of {{ s.requiredTotal }}</dd>
+              }
+            </dl>
+          </section>
+
+          @if (s.issues.length) {
+            <section class="mt-3">
+              @for (issue of s.issues; track $index) {
+                <p
+                  class="mb-1 small"
+                  [class.text-danger]="issue.severity === 'error'"
+                  [class.text-warning]="issue.severity === 'warning'"
+                >
+                  <strong>{{ issue.field }}:</strong> {{ issue.message }}
+                </p>
+              }
+            </section>
+          } @else if (doc.validation) {
+            <p class="text-success small mt-3 mb-0">
+              Checked against your profile. No unsupported claims found.
+            </p>
+          }
+        }
+
+        <p class="clk-fineprint mt-3 mb-0">
+          Your edits are checked against your profile before saving. Regenerating creates a new
+          version using the current options.
+        </p>
+      </article>
+    </section>
+  }
+}

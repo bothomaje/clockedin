@@ -15,7 +15,6 @@ export class AiUsageRepository {
     return doc(this.db, 'users', uid, 'meta', 'aiUsage');
   }
 
-  /** Throws if the caller is over the rolling hourly limit. Client-side only, not a security boundary. */
   async checkAndRecord(): Promise<void> {
     const ref = this.usageDoc();
 

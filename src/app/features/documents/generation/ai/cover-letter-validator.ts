@@ -25,6 +25,7 @@ function numbersIn(text: string): string[] {
 export function validateCoverLetter(
   letter: GeneratedCoverLetter,
   career: Career,
+  maxWords = MAX_WORDS,
 ): CvValidationResult {
   const issues: CvValidationIssue[] = [];
   const facts = buildCareerFacts(career);
@@ -46,11 +47,11 @@ export function validateCoverLetter(
     .map((paragraph) => paragraph.text.split(/\s+/).length)
     .reduce((total, count) => total + count, 0);
 
-  if (wordCount > MAX_WORDS) {
+  if (wordCount > maxWords) {
     issues.push({
       severity: 'warning',
       field: 'paragraphs',
-      message: `Cover letter is ${wordCount} words. Aim for under ${MAX_WORDS}.`,
+      message: `Cover letter is ${wordCount} words. Aim for under ${maxWords}.`,
     });
   }
 

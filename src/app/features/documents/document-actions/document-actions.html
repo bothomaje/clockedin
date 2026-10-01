@@ -1,10 +1,6 @@
 @if (document().structured) {
-  <button
-    class="btn btn-outline-secondary btn-sm"
-    [disabled]="isDownloading()"
-    (click)="download()"
-  >
-    {{ isDownloading() ? 'Building PDF...' : 'Download PDF' }}
+  <button [class]="buttonClass()" [disabled]="isDownloading()" (click)="download()">
+    {{ isDownloading() ? 'Building PDF...' : label() }}
   </button>
 }
 @if (downloadError()) {

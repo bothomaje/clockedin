@@ -1,0 +1,113 @@
+@if (!documentState.activeCv() && !documentState.activeCoverLetter()) {
+  <section class="clk-docs-empty">
+    <span class="clk-docs-empty__icon">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <path d="M14 2v6h6" />
+      </svg>
+    </span>
+    <section class="clk-docs-empty__text">
+      <h3>No documents yet</h3>
+      <p>
+        Create a CV or cover letter tailored to this application using your profile and the job
+        details.
+      </p>
+    </section>
+    <section class="clk-docs-empty__actions">
+      <a class="btn btn-primary" [routerLink]="['/' + basePath(), job().id, 'cv']">
+        Create tailored CV
+      </a>
+      <a
+        class="btn btn-outline-secondary"
+        [routerLink]="['/' + basePath(), job().id, 'cover-letter']"
+      >
+        Create cover letter
+      </a>
+    </section>
+  </section>
+} @else {
+  <article class="clk-widget">
+    <h3 class="clk-widget__title">Documents</h3>
+    <section class="clk-assets">
+      <section class="clk-asset">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <path d="M14 2v6h6M16 13H8M16 17H8" />
+        </svg>
+        <section class="clk-asset__text">
+          <p class="clk-asset__name">Tailored CV</p>
+          <p class="clk-asset__meta">
+            @if (documentState.activeCv(); as cv) {
+              CV · v{{ cv.version }} · {{ cv.generatedAt | date: 'mediumDate' }}
+            } @else {
+              Not created yet
+            }
+          </p>
+        </section>
+        @if (documentState.activeCv(); as cv) {
+          <a class="clk-link-action" [routerLink]="['/' + basePath(), job().id, 'cv']">Open</a>
+          <app-document-actions [document]="cv" [user]="user()" [job]="job()" />
+        } @else {
+          <a class="clk-link-action" [routerLink]="['/' + basePath(), job().id, 'cv']">Generate</a>
+        }
+      </section>
+
+      <section class="clk-asset">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <path d="M14 2v6h6M16 13H8M16 17H8" />
+        </svg>
+        <section class="clk-asset__text">
+          <p class="clk-asset__name">Cover Letter</p>
+          <p class="clk-asset__meta">
+            @if (documentState.activeCoverLetter(); as letter) {
+              Cover Letter · v{{ letter.version }} · {{ letter.generatedAt | date: 'mediumDate' }}
+            } @else {
+              Not generated yet
+            }
+          </p>
+        </section>
+        @if (documentState.activeCoverLetter(); as letter) {
+          <a class="clk-link-action" [routerLink]="['/' + basePath(), job().id, 'cover-letter']"
+            >Open</a
+          >
+          <app-document-actions [document]="letter" [user]="user()" [job]="job()" />
+        } @else {
+          <a class="clk-link-action" [routerLink]="['/' + basePath(), job().id, 'cover-letter']"
+            >Generate</a
+          >
+        }
+      </section>
+    </section>
+  </article>
+}

@@ -1,4 +1,5 @@
 import { CvValidationResult } from './cv-validation';
+import { GenerationOptions } from './generation-options';
 import { GeneratedCv } from './generated-cv';
 import { JobAnalysis } from '../../jobs/models/job-analysis';
 import { GeneratedCoverLetter } from './generated-cover-letter';
@@ -17,6 +18,11 @@ export interface GeneratedDocument {
   jobAnalysis: JobAnalysis | null;
   model: string;
   generatedAt: Date;
+  options: GenerationOptions | null;
+  editedAt: Date | null;
 }
 
-export type NewGeneratedDocument = Omit<GeneratedDocument, 'id' | 'version' | 'generatedAt'>;
+export type NewGeneratedDocument = Omit<
+  GeneratedDocument,
+  'id' | 'version' | 'generatedAt' | 'editedAt'
+>;

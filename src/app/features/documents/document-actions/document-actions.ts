@@ -18,6 +18,8 @@ export class DocumentActions {
   document = input.required<GeneratedDocument>();
   user = input.required<User>();
   job = input.required<Job>();
+  label = input('Download PDF');
+  buttonClass = input('btn btn-outline-secondary btn-sm');
 
   private pdfCompiler = inject(PdfCompiler);
 

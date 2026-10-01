@@ -1,0 +1,56 @@
+@let d = draft();
+
+<section class="clk-editor">
+  <section class="clk-editor__grid">
+    <section>
+      <label class="form-label">Recipient</label>
+      <input type="text" class="form-control" [(ngModel)]="d.recipient" />
+    </section>
+    <section>
+      <label class="form-label">Salutation</label>
+      <input type="text" class="form-control" [(ngModel)]="d.salutation" />
+    </section>
+  </section>
+
+  <h4 class="clk-editor__heading">Body</h4>
+  @for (paragraph of d.paragraphs; track $index; let i = $index) {
+    <section class="clk-editor__row">
+      <textarea class="form-control" rows="5" [(ngModel)]="paragraph.text"></textarea>
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-sm"
+        aria-label="Remove paragraph"
+        (click)="removeParagraph(i)"
+      >
+        ×
+      </button>
+    </section>
+  }
+  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="addParagraph()">
+    Add paragraph
+  </button>
+
+  <section class="mt-3">
+    <label class="form-label">Closing</label>
+    <input type="text" class="form-control" [(ngModel)]="d.closing" />
+  </section>
+
+  <p class="clk-editor__note">
+    Your name is added automatically. Details such as dates and numbers are checked against your
+    profile so unsupported claims can be flagged.
+  </p>
+
+  <section class="clk-actions">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      [disabled]="saving()"
+      (click)="cancel.emit()"
+    >
+      Cancel
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="saving()" (click)="submit()">
+      {{ saving() ? 'Saving...' : 'Save changes' }}
+    </button>
+  </section>
+</section>

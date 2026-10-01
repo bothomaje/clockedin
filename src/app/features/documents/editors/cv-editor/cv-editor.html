@@ -1,0 +1,150 @@
+@let d = draft();
+
+<section class="clk-editor">
+  <label class="form-label">Summary</label>
+  <textarea class="form-control" rows="4" [(ngModel)]="d.summary"></textarea>
+
+  <h4 class="clk-editor__heading">Experience</h4>
+  @for (entry of d.experience; track $index; let i = $index) {
+    <section class="clk-editor__entry">
+      <header class="clk-editor__entry-head">
+        <section>
+          <strong>{{ entry.role }} — {{ entry.company }}</strong>
+          <span class="clk-editor__meta">{{ entry.startDate }} – {{ entry.endDate }}</span>
+        </section>
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm text-danger"
+          (click)="removeAt(d.experience, i)"
+        >
+          Remove
+        </button>
+      </header>
+      @for (bullet of entry.bullets; track $index; let b = $index) {
+        <section class="clk-editor__row">
+          <textarea class="form-control" rows="2" [(ngModel)]="entry.bullets[b]"></textarea>
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm"
+            aria-label="Remove bullet"
+            (click)="removeAt(entry.bullets, b)"
+          >
+            ×
+          </button>
+        </section>
+      }
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-sm"
+        (click)="addBullet(entry.bullets)"
+      >
+        Add bullet
+      </button>
+    </section>
+  }
+
+  @if (d.projects.length) {
+    <h4 class="clk-editor__heading">Projects</h4>
+    @for (entry of d.projects; track $index; let i = $index) {
+      <section class="clk-editor__entry">
+        <header class="clk-editor__entry-head">
+          <strong>{{ entry.name }}</strong>
+          <button
+            type="button"
+            class="btn btn-ghost btn-sm text-danger"
+            (click)="removeAt(d.projects, i)"
+          >
+            Remove
+          </button>
+        </header>
+        @for (bullet of entry.bullets; track $index; let b = $index) {
+          <section class="clk-editor__row">
+            <textarea class="form-control" rows="2" [(ngModel)]="entry.bullets[b]"></textarea>
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              aria-label="Remove bullet"
+              (click)="removeAt(entry.bullets, b)"
+            >
+              ×
+            </button>
+          </section>
+        }
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          (click)="addBullet(entry.bullets)"
+        >
+          Add bullet
+        </button>
+      </section>
+    }
+  }
+
+  @if (d.education.length) {
+    <h4 class="clk-editor__heading">Education</h4>
+    @for (entry of d.education; track $index; let i = $index) {
+      <section class="clk-editor__entry clk-editor__entry-head">
+        <section>
+          <strong>{{ entry.qualification }}{{ entry.field ? ', ' + entry.field : '' }}</strong>
+          <span class="clk-editor__meta">{{ entry.institution }}</span>
+        </section>
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm text-danger"
+          (click)="removeAt(d.education, i)"
+        >
+          Remove
+        </button>
+      </section>
+    }
+  }
+
+  <h4 class="clk-editor__heading">Skills</h4>
+  <section class="clk-editor__chips">
+    @for (skill of d.skills; track $index; let i = $index) {
+      <span class="clk-editor__chip">
+        {{ skill }}
+        <button type="button" [attr.aria-label]="'Remove ' + skill" (click)="removeAt(d.skills, i)">
+          ×
+        </button>
+      </span>
+    }
+  </section>
+  @if (availableSkills().length) {
+    <section class="clk-editor__row mt-2">
+      <select #pick class="form-select form-select-sm">
+        <option value="">Add a skill from your profile…</option>
+        @for (skill of availableSkills(); track skill) {
+          <option [value]="skill">{{ skill }}</option>
+        }
+      </select>
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-sm"
+        (click)="addSkill(pick.value); pick.value = ''"
+      >
+        Add
+      </button>
+    </section>
+  }
+
+  <p class="clk-editor__note">
+    Your experience, dates, education, and other profile details are managed on your Profile page.
+    Update them there and regenerate the CV to use the changes.
+  </p>
+
+  <section class="clk-actions">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      [disabled]="saving()"
+      (click)="cancel.emit()"
+    >
+      Cancel
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="saving()" (click)="submit()">
+      {{ saving() ? 'Saving...' : 'Save changes' }}
+    </button>
+  </section>
+</section>

@@ -17,6 +17,8 @@
     "@angular/forms": "^22.1.0",
     "@angular/platform-browser": "^22.1.0",
     "@angular/router": "^22.1.0",
+    "@huggingface/transformers": "^4.3.0",
+    "@mlc-ai/web-llm": "^0.2.85",
     "@myriaddreamin/typst-ts-web-compiler": "^0.7.0",
     "@myriaddreamin/typst.ts": "^0.7.0",
     "bootstrap": "^5.3.8",

@@ -38,8 +38,6 @@ yarn-error.log
 testem.log
 /typings
 __screenshots__/
-environments/
-.env
 .env.*
 .firebase/
 

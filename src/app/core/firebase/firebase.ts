@@ -9,7 +9,7 @@ export const firebaseApp = initializeApp(environment);
 
 if (!environment.production) {
   (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN =
-    import.meta.env['VITE_FIREBASE_APPCHECK_DEBUG_TOKEN'] ?? true;
+    import.meta.env.NG_APP_FIREBASE_APPCHECK_DEBUG_TOKEN ?? true;
 }
 
 initializeAppCheck(firebaseApp, {

@@ -153,7 +153,7 @@ export class FirebaseGeminiProvider implements AiProvider {
     if (message.includes('401') || code.includes('unauthenticated')) {
       return fail(
         'unauthenticated',
-        'Firebase AI Logic rejected this request (401). Check that the Firebase AI Logic API is enabled for the clockd-in project and that the Firebase web API key is allowed to use it.',
+        'Firebase AI Logic rejected this request (401). Check that the Firebase AI Logic API is enabled for the project and that the Firebase web API key is allowed to use it.',
       );
     }
 

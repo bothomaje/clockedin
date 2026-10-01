@@ -1,5 +1,9 @@
 {
   "projects": {
-    "default": "clockd-in"
-  }
+    "default": "clockedin-prod",
+    "production": "clockedin-prod",
+    "staging": "clockedin-staging"
+  },
+  "targets": {},
+  "etags": {}
 }

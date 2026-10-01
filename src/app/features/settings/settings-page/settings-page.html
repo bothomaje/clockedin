@@ -1,11 +1,11 @@
 <main class="container mt-4">
-  <h2>Account Settings</h2>
+  <h2>Account</h2>
 
   <section class="mt-4">
     <h3>Email</h3>
     <hr />
     <p>{{ email }}</p>
-    @if (emailVerified) {
+    @if (emailVerified()) {
       <span class="badge bg-success">Verified</span>
     } @else {
       <span class="badge bg-warning text-dark">Not Verified</span>
@@ -29,7 +29,7 @@
   </section>
 
   <section class="mt-5">
-    <h3>Change Password</h3>
+    <h3>Change password</h3>
     <hr />
     @if (passwordMessage()) {
       <p class="alert alert-success">{{ passwordMessage() }}</p>
@@ -93,7 +93,8 @@
       <button class="btn btn-outline-danger" (click)="beginDelete()">Delete My Account</button>
     } @else {
       <p class="text-danger">
-        This permanently deletes your account and all data. This cannot be undone.
+        This permanently deletes your clockedin account and all associated data. This can't be
+        undone.
       </p>
       <label class="form-label">Confirm your password</label>
       <input type="password" class="form-control" [(ngModel)]="deletePassword" />
@@ -104,7 +105,7 @@
           [disabled]="isDeleting() || !deletePassword"
           (click)="deleteAccount()"
         >
-          {{ isDeleting() ? 'Deleting...' : 'Permanently Delete Account' }}
+          {{ isDeleting() ? 'Deleting...' : 'Permanently delete account' }}
         </button>
       </section>
     }

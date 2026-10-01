@@ -15,7 +15,7 @@ export class Settings {
   private router = inject(Router);
 
   email = this.authService.currentUserSnapshot()?.email ?? '';
-  emailVerified = this.authService.currentUserSnapshot()?.emailVerified ?? false;
+  emailVerified = this.authService.isEmailVerified;
   verificationSent = signal(false);
   verificationError = signal('');
   isSendingVerification = signal(false);

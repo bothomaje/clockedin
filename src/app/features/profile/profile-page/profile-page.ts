@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { ProfileState } from '../state/profile-state';
@@ -9,17 +9,24 @@ import { Skill } from '../models/skill';
 import { CareerProfile } from '../models/career-profile';
 import { Evidence } from '../models/evidence';
 import { Link } from '../models/link';
+import { PageHeader } from '../../../shared/ui/page-header/page-header';
+import { Modal } from '../../../shared/ui/modal/modal';
+import { Info } from '../models/info';
+import { CompletenessId, getCompleteness, READY_SCORE } from '../state/profile-completeness';
+import { ErrorState } from '../../../shared/ui/error-state/error-state';
 
 @Component({
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule, DatePipe, PageHeader, Modal, ErrorState],
   selector: 'app-profile',
   templateUrl: './profile-page.html',
+  styleUrl: './profile-page.scss',
 })
 export class Profile implements OnInit {
   private profileState = inject(ProfileState);
 
   skillError = '';
 
+  editedInfo?: Info;
   editedExperience?: Experience;
   editedEducation?: Education;
   editedProject?: Project;
@@ -31,6 +38,34 @@ export class Profile implements OnInit {
 
   expandedProjectId?: string;
   editedProjectEvidence?: Evidence;
+
+  completeness = computed(() => getCompleteness(this.profileState.user()));
+  isReady = computed(() => this.completeness().score >= READY_SCORE);
+
+  sortedExperience = computed(() =>
+    [...this.profileState.experience()].sort(
+      (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
+    ),
+  );
+
+  // Derived from newest open-ended role, else newest role. No new model field.
+  headline = computed(() => {
+    const title = this.profileState.info().title?.trim();
+    if (title) return title;
+    const list = this.sortedExperience();
+    return (list.find((e) => !e.endDate) ?? list[0])?.role ?? '';
+  });
+
+  initials = computed(() => {
+    const info = this.profileState.info();
+    const source = (info.name || info.email || '?').trim();
+    return source
+      .split(/\s/)
+      .map((part) => part[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase();
+  });
 
   get isLoading() {
     return this.profileState.loading();
@@ -68,6 +103,14 @@ export class Profile implements OnInit {
     this.profileState.load();
   }
 
+  reload() {
+    this.profileState.load();
+  }
+
+  linkLabel(url: string): string {
+    return url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+  }
+
   toCsv(values?: string[]): string {
     return (values ?? []).join(', ');
   }
@@ -88,16 +131,59 @@ export class Profile implements OnInit {
     return value ? new Date(value) : null;
   }
 
+  beginInfoEdit() {
+    this.editedInfo = {
+      ...this.info,
+      links: (this.info.links ?? []).map((l) => ({ ...l })),
+    };
+  }
+
+  cancelInfoEdit() {
+    this.editedInfo = undefined;
+    this.openLinkTypeIndex = null;
+  }
+
   async saveInfo() {
-    await this.profileState.saveInfo(this.info);
+    if (!this.editedInfo) return;
+    await this.profileState.saveInfo({
+      ...this.editedInfo,
+      links: (this.editedInfo.links ?? []).filter((l) => l.url.trim()),
+    });
+    this.cancelInfoEdit();
   }
 
   addLink(): void {
-    this.info.links = [...(this.info.links ?? []), { type: '', url: '' }];
+    if (!this.editedInfo) return;
+    this.editedInfo.links = [...(this.editedInfo.links ?? []), { type: '', url: '' }];
   }
 
   removeLink(index: number): void {
-    this.info.links = (this.info.links ?? []).filter((_, i) => i !== index);
+    if (!this.editedInfo) return;
+    this.editedInfo.links = (this.editedInfo.links ?? []).filter((_, i) => i !== index);
+  }
+
+  runCheckAction(id: CompletenessId): void {
+    switch (id) {
+      case 'basics':
+      case 'summary':
+      case 'links':
+        return this.beginInfoEdit();
+      case 'experience':
+        return this.beginExperienceAdd();
+      case 'evidence': {
+        const target = this.experience.find((e) => !(e.evidence?.length ?? 0));
+        if (target) this.expandedExperienceId = target.id;
+        return;
+      }
+      case 'education':
+        return this.beginEducationAdd();
+      case 'projects':
+        return this.beginProjectAdd();
+      case 'skills':
+        return this.beginSkillAdd();
+      case 'careerProfiles':
+        return this.beginCareerProfileAdd();
+    }
   }
 
   readonly linkTypeOptions = ['GitHub', 'LinkedIn', 'Site', 'Portfolio', 'Personal'];

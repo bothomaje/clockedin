@@ -80,14 +80,15 @@
           (ngModelChange)="editedJob.applicationDeadline = $event ? toDate($event) : null"
         />
       </section>
+
       <section class="clk-field">
-        <label class="form-label" for="department">Department</label>
+        <label class="form-label" for="keyContact">Contact</label>
         <input
-          id="department"
+          id="keyContact"
           class="form-control"
-          name="department"
-          placeholder="e.g., Product Design"
-          [(ngModel)]="editedJob.department"
+          name="keyContact"
+          placeholder="Hiring Manager, Recruiter name"
+          [(ngModel)]="editedJob.contact"
         />
       </section>
     </section>
@@ -120,26 +121,7 @@
             </select>
           </section>
         }
-        <section class="clk-field">
-          <label class="form-label" for="keyContact">Contact</label>
-          <input
-            id="keyContact"
-            class="form-control"
-            name="keyContact"
-            placeholder="Hiring Manager, Recruiter name"
-            [(ngModel)]="editedJob.keyContact"
-          />
-        </section>
-        <section class="clk-field">
-          <label class="form-label" for="source">Where you found it</label>
-          <input
-            id="source"
-            class="form-control"
-            name="source"
-            placeholder="Referral, LinkedIn..."
-            [(ngModel)]="editedJob.source"
-          />
-        </section>
+
         <section class="clk-field">
           <label class="form-label" for="dateApplied">Date Applied</label>
           <input
@@ -147,17 +129,10 @@
             type="date"
             class="form-control"
             name="dateApplied"
-            [ngModel]="editedJob.dateApplied ? (editedJob.dateApplied | date: 'yyyy-MM-dd') : ''"
-            (ngModelChange)="editedJob.dateApplied = $event ? toDate($event) : null"
-          />
-        </section>
-        <section class="clk-field">
-          <label class="form-label" for="nextAction">Next Step</label>
-          <input
-            id="nextAction"
-            class="form-control"
-            name="nextAction"
-            [(ngModel)]="editedJob.nextAction"
+            [ngModel]="
+              getDateApplied(editedJob) ? (getDateApplied(editedJob) | date: 'yyyy-MM-dd') : ''
+            "
+            (ngModelChange)="getDateApplied(editedJob) === $event ? toDate($event) : null"
           />
         </section>
       </section>

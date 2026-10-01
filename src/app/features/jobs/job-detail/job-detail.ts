@@ -1,7 +1,7 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Job, JobStatus, getLatestJobUpdate } from '../models/job';
+import { Job, JobStatus, getDateApplied, getLatestJobUpdate } from '../models/job';
 import { StatusChip, statusLabel } from '../../../shared/ui/status-chip/status-chip';
 import { RouterLink } from '@angular/router';
 import { Breadcrumbs, Crumb } from '../../../shared/ui/breadcrumbs/breadcrumbs';
@@ -35,6 +35,7 @@ export class JobDetail {
   nextStatus: JobStatus = JobStatus.NEW;
   statuses = Object.values(JobStatus);
   statusLabel = statusLabel;
+  getDateApplied = getDateApplied;
 
   latest = computed(() => getLatestJobUpdate(this.job()));
   crumbs = computed<Crumb[]>(() => [

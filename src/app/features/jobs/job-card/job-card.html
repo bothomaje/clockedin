@@ -1,25 +1,20 @@
 <td class="clk-cell-company">{{ job().company }}</td>
+<td class="clk-cell-role">{{ job().role }}</td>
+<td><app-status-chip [status]="getLatestJobUpdate(job()).status" /></td>
 <td class="clk-cell-role">
-  {{ job().role }}
-  @if (job().department) {
-    <span class="clk-cell-sub">{{ job().department }}</span>
+  {{ job().location || '—' }}
+  @if (job().employmentType) {
+    <span class="clk-cell-sub">{{ job().employmentType }}</span>
   }
 </td>
 @if (variant() === 'saved') {
-  <td class="clk-cell-role">
-    {{ job().location || '—' }}
-    @if (job().employmentType) {
-      <span class="clk-cell-sub">{{ job().employmentType }}</span>
-    }
-  </td>
-  <td class="clk-cell-note">{{ job().salary || '—' }}</td>
-  <td class="clk-cell-date">{{ getSavedAt(job()) | date: 'MMM d, y' }}</td>
-  <td><app-status-chip [status]="getLatestJobUpdate(job()).status" /></td>
-} @else {
-  <td><app-status-chip [status]="getLatestJobUpdate(job()).status" /></td>
+  <td class="clk-cell-date">{{ getSavedAt(job()) | date: 'd MMM y' }}</td>
   <td class="clk-cell-date">
-    {{ job().dateApplied ? (job().dateApplied | date: dateFormat(job().dateApplied)) : '—' }}
+    {{ job().applicationDeadline ? (job().applicationDeadline | date: 'd MMM y') : '—' }}
   </td>
-  <td class="clk-cell-note" [attr.title]="job().nextAction">{{ job().nextAction || '—' }}</td>
-  <td class="clk-cell-note">{{ job().keyContact || '—' }}</td>
+} @else {
+  <td class="clk-cell-note">{{ job().salary || '—' }}</td>
+  <td class="clk-cell-date">
+    {{ getDateApplied(job()) ? (getDateApplied(job()) | date: 'd MMM y') : '—' }}
+  </td>
 }

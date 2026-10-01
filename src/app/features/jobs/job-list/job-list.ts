@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import { JobState } from '../state/job-state';
-import { getLatestJobUpdate, getSavedAt, Job, JobStatus } from '../models/job';
+import { getDateApplied, getLatestJobUpdate, getSavedAt, Job, JobStatus } from '../models/job';
 import { JobCard, JobRowVariant } from '../job-card/job-card';
 import { FormsModule } from '@angular/forms';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
@@ -14,22 +14,22 @@ interface Column {
   width?: string;
 }
 
-const PIPELINE_COLUMNS: Column[] = [
-  { label: 'Company', width: '220px' },
+const APPLICATION_COLUMNS: Column[] = [
+  { label: 'Company', width: '240px' },
   { label: 'Role' },
-  { label: 'Location & employment', width: '180px' },
-  { label: 'Salary Range', width: '150px' },
-  { label: 'Saved Date', width: '130px' },
-  { label: 'Application', width: '130px' },
+  { label: 'Status', width: '132px' },
+  { label: 'Location', width: '200px' },
+  { label: 'Salary', width: '130px' },
+  { label: 'Date applied', width: '130px' },
 ];
 
 const SAVED_COLUMNS: Column[] = [
-  { label: 'Company', width: '220px' },
-  { label: 'Role & department' },
-  { label: 'Location', width: '180px' },
-  { label: 'Salary', width: '150px' },
-  { label: 'Deadline', width: '130px' },
+  { label: 'Company', width: '240px' },
+  { label: 'Role' },
+  { label: 'Status', width: '132px' },
+  { label: 'Location', width: '200px' },
   { label: 'Date saved', width: '130px' },
+  { label: 'Deadline', width: '130px' },
 ];
 
 @Component({
@@ -41,7 +41,7 @@ export class JobList implements OnInit {
   private jobState = inject(JobState);
 
   statuses = input<JobStatus[]>();
-  variant = input<JobRowVariant>('pipeline');
+  variant = input<JobRowVariant>('application');
   defaultSort = input<SortField>('updatedAt');
   allStatusesLabel = input('All statuses');
   emptyTitle = input('No saved jobs yet');
@@ -53,13 +53,13 @@ export class JobList implements OnInit {
   view = output<Job>();
   edit = output<Job>();
   statusLabel = statusLabel;
+  getDateApplied = getDateApplied;
 
   loading = this.jobState.loading;
   error = this.jobState.error;
 
   search = signal('');
   statusFilter = signal<JobStatus | ''>('');
-  departmentFilter = signal('');
   locationFilter = signal('');
   sortBy = signal<SortField>('updatedAt');
   sortDir = signal<'asc' | 'desc'>('desc');
@@ -71,8 +71,7 @@ export class JobList implements OnInit {
   ];
 
   activeFilterCount = computed(
-    () =>
-      [this.statusFilter(), this.departmentFilter(), this.locationFilter()].filter(Boolean).length,
+    () => [this.statusFilter(), this.locationFilter()].filter(Boolean).length,
   );
   hasActiveFilters = computed(() => this.activeFilterCount() > 0 || !!this.search().trim());
 
@@ -86,11 +85,10 @@ export class JobList implements OnInit {
 
   statusOptions = computed(() => this.statuses() ?? Object.values(JobStatus));
   showStatusFilter = computed(
-    () => this.variant() === 'pipeline' && this.statusOptions().length > 1,
+    () => this.variant() === 'application' && this.statusOptions().length > 1,
   );
-  showDepartmentFilter = computed(() => this.variant() === 'pipeline');
   chipColumn = computed(() => (this.variant() === 'saved' ? 5 : 2));
-  columns = computed(() => (this.variant() === 'saved' ? SAVED_COLUMNS : PIPELINE_COLUMNS));
+  columns = computed(() => (this.variant() === 'saved' ? SAVED_COLUMNS : APPLICATION_COLUMNS));
 
   private scoped = computed(() => {
     const allowed = this.statuses();
@@ -98,7 +96,6 @@ export class JobList implements OnInit {
     return allowed ? jobs.filter((j) => allowed.includes(getLatestJobUpdate(j).status)) : jobs;
   });
 
-  departmentOptions = computed(() => this.distinct((j) => j.department));
   locationOptions = computed(() => this.distinct((j) => j.location));
 
   private distinct(pick: (job: Job) => string | undefined): string[] {
@@ -114,13 +111,11 @@ export class JobList implements OnInit {
   filteredJobs = computed(() => {
     const term = this.search().trim().toLowerCase();
     const status = this.statusFilter();
-    const department = this.departmentFilter();
     const location = this.locationFilter();
 
     const filtered = this.scoped().filter((job) => {
       if (term && !`${job.company} ${job.role}`.toLowerCase().includes(term)) return false;
       if (status && getLatestJobUpdate(job).status !== status) return false;
-      if (department && job.department !== department) return false;
       if (location && job.location !== location) return false;
       return true;
     });
@@ -132,11 +127,11 @@ export class JobList implements OnInit {
       if (field === 'company') return dir * (a.company ?? '').localeCompare(b.company ?? '');
       if (field === 'role') return dir * (a.role ?? '').localeCompare(b.role ?? '');
       if (field === 'savedAt') return dir * (getSavedAt(a).getTime() - getSavedAt(b).getTime());
-      if (field === 'dateApplied') {
-        const at = a.dateApplied ? new Date(a.dateApplied).getTime() : 0;
-        const bt = b.dateApplied ? new Date(b.dateApplied).getTime() : 0;
-        return dir * (at - bt);
-      }
+      // if (field === 'dateApplied') {
+      //   const at = getDateApplied(a) ? getDateApplied(a) : 0;
+      //   const bt = getDateApplied(b) ? getDateApplied(a) : 0;
+      //   return dir * (at - bt);
+      // }
       return (
         dir *
         (getLatestJobUpdate(a).updatedAt.getTime() - getLatestJobUpdate(b).updatedAt.getTime())
@@ -159,7 +154,6 @@ export class JobList implements OnInit {
   clearFilters(): void {
     this.search.set('');
     this.statusFilter.set('');
-    this.departmentFilter.set('');
     this.locationFilter.set('');
   }
 

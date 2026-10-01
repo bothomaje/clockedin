@@ -1,7 +1,7 @@
 import { Component, effect, input, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { APPLICATION_STATUSES, Job, JobStatus } from '../models/job';
+import { APPLICATION_STATUSES, getDateApplied, Job, JobStatus } from '../models/job';
 import { statusLabel } from '../../../shared/ui/status-chip/status-chip';
 
 @Component({
@@ -21,6 +21,7 @@ export class JobForm {
   status = JobStatus.APPLIED;
   statusOptions = APPLICATION_STATUSES;
   statusLabel = statusLabel;
+  getDateApplied = getDateApplied;
 
   constructor() {
     effect(() => {
@@ -32,7 +33,6 @@ export class JobForm {
     const job = { ...this.editedJob };
     if (!job.id && this.showStatus()) {
       job.jobUpdates = [{ status: this.status, updatedAt: new Date() }];
-      if (!job.dateApplied) job.dateApplied = new Date();
     }
     this.save.emit(job);
   }

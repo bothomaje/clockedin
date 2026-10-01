@@ -39,19 +39,13 @@
       <h3 class="clk-widget__title">Application Information</h3>
       <dl class="clk-kv">
         <dt>Date Applied</dt>
-        <dd>{{ job().dateApplied ? (job().dateApplied | date: 'longDate') : '—' }}</dd>
-        <dt>Source</dt>
-        <dd>{{ job().source || '—' }}</dd>
+        <dd>{{ getDateApplied(job()) ? (getDateApplied(job()) | date: 'longDate') : '—' }}</dd>
         <dt>Salary</dt>
         <dd>{{ job().salary || '—' }}</dd>
         <dt>Contact</dt>
-        <dd>{{ job().keyContact || '—' }}</dd>
-        <dt>Next Step</dt>
-        <dd>{{ job().nextAction || '—' }}</dd>
+        <dd>{{ job().contact || '—' }}</dd>
         <dt>Employment Type</dt>
         <dd>{{ job().employmentType || '—' }}</dd>
-        <dt>Department</dt>
-        <dd>{{ job().department || '—' }}</dd>
         <dt>Deadline</dt>
         <dd>
           {{ job().applicationDeadline ? (job().applicationDeadline | date: 'longDate') : '—' }}

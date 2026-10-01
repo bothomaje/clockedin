@@ -52,7 +52,6 @@ export class JobSpecPage implements OnInit {
   async applyNow(): Promise<void> {
     const job = this.jobState.selectedJob();
     if (!job?.id) return;
-    await this.jobState.updateJob(job.id, { dateApplied: job.dateApplied ?? new Date() });
     await this.jobState.updateJobStatus(job.id, JobStatus.APPLIED);
     this.toast.success('Moved to Applications.', {
       label: 'Create tailored CV',

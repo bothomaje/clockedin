@@ -45,11 +45,7 @@ export class JobRepository {
       salary: job.salary ?? '',
       notes: job.notes ?? '',
       applicationDeadline: job.applicationDeadline ?? null,
-      department: job.department ?? '',
-      source: job.source ?? '',
-      keyContact: job.keyContact ?? '',
-      nextAction: job.nextAction ?? '',
-      dateApplied: job.dateApplied ?? null,
+      contact: job.contact ?? '',
       jobUpdates: job.jobUpdates.map((u) => ({
         status: u.status,
         updatedAt: u.updatedAt,
@@ -108,11 +104,7 @@ export class JobRepository {
       generatedCoverLetter: data['generatedCoverLetter'],
       jobAnalysis: data['jobAnalysis'] ?? null,
       jobAnalysedAt: this.toDateOrNull(data['jobAnalysedAt']),
-      department: data['department'],
-      dateApplied: this.toDateOrNull(data['dateApplied']),
-      source: data['source'],
-      keyContact: data['keyContact'],
-      nextAction: data['nextAction'],
+      contact: data['contact'],
     };
   }
 
@@ -121,10 +113,30 @@ export class JobRepository {
     if (!uid) throw new Error('Cannot update job: No user is signed in.');
 
     const jobRef = doc(this.db, 'users', uid, 'jobs', jobId);
-    await updateDoc(jobRef, updates as DocumentData);
+    await updateDoc(jobRef, this.withoutUndefined(updates) as DocumentData);
   }
 
   async saveJobAnalysis(jobId: string, analysis: JobAnalysis): Promise<void> {
     await this.updateJob(jobId, { jobAnalysis: analysis, jobAnalysedAt: new Date() });
+  }
+
+  private withoutUndefined(value: unknown): unknown {
+    if (Array.isArray(value)) {
+      return value.map((item) => this.withoutUndefined(item));
+    }
+
+    if (value instanceof Date || value instanceof Timestamp || value === null) {
+      return value;
+    }
+
+    if (typeof value === 'object' && value !== undefined) {
+      return Object.fromEntries(
+        Object.entries(value)
+          .filter(([, item]) => item !== undefined)
+          .map(([key, item]) => [key, this.withoutUndefined(item)]),
+      );
+    }
+
+    return value;
   }
 }

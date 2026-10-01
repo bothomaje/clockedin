@@ -51,17 +51,15 @@
           <section class="clk-table-wrap">
             <table class="clk-table clk-table--dash">
               <colgroup>
-                <col style="width: 180px" />
+                <col style="width: 220px" />
                 <col />
                 <col style="width: 120px" />
-                <col style="width: 200px" />
               </colgroup>
               <thead>
                 <tr>
                   <th>Company</th>
                   <th>Role</th>
                   <th>Status</th>
-                  <th>Next Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -70,7 +68,6 @@
                     <td>{{ job.company }}</td>
                     <td>{{ job.role }}</td>
                     <td><app-status-chip [status]="getLatestJobUpdate(job).status" /></td>
-                    <td [attr.title]="job.nextAction">{{ job.nextAction || '—' }}</td>
                   </tr>
                 }
               </tbody>

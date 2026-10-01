@@ -33,14 +33,9 @@ export interface Job {
   generatedCv?: string;
   jobAnalysis?: JobAnalysis | null;
   jobAnalysedAt?: Date | null;
-  department?: string;
-  dateApplied?: Date | null;
-  source?: string;
-  keyContact?: string;
-  nextAction?: string;
+  contact?: string;
 }
 
-export const SAVED_JOB_STATUSES: JobStatus[] = [JobStatus.NEW];
 export const APPLICATION_STATUSES: JobStatus[] = Object.values(JobStatus).filter(
   (s) => s !== JobStatus.NEW,
 );
@@ -49,6 +44,17 @@ export function getLatestJobUpdate(job: Job): JobUpdate {
   return job.jobUpdates.reduce((latest, current) =>
     current.updatedAt > latest.updatedAt ? current : latest,
   );
+}
+
+export function getDateApplied(job: Job): Date | null {
+  return job.jobUpdates
+    .filter((update) => update.status === 'applied')
+    .reduce<Date | null>((latestDate, update) => {
+      if (!latestDate || update.updatedAt > latestDate) {
+        return update.updatedAt;
+      }
+      return latestDate;
+    }, null);
 }
 
 export function getSavedAt(job: Job): Date {

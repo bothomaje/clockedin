@@ -36,9 +36,9 @@ export class JobFormPage implements OnInit {
           submit: editing ? 'Save changes' : 'Save application',
         }
       : {
-          eyebrow: 'Saved Jobs',
-          title: editing ? 'Edit Job' : 'Save a job',
-          submit: editing ? 'Save Changes' : 'Save Job',
+          eyebrow: 'Saved jobs',
+          title: editing ? 'Edit job' : 'Save a job',
+          submit: editing ? 'Save changes' : 'Save job',
         };
   });
 
@@ -57,6 +57,7 @@ export class JobFormPage implements OnInit {
   async onSave(job: Job): Promise<void> {
     if (job.id) {
       const { id, ...updates } = job;
+      console.log(updates);
       await this.jobState.updateJob(id, updates);
       const isSaved = getLatestJobUpdate(job).status === JobStatus.NEW;
       this.toast.success('Changes saved successfully.');

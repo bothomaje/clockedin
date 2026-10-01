@@ -1,9 +1,9 @@
 import { Component, computed, input, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Job, getLatestJobUpdate, getSavedAt } from '../models/job';
+import { Job, getDateApplied, getLatestJobUpdate, getSavedAt } from '../models/job';
 import { StatusChip } from '../../../shared/ui/status-chip/status-chip';
 
-export type JobRowVariant = 'pipeline' | 'saved';
+export type JobRowVariant = 'application' | 'saved';
 
 @Component({
   selector: 'tr[app-job-card]',
@@ -18,12 +18,13 @@ export type JobRowVariant = 'pipeline' | 'saved';
 })
 export class JobCard {
   job = input.required<Job>();
-  variant = input<JobRowVariant>('pipeline');
+  variant = input<JobRowVariant>('application');
   view = output<Job>();
   edit = output<Job>();
 
   getLatestJobUpdate = getLatestJobUpdate;
   getSavedAt = getSavedAt;
+  getDateApplied = getDateApplied;
 
   dateFormat(date?: Date | null): string {
     return date && new Date(date).getFullYear() !== new Date().getFullYear() ? 'MMM d, y' : 'MMM d';

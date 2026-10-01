@@ -1,50 +1,209 @@
-<main class="container mt-4">
-  <section class="d-flex justify-content-between">
-    <h2>Dashboard</h2>
-    @if (!editedJob()) {
-      <section class="gap-2 d-flex">
-        <button class="btn btn-primary" (click)="beginJobAdd()">Add Job</button>
-      </section>
-    }
+<app-page-header eyebrow="Dashboard" [title]="headline()">
+  <a
+    actions
+    routerLink="/applications/new"
+    class="btn btn-primary d-inline-flex align-items-center gap-2"
+  >
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      aria-hidden="true"
+    >
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+    Add application
+  </a>
+</app-page-header>
+
+<section class="clk-dashboard">
+  @if (!profileState.loading() && !profileState.onboardingComplete()) {
+    <p class="alert alert-info">
+      Finish setting up your profile — <a routerLink="/onboarding">resume onboarding</a>.
+    </p>
+  }
+
+  <section class="clk-dashboard__stats">
+    <app-stat-card label="Active Roles" [value]="activeRoles()" />
+    <app-stat-card label="Interviews" [value]="interviews()" />
+    <app-stat-card label="Offers Active" [value]="offers()" />
+    <app-stat-card label="Total Applications" [value]="total()" />
   </section>
 
-  @if (editedJob(); as editing) {
-    <app-job-form [job]="editing" (save)="onSaveJob($event)" (cancel)="cancelJobEdit()" />
-  }
+  <section class="clk-dashboard__grid">
+    <section class="clk-dashboard__main">
+      <article class="clk-card clk-card--lg clk-card--stack">
+        <header class="clk-widget__head">
+          <h3 class="clk-dashboard__title">Active Applications</h3>
+          <a routerLink="/applications" class="clk-dashboard__link">View all applications →</a>
+        </header>
 
-  @if (jobState.selectedJob(); as job) {
-    <app-job-detail
-      [job]="job"
-      (close)="onCloseDetail()"
-      (statusChange)="onStatusChange(job, $event)"
-      (notesSave)="onNotesSave(job, $event)"
-    />
+        @if (activeApplications().length === 0) {
+          <p class="clk-widget__empty">
+            No active applications yet.
+            <a routerLink="/applications/new">Add your first application</a>.
+          </p>
+        } @else {
+          <section class="clk-table-wrap">
+            <table class="clk-table clk-table--dash">
+              <colgroup>
+                <col style="width: 180px" />
+                <col />
+                <col style="width: 120px" />
+                <col style="width: 200px" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Next Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (job of activeApplications(); track job.id) {
+                  <tr [routerLink]="['/applications', job.id]" class="clk-clickable-row">
+                    <td>{{ job.company }}</td>
+                    <td>{{ job.role }}</td>
+                    <td><app-status-chip [status]="getLatestJobUpdate(job).status" /></td>
+                    <td [attr.title]="job.nextAction">{{ job.nextAction || '—' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </section>
+        }
+      </article>
 
-    @if (!profileState.loading()) {
-      <app-job-analysis-panel
-        [job]="job"
-        [user]="profileState.user()"
-        (analysed)="jobAnalysis.set($event)"
-      />
+      <article class="clk-card clk-card--lg clk-card--stack">
+        <h3 class="clk-dashboard__title">Follow-ups</h3>
+        @if (followUps().length === 0) {
+          <p class="clk-widget__empty">Nothing needs your attention right now.</p>
+        } @else {
+          <section class="clk-followups">
+            @for (f of followUps(); track f.job.id) {
+              <a
+                class="clk-followup"
+                [class.clk-followup--urgent]="f.urgent"
+                [routerLink]="['/applications', f.job.id]"
+              >
+                <section class="clk-followup__head">
+                  <span class="clk-followup__company">{{ f.job.company }}</span>
+                  @if (f.urgent) {
+                    <span class="clk-followup__tag">Needs attention</span>
+                  }
+                </section>
+                <p class="clk-followup__text">{{ f.text }}</p>
+              </a>
+            }
+          </section>
+        }
+      </article>
+    </section>
 
-      <app-cover-letter-panel
-        [job]="job"
-        [user]="profileState.user()"
-        [analysis]="jobAnalysis()"
-        [cv]="generatedCv()"
-        (analysisUpdated)="jobAnalysis.set($event)"
-      />
+    <aside class="clk-dashboard__side">
+      <article class="clk-card clk-card--stack">
+        <h3 class="clk-dashboard__subtitle">To-do list</h3>
+        <ul class="clk-todos">
+          @for (todo of todos(); track todo.id) {
+            <li class="clk-todo">
+              <label class="clk-todo__label">
+                <input
+                  type="checkbox"
+                  class="clk-checkbox"
+                  [checked]="todo.done"
+                  (change)="toggleTodo(todo.id)"
+                />
+                <span [class.is-done]="todo.done">{{ todo.text }}</span>
+              </label>
+              <button
+                type="button"
+                class="clk-todo__remove"
+                aria-label="Remove todo"
+                (click)="removeTodo(todo.id)"
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  aria-hidden="true"
+                >
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </li>
+          } @empty {
+            <li class="clk-widget__empty">Nothing on your list yet.</li>
+          }
+        </ul>
+        <section class="clk-todo-add">
+          <input
+            class="form-control"
+            placeholder="Add a todo"
+            aria-label="New todo"
+            [(ngModel)]="newTodoText"
+            name="newTodo"
+            (keyup.enter)="addTodo()"
+          />
+          <button type="button" class="btn btn-outline-secondary" (click)="addTodo()">Add</button>
+        </section>
+      </article>
 
-      <app-cv-generation-panel
-        [job]="job"
-        [user]="profileState.user()"
-        [careerProfiles]="profileState.careerProfiles()"
-        [analysis]="jobAnalysis()"
-        (analysisUpdated)="jobAnalysis.set($event)"
-        (cvGenerated)="generatedCv.set($event)"
-      />
-    }
-  } @else {
-    <app-job-list (view)="onViewJob($event)" (edit)="onEditJob($event)" />
-  }
-</main>
+      <article class="clk-card clk-card--stack clk-card--tight">
+        <header class="clk-widget__head">
+          <h3 class="clk-dashboard__subtitle">Job Search Goals</h3>
+          @if (!editingTargets()) {
+            <button type="button" class="clk-link-action" (click)="editTargets()">Edit</button>
+          }
+        </header>
+        @if (editingTargets()) {
+          <section class="clk-field">
+            <label class="form-label" for="targetRoles">Roles I'm looking for</label>
+            <textarea
+              id="targetRoles"
+              class="form-control"
+              rows="3"
+              name="targetRoles"
+              [(ngModel)]="targetRolesDraft"
+            ></textarea>
+          </section>
+          <section class="clk-field">
+            <label class="form-label" for="targetSalary">Salary range</label>
+            <input
+              id="targetSalary"
+              class="form-control"
+              name="targetSalary"
+              [(ngModel)]="targetSalaryDraft"
+            />
+          </section>
+          <section class="clk-dashboard__edit-actions">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              (click)="editingTargets.set(false)"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-primary" (click)="saveTargets()">Save</button>
+          </section>
+        } @else {
+          <p class="clk-dashboard__text">
+            {{ profileState.info().targetRoles || "Add the roles you're looking for." }}
+          </p>
+          <dl class="clk-kv">
+            <dt>Target Base Salary</dt>
+            <dd>{{ profileState.info().targetSalary || '—' }}</dd>
+          </dl>
+        }
+      </article>
+    </aside>
+  </section>
+</section>

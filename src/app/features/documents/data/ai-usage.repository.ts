@@ -40,7 +40,6 @@ export class AiUsageRepository {
     });
   }
 
-  /** Read-only — does not consume a slot. For showing remaining quota in the UI. */
   async getStatus(): Promise<{ remaining: number; resetAt: Date | null }> {
     const uid = firebaseAuth.currentUser?.uid;
     if (!uid) return { remaining: MAX_PER_WINDOW, resetAt: null };

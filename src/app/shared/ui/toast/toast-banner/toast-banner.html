@@ -1,5 +1,9 @@
 @if (toastService.toast(); as toast) {
-  <section class="clk-toast" role="status">
+  <section
+    class="clk-toast"
+    [class.clk-toast--error]="toast.kind === 'error'"
+    [attr.role]="toast.kind === 'error' ? 'alert' : 'status'"
+  >
     <section class="clk-toast__message">
       <span class="clk-toast__icon">
         <svg
@@ -13,7 +17,11 @@
           stroke-linejoin="round"
           aria-hidden="true"
         >
-          <path d="m5 12 5 5L20 7" />
+          @if (toast.kind === 'error') {
+            <path d="M12 6v8M12 18h.01" />
+          } @else {
+            <path d="m5 12 5 5L20 7" />
+          }
         </svg>
       </span>
       <p>{{ toast.message }}</p>

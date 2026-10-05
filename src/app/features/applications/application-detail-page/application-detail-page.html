@@ -21,10 +21,22 @@
     title="Delete this application?"
     confirmLabel="Delete permanently"
     cancelLabel="Cancel"
+    [busy]="deleting()"
     (confirmed)="confirmDelete()"
     (cancelled)="cancelDelete()"
   >
     This will permanently delete your application details for <strong>{{ job.company }}</strong
     >, including notes and documents associated with it. This can't be undone.
   </app-confirm-dialog>
+} @else if (notFound()) {
+  <app-empty-state
+    title="Application not found"
+    [description]="
+      jobState.error()
+        ? 'Could not load this application. Check your connection and try again.'
+        : 'It may have been deleted, or the link is wrong.'
+    "
+  >
+    <a routerLink="/applications" class="btn btn-primary">Back to Applications</a>
+  </app-empty-state>
 }

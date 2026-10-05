@@ -59,8 +59,6 @@ export class AiService {
     const chain = this.providerChain(request.capability, request.context);
 
     if (!chain.length) {
-      // Phase 13's whole point: local-only must fail loudly, never silently
-      // reach for Gemini because "no provider happened to be available".
       const reason =
         request.context?.privacyMode === 'local-only' ||
         request.context?.allowCloudFallback === false

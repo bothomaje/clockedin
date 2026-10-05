@@ -31,6 +31,16 @@
   color: #fff;
 }
 
+.clk-toast--error {
+  background: var(--clk-color-error-subtle);
+  border-bottom-color: var(--clk-color-error-border);
+  color: var(--clk-color-error);
+
+  .clk-toast__icon {
+    background: var(--clk-color-error);
+  }
+}
+
 .clk-toast__actions {
   display: flex;
   align-items: center;

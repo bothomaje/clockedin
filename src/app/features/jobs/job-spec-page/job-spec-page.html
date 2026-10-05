@@ -84,16 +84,21 @@
     title="Delete saved job?"
     confirmLabel="Delete permanently"
     cancelLabel="Cancel, keep job"
+    [busy]="deleting()"
     (confirmed)="confirmDelete()"
     (cancelled)="cancelDelete()"
   >
     This will permanently delete your saved details for <strong>{{ job.company }}</strong
     >. This cannot be undone.
   </app-confirm-dialog>
-} @else if (!jobState.loading()) {
+} @else if (notFound()) {
   <app-empty-state
     title="Job not found"
-    description="It may have been deleted, or the link is wrong."
+    [description]="
+      jobState.error()
+        ? 'Could not load this job. Check your connection and try again.'
+        : 'It may have been deleted, or the link is wrong.'
+    "
   >
     <a routerLink="/jobs" class="btn btn-primary">Back to Jobs</a>
   </app-empty-state>

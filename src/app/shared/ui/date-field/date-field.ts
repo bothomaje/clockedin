@@ -2,7 +2,6 @@ import { Component, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbInputDatepicker } from '@ng-bootstrap/ng-bootstrap/datepicker';
 
-/** Bootstrap input group + ng-bootstrap datepicker. Replaces <input type="date">. */
 @Component({
   selector: 'app-date-field',
   imports: [FormsModule, NgbInputDatepicker],

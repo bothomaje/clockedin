@@ -110,7 +110,6 @@ export function indexFacts(facts: CareerFact[]): Map<string, CareerFact> {
   return new Map(facts.map((fact) => [fact.id, fact]));
 }
 
-/** Every skill term the CV is allowed to name. */
 export function allowedSkillTerms(career: Career): Set<string> {
   const terms = new Set<string>();
   for (const skill of career.skills ?? []) {

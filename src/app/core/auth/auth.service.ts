@@ -98,9 +98,14 @@ export class AuthService {
     return sendPasswordResetEmail(this.auth, email);
   }
 
-  sendVerificationEmail() {
-    if (!this.auth.currentUser) throw new Error('No user is signed in.');
-    return sendEmailVerification(this.auth.currentUser, {
+  private requireUser(): User {
+    const user = this.auth.currentUser;
+    if (!user) throw new Error('No user is signed in.');
+    return user;
+  }
+
+  async sendVerificationEmail(): Promise<void> {
+    await sendEmailVerification(this.requireUser(), {
       url: `${window.location.origin}/onboarding`,
     });
   }
@@ -119,10 +124,10 @@ export class AuthService {
 
   async changePassword(currentPassword: string, newPassword: string) {
     await this.reauthenticate(currentPassword);
-    await updatePassword(this.auth.currentUser!, newPassword);
+    await updatePassword(this.requireUser(), newPassword);
   }
 
   async deleteAuthAccount(): Promise<void> {
-    await deleteUser(this.auth.currentUser!);
+    await deleteUser(this.requireUser());
   }
 }

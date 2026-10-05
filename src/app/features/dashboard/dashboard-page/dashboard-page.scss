@@ -52,7 +52,6 @@
   gap: 12px;
 }
 
-// Active applications table (Figma: 180 / flex / 120 / 200)
 .clk-table--dash {
   min-width: 640px;
   table-layout: fixed;
@@ -85,7 +84,6 @@
   }
 }
 
-// Follow-up cards
 .clk-followups {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -133,7 +131,6 @@
   color: var(--clk-color-text-muted);
 }
 
-// Todos
 .clk-todos {
   display: flex;
   flex-direction: column;

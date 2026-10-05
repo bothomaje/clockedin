@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 
 export interface ToastAction {
   label: string;
@@ -6,10 +6,11 @@ export interface ToastAction {
 }
 export interface Toast {
   message: string;
+  kind: 'success' | 'error';
   action?: ToastAction;
 }
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ToastService {
   private state = signal<Toast | null>(null);
   private timer?: ReturnType<typeof setTimeout>;
@@ -17,9 +18,17 @@ export class ToastService {
   toast = this.state.asReadonly();
 
   success(message: string, action?: ToastAction): void {
+    this.show({ message, kind: 'success', action }, 8000);
+  }
+
+  error(message: string): void {
+    this.show({ message, kind: 'error' }, 12000);
+  }
+
+  private show(toast: Toast, ms: number): void {
     clearTimeout(this.timer);
-    this.state.set({ message, action });
-    this.timer = setTimeout(() => this.dismiss(), 8000);
+    this.state.set(toast);
+    this.timer = setTimeout(() => this.dismiss(), ms);
   }
 
   dismiss(): void {

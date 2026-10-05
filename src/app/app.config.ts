@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
 import { provideMarkdown } from 'ngx-markdown';
@@ -9,7 +9,7 @@ import { DisplayDateParserFormatter, UtcDateAdapter } from './shared/ui/date-fie
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
+    provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(),
     provideMarkdown(),
     { provide: NgbDateAdapter, useClass: UtcDateAdapter },

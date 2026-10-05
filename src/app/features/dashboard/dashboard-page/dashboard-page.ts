@@ -3,7 +3,6 @@ import { RouterLink } from '@angular/router';
 import { PageHeader } from '../../../shared/ui/page-header/page-header';
 import { ProfileState } from '../../profile/state/profile-state';
 import { FormsModule } from '@angular/forms';
-import { DatePipe } from '@angular/common';
 import { StatusChip } from '../../../shared/ui/status-chip/status-chip';
 import { StatCard } from '../../../shared/ui/stat-card/stat-card';
 import { JobState } from '../../jobs/state/job-state';

@@ -103,11 +103,6 @@ Nice to have:
 You'll build features end-to-end across our TypeScript/Node/Postgres stack, contribute to our React component library, and help evolve our Docker-based dev environment.`,
 });
 
-/**
- * Deliberately long and repetitive — a real over-written posting, not
- * hand-crafted prose — to exercise prepareJobDescription's truncation at
- * MAX_JOB_DESCRIPTION_CHARS (12000) and any provider context-window limits.
- */
 export const longJobDescriptionJob = job({
   company: 'Meridian Group',
   role: 'Senior Software Engineer',

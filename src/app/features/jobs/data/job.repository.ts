@@ -56,9 +56,9 @@ export class JobRepository {
     return { ...job, id: docRef.id };
   }
 
-  async updateJobStatus(jobId: string, newStatus: JobStatus, note?: string): Promise<void> {
+  async updateJobStatus(jobId: string, newStatus: JobStatus, note?: string): Promise<JobUpdate> {
     const uid = firebaseAuth.currentUser?.uid;
-    if (!uid) return;
+    if (!uid) throw new Error('Cannot update job: No user is signed in.');
 
     const jobRef = doc(this.db, 'users', uid, 'jobs', jobId);
     const update: { status: JobStatus; updatedAt: Date; note?: string } = {
@@ -68,6 +68,7 @@ export class JobRepository {
     if (note) update.note = note;
 
     await updateDoc(jobRef, { jobUpdates: arrayUnion(update) });
+    return update;
   }
 
   async deleteJob(jobId: string): Promise<void> {

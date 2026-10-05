@@ -1,34 +1,39 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { JobState } from '../state/job-state';
 import { JobForm } from '../job-form/job-form';
 import { Job, JobStatus, getLatestJobUpdate } from '../models/job';
 import { PageHeader } from '../../../shared/ui/page-header/page-header';
 import { ToastService } from '../../../shared/ui/toast/toast.service';
+import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 
 @Component({
   selector: 'app-job-form-page',
-  imports: [JobForm, PageHeader],
+  imports: [JobForm, PageHeader, EmptyState, RouterLink],
   templateUrl: './job-form-page.html',
 })
-export class JobFormPage implements OnInit {
-  private route = inject(ActivatedRoute);
+export class JobFormPage {
   private router = inject(Router);
-  private jobState = inject(JobState);
+  protected jobState = inject(JobState);
   private toast = inject(ToastService);
 
+  id = input<string>();
+  mode = input<'application'>();
+
   draft = signal<Job | undefined>(undefined);
-  protected isApplication = this.route.snapshot.data['mode'] === 'application';
-  protected isEditing = !!this.route.snapshot.paramMap.get('id');
+  notFound = signal(false);
+  saving = signal(false);
+  protected isApplication = computed(() => this.mode() === 'application');
+  protected isEditing = computed(() => !!this.id());
 
   protected pipeline = computed(() => {
     const job = this.draft();
-    if (this.isApplication) return true;
+    if (this.isApplication()) return true;
     return !!job?.jobUpdates.length && getLatestJobUpdate(job).status !== JobStatus.NEW;
   });
 
   protected heading = computed(() => {
-    const editing = this.isEditing;
+    const editing = this.isEditing();
     return this.pipeline()
       ? {
           eyebrow: editing ? 'Application' : 'Add application',
@@ -42,39 +47,72 @@ export class JobFormPage implements OnInit {
         };
   });
 
-  async ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
+  constructor() {
+    effect(() => {
+      const id = this.id();
+      untracked(() => void this.init(id));
+    });
+  }
 
-    if (id) {
-      if (this.jobState.jobs().length === 0) await this.jobState.loadJobs();
-      this.jobState.selectJob(id);
-      this.draft.set(this.jobState.selectedJob());
-    } else {
+  private async init(id: string | undefined): Promise<void> {
+    this.notFound.set(false);
+    if (!id) {
       this.draft.set({ company: '', role: '', jobDescription: '', jobUpdates: [] });
+      return;
     }
+    this.draft.set(undefined);
+    const job = await this.jobState.openJob(id);
+    if (this.id() !== id) return;
+    if (job) this.draft.set(job);
+    else this.notFound.set(true);
   }
 
   async onSave(job: Job): Promise<void> {
-    if (job.id) {
-      const { id, ...updates } = job;
-      console.log(updates);
-      await this.jobState.updateJob(id, updates);
-      const isSaved = getLatestJobUpdate(job).status === JobStatus.NEW;
-      this.toast.success('Changes saved successfully.');
-      this.router.navigate([isSaved ? '/jobs' : '/applications', id]);
-    } else {
-      if (!job.jobUpdates?.length) {
-        job.jobUpdates = [{ status: JobStatus.NEW, updatedAt: new Date() }];
-      }
-      const saved = await this.jobState.addJob(job);
-      const isApp = getLatestJobUpdate(job).status !== JobStatus.NEW;
-      const base = isApp ? '/applications' : '/jobs';
-      this.toast.success(
-        isApp ? 'Application saved successfully.' : 'Job saved successfully.',
-        isApp ? { label: 'Create tailored CV', link: [base, saved.id, 'cv'] } : undefined,
-      );
-      this.router.navigate([base, saved.id]);
+    if (this.saving()) return;
+    this.saving.set(true);
+    try {
+      if (job.id) await this.updateExisting(job.id, job);
+      else await this.createNew(job);
+    } catch {
+      this.toast.error('Could not save. Check your connection and try again.');
+    } finally {
+      this.saving.set(false);
     }
+  }
+
+  private async updateExisting(id: string, job: Job): Promise<void> {
+    const updates: Partial<Job> = {
+      company: job.company,
+      role: job.role,
+      url: job.url,
+      location: job.location,
+      employmentType: job.employmentType,
+      salary: job.salary,
+      applicationDeadline: job.applicationDeadline,
+      contact: job.contact,
+      jobDescription: job.jobDescription,
+      notes: job.notes,
+    };
+    if (job.jobUpdates !== this.draft()?.jobUpdates) updates.jobUpdates = job.jobUpdates;
+
+    await this.jobState.updateJob(id, updates);
+    const isSaved = getLatestJobUpdate(job).status === JobStatus.NEW;
+    this.toast.success('Changes saved successfully.');
+    this.router.navigate([isSaved ? '/jobs' : '/applications', id]);
+  }
+
+  private async createNew(job: Job): Promise<void> {
+    const toSave: Job = job.jobUpdates?.length
+      ? job
+      : { ...job, jobUpdates: [{ status: JobStatus.NEW, updatedAt: new Date() }] };
+    const saved = await this.jobState.addJob(toSave);
+    const isApp = getLatestJobUpdate(toSave).status !== JobStatus.NEW;
+    const base = isApp ? '/applications' : '/jobs';
+    this.toast.success(
+      isApp ? 'Application saved successfully.' : 'Job saved successfully.',
+      isApp ? { label: 'Create tailored CV', link: [base, saved.id, 'cv'] } : undefined,
+    );
+    this.router.navigate([base, saved.id]);
   }
 
   onCancel(): void {
@@ -83,7 +121,7 @@ export class JobFormPage implements OnInit {
       const isSaved = getLatestJobUpdate(existing).status === JobStatus.NEW;
       this.router.navigate([isSaved ? '/jobs' : '/applications', existing.id]);
     } else {
-      this.router.navigate([this.isApplication ? '/applications' : '/jobs']);
+      this.router.navigate([this.isApplication() ? '/applications' : '/jobs']);
     }
   }
 }

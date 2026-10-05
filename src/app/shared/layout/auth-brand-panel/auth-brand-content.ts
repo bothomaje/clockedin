@@ -40,7 +40,6 @@ export const AUTH_HEADLINES: { prefix: string; headline: string }[] = [
   { prefix: '/auth/error', headline: 'Access issues happen.' },
 ];
 
-// Index = onboarding step
 export const ONBOARDING_BRAND: WizardBrand[] = [
   {
     headline: 'Your job search, organised in one calm space.',

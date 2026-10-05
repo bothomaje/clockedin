@@ -1,12 +1,7 @@
 import { inject, Service } from '@angular/core';
 import { Career } from '../../../profile/models/career';
 import { CvValidationResult } from '../../models/cv-validation';
-import {
-  AiGenerationRequest,
-  AiGenerativeCapability,
-  AiProvider,
-  AiProviderId,
-} from './ai-provider';
+import { AiGenerationRequest, AiProvider, AiProviderId } from './ai-provider';
 import { AiRun } from './tasks/ai-task';
 import { analyseJobTask } from './tasks/job-analysis.task';
 import { generateCvTask } from './tasks/cv-generation.task';
@@ -29,29 +24,14 @@ export interface AiLabRunResult {
   latencyMs: number;
   attempts?: number;
   data?: unknown;
-  /** Structural/factual check via the existing validators — only set for cv/cover-letter comparisons. */
   validation?: CvValidationResult;
   error?: string;
 }
 
-/** Marker used internally to pull a task's built AiGenerationRequest out without letting it actually call a provider. */
 class CapturedRequestSignal {
   constructor(readonly request: AiGenerationRequest) {}
 }
 
-/**
- * Development-only AI evaluation harness (roadmap Phase 16). Runs the same
- * request through several providers and reports latency/success/validity
- * side by side — no /ai-lab route or UI built here, that's separate from
- * this project's current dev-plan work. This service is what a future
- * /ai-lab page would call.
- *
- * WARNING: this deliberately bypasses AiService's quota and dedup logic for
- * the providers being compared — that's the point (you want every provider
- * to actually run, not have one skipped by dedup or a quota short-circuit).
- * Comparing against 'firebase-gemini' spends real Spark quota, once per
- * provider in the comparison, every time you run a comparison.
- */
 @Service()
 export class AiLabService {
   private transformers = inject(TransformersProvider);
@@ -131,22 +111,18 @@ export class AiLabService {
     return { analysis, selectedFacts: pickSelectedFacts(facts, selection) };
   }
 
-  /** Aborts the task the moment it calls the provider, capturing the exact request it built. */
   private async captureRequest<T>(
     invoke: (run: AiRun) => Promise<T>,
   ): Promise<AiGenerationRequest> {
     const capturingRun: AiRun = async <U>(request: AiGenerationRequest) => {
       throw new CapturedRequestSignal(request);
-      // Body only ever throws — the AiGenerationResult<U> return type is
-      // never actually produced, which is fine: a function typed to return
-      // X can satisfy that by always throwing instead.
     };
 
     try {
       await invoke(capturingRun);
     } catch (error) {
       if (error instanceof CapturedRequestSignal) return error.request;
-      throw error; // a genuine error from building the request (e.g. empty job description) — surface it
+      throw error;
     }
 
     throw new Error('Task completed without calling the AI provider — nothing to compare.');

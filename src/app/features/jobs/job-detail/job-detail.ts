@@ -6,6 +6,7 @@ import { StatusChip, statusLabel } from '../../../shared/ui/status-chip/status-c
 import { RouterLink } from '@angular/router';
 import { Breadcrumbs, Crumb } from '../../../shared/ui/breadcrumbs/breadcrumbs';
 import { Modal } from '../../../shared/ui/modal/modal';
+import { Select, SelectOption } from '../../../shared/ui/select/select';
 
 export interface StatusChangeEvent {
   status: JobStatus;
@@ -16,7 +17,7 @@ type DetailModal = 'status' | 'event' | null;
 
 @Component({
   selector: 'app-job-detail',
-  imports: [FormsModule, DatePipe, StatusChip, RouterLink, Breadcrumbs, Modal],
+  imports: [FormsModule, DatePipe, StatusChip, RouterLink, Breadcrumbs, Modal, Select],
   templateUrl: './job-detail.html',
   styleUrl: './job-detail.scss',
 })
@@ -34,6 +35,10 @@ export class JobDetail {
   eventNote = '';
   nextStatus: JobStatus = JobStatus.NEW;
   statuses = Object.values(JobStatus);
+  statusSelectOptions: SelectOption<JobStatus>[] = this.statuses.map((status) => ({
+    value: status,
+    label: statusLabel(status),
+  }));
   statusLabel = statusLabel;
   getDateApplied = getDateApplied;
 

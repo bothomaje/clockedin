@@ -67,18 +67,7 @@
       </section>
       <section class="clk-field">
         <label class="form-label" for="deadline">Application Deadline</label>
-        <input
-          id="deadline"
-          type="date"
-          class="form-control"
-          name="deadline"
-          [ngModel]="
-            editedJob.applicationDeadline
-              ? (editedJob.applicationDeadline | date: 'yyyy-MM-dd')
-              : ''
-          "
-          (ngModelChange)="editedJob.applicationDeadline = $event ? toDate($event) : null"
-        />
+        <app-date-field inputId="deadline" [(value)]="editedJob.applicationDeadline" />
       </section>
 
       <section class="clk-field">
@@ -114,26 +103,13 @@
         @if (showStatus()) {
           <section class="clk-field">
             <label class="form-label" for="status">Status</label>
-            <select id="status" class="form-select" name="status" [(ngModel)]="status">
-              @for (s of statusOptions; track s) {
-                <option [value]="s">{{ statusLabel(s) }}</option>
-              }
-            </select>
+            <app-select inputId="status" [options]="statusSelectOptions" [(value)]="status" />
           </section>
         }
 
         <section class="clk-field">
           <label class="form-label" for="dateApplied">Date Applied</label>
-          <input
-            id="dateApplied"
-            type="date"
-            class="form-control"
-            name="dateApplied"
-            [ngModel]="
-              getDateApplied(editedJob) ? (getDateApplied(editedJob) | date: 'yyyy-MM-dd') : ''
-            "
-            (ngModelChange)="getDateApplied(editedJob) === $event ? toDate($event) : null"
-          />
+          <app-date-field inputId="dateApplied" [(value)]="dateApplied" />
         </section>
       </section>
       <section class="clk-field">

@@ -133,32 +133,20 @@
       </section>
 
       @if (showStatusFilter()) {
-        <select
-          class="form-select"
-          aria-label="Status"
-          [class.is-active]="!!statusFilter()"
-          [(ngModel)]="statusFilter"
-          name="status"
-        >
-          <option value="">{{ allStatusesLabel() }}</option>
-          @for (status of statusOptions(); track status) {
-            <option [value]="status">{{ statusLabel(status) }}</option>
-          }
-        </select>
+        <app-select
+          ariaLabel="Status"
+          [options]="statusSelectOptions()"
+          [highlight]="!!statusFilter()"
+          [(value)]="statusFilter"
+        />
       }
 
-      <select
-        class="form-select"
-        aria-label="Location"
-        [class.is-active]="!!locationFilter()"
-        [(ngModel)]="locationFilter"
-        name="location"
-      >
-        <option value="">All locations</option>
-        @for (l of locationOptions(); track l) {
-          <option [value]="l">{{ l }}</option>
-        }
-      </select>
+      <app-select
+        ariaLabel="Location"
+        [options]="locationSelectOptions()"
+        [highlight]="!!locationFilter()"
+        [(value)]="locationFilter"
+      />
       @if (activeFilterCount() > 0) {
         <button
           type="button"
@@ -179,16 +167,12 @@
       }
       <section class="clk-sort">
         <label for="sortBy">Sort by:</label>
-        <select id="sortBy" class="clk-sort__select" [(ngModel)]="sortBy" name="sortBy">
-          @if (variant() === 'saved') {
-            <option value="savedAt">Date Saved</option>
-          } @else {
-            <option value="dateApplied">Date Applied</option>
-          }
-          <option value="updatedAt">Last Updated</option>
-          <option value="company">Company</option>
-          <option value="role">Role</option>
-        </select>
+        <app-select
+          inputId="sortBy"
+          appearance="inline"
+          [options]="sortOptions()"
+          [(value)]="sortBy"
+        />
         <button
           type="button"
           class="clk-sort__dir"

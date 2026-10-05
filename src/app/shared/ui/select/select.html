@@ -1,0 +1,27 @@
+<div ngbDropdown class="clk-select" [class.clk-select--inline]="appearance() === 'inline'">
+  <button
+    type="button"
+    ngbDropdownToggle
+    class="clk-select__toggle"
+    [class.form-select]="appearance() === 'field'"
+    [class.is-active]="highlight()"
+    [id]="inputId()"
+    [attr.aria-label]="ariaLabel() || null"
+    [disabled]="disabled()"
+  >
+    {{ selectedLabel() }}
+  </button>
+  <div ngbDropdownMenu class="clk-select__menu">
+    @for (option of options(); track option.value) {
+      <button
+        type="button"
+        ngbDropdownItem
+        [class.active]="option.value === value()"
+        [attr.aria-current]="option.value === value() ? 'true' : null"
+        (click)="value.set(option.value)"
+      >
+        {{ option.label }}
+      </button>
+    }
+  </div>
+</div>

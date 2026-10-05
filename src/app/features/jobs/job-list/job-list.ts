@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { statusLabel } from '../../../shared/ui/status-chip/status-chip';
 import { ErrorState } from '../../../shared/ui/error-state/error-state';
+import { Select, SelectOption } from '../../../shared/ui/select/select';
 
 export type SortField = 'updatedAt' | 'dateApplied' | 'savedAt' | 'company' | 'role';
 
@@ -34,7 +35,7 @@ const SAVED_COLUMNS: Column[] = [
 
 @Component({
   selector: 'app-job-list',
-  imports: [JobCard, FormsModule, EmptyState, ErrorState],
+  imports: [JobCard, FormsModule, EmptyState, ErrorState, Select],
   templateUrl: './job-list.html',
 })
 export class JobList implements OnInit {
@@ -97,6 +98,25 @@ export class JobList implements OnInit {
   });
 
   locationOptions = computed(() => this.distinct((j) => j.location));
+
+  statusSelectOptions = computed<SelectOption<JobStatus | ''>[]>(() => [
+    { value: '', label: this.allStatusesLabel() },
+    ...this.statusOptions().map((status) => ({ value: status, label: statusLabel(status) })),
+  ]);
+
+  locationSelectOptions = computed<SelectOption<string>[]>(() => [
+    { value: '', label: 'All locations' },
+    ...this.locationOptions().map((location) => ({ value: location, label: location })),
+  ]);
+
+  sortOptions = computed<SelectOption<SortField>[]>(() => [
+    this.variant() === 'saved'
+      ? { value: 'savedAt', label: 'Date Saved' }
+      : { value: 'dateApplied', label: 'Date Applied' },
+    { value: 'updatedAt', label: 'Last Updated' },
+    { value: 'company', label: 'Company' },
+    { value: 'role', label: 'Role' },
+  ]);
 
   private distinct(pick: (job: Job) => string | undefined): string[] {
     return [

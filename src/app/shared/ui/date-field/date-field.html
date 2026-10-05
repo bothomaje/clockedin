@@ -1,0 +1,39 @@
+<div class="input-group clk-date">
+  <input
+    class="form-control"
+    autocomplete="off"
+    ngbDatepicker
+    #picker="ngbDatepicker"
+    #control="ngModel"
+    placeholder="dd Mmm yyyy"
+    [id]="inputId()"
+    [attr.aria-label]="ariaLabel() || null"
+    [class.is-invalid]="control.invalid && control.touched"
+    [disabled]="disabled()"
+    [ngModel]="value()"
+    [ngModelOptions]="{ standalone: true }"
+    (ngModelChange)="onModelChange($event)"
+  />
+  <button
+    type="button"
+    class="btn btn-outline-secondary clk-date__toggle"
+    aria-label="Open calendar"
+    [disabled]="disabled()"
+    (click)="picker.toggle()"
+  >
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </svg>
+  </button>
+</div>

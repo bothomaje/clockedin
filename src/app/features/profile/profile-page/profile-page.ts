@@ -14,9 +14,10 @@ import { Modal } from '../../../shared/ui/modal/modal';
 import { Info } from '../models/info';
 import { CompletenessId, getCompleteness, READY_SCORE } from '../state/profile-completeness';
 import { ErrorState } from '../../../shared/ui/error-state/error-state';
+import { DateField } from '../../../shared/ui/date-field/date-field';
 
 @Component({
-  imports: [FormsModule, DatePipe, PageHeader, Modal, ErrorState],
+  imports: [FormsModule, DatePipe, PageHeader, Modal, ErrorState, DateField],
   selector: 'app-profile',
   templateUrl: './profile-page.html',
   styleUrl: './profile-page.scss',
@@ -48,7 +49,6 @@ export class Profile implements OnInit {
     ),
   );
 
-  // Derived from newest open-ended role, else newest role. No new model field.
   headline = computed(() => {
     const title = this.profileState.info().title?.trim();
     if (title) return title;
@@ -120,15 +120,6 @@ export class Profile implements OnInit {
       .split(',')
       .map((v) => v.trim())
       .filter(Boolean);
-  }
-
-  toDateInput(date?: Date | null): string {
-    if (!date) return '';
-    return new Date(date).toISOString().slice(0, 10);
-  }
-
-  fromDateInput(value: string): Date | null {
-    return value ? new Date(value) : null;
   }
 
   beginInfoEdit() {

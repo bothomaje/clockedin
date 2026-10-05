@@ -114,11 +114,7 @@
     @if (modal() === 'status') {
       <section class="clk-field">
         <label class="form-label" for="nextStatus">Update status</label>
-        <select id="nextStatus" class="form-select" name="nextStatus" [(ngModel)]="nextStatus">
-          @for (s of statuses; track s) {
-            <option [value]="s">{{ statusLabel(s) }}</option>
-          }
-        </select>
+        <app-select inputId="nextStatus" [options]="statusSelectOptions" [(value)]="nextStatus" />
       </section>
     }
     <section class="clk-field">

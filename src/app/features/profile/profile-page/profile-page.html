@@ -591,21 +591,14 @@
       <section class="clk-form-row mt-2">
         <section>
           <label class="form-label">Start Date</label>
-          <input
-            type="date"
-            class="form-control"
-            [ngModel]="toDateInput(form.startDate)"
-            (ngModelChange)="form.startDate = fromDateInput($event) ?? form.startDate"
+          <app-date-field
+            [value]="form.startDate"
+            (valueChange)="form.startDate = $event ?? form.startDate"
           />
         </section>
         <section>
           <label class="form-label">End Date</label>
-          <input
-            type="date"
-            class="form-control"
-            [ngModel]="toDateInput(form.endDate)"
-            (ngModelChange)="form.endDate = fromDateInput($event)"
-          />
+          <app-date-field [(value)]="form.endDate" />
           <div class="form-text">Leave blank if current</div>
         </section>
       </section>
@@ -652,21 +645,14 @@
       <section class="clk-form-row mt-2">
         <section>
           <label class="form-label">Start Date</label>
-          <input
-            type="date"
-            class="form-control"
-            [ngModel]="toDateInput(form.startDate)"
-            (ngModelChange)="form.startDate = fromDateInput($event) ?? form.startDate"
+          <app-date-field
+            [value]="form.startDate"
+            (valueChange)="form.startDate = $event ?? form.startDate"
           />
         </section>
         <section>
           <label class="form-label">End Date</label>
-          <input
-            type="date"
-            class="form-control"
-            [ngModel]="toDateInput(form.endDate)"
-            (ngModelChange)="form.endDate = fromDateInput($event)"
-          />
+          <app-date-field [(value)]="form.endDate" />
         </section>
       </section>
       <section class="clk-actions mt-4">

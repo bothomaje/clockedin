@@ -33,11 +33,6 @@ function overlapScore(factTokens: Set<string>, terms: string[], weight: number):
   return score;
 }
 
-/**
- * Deterministic relevance score for one career fact against a job analysis.
- * Exact token overlap only — no LLM, no embeddings. Phase 8: reduce how much
- * reasoning the model is responsible for before it ever sees a prompt.
- */
 export function scoreFact(
   fact: CareerFact,
   analysis: JobAnalysis,

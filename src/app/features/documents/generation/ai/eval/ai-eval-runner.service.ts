@@ -5,7 +5,6 @@ import { AiLabRunResult, AiLabService } from '../ai-lab.service';
 import { CAREER_FIXTURES, CareerFixtureName } from './fixtures/careers.fixtures';
 import { JOB_FIXTURES, JobFixtureName } from './fixtures/jobs.fixtures';
 
-/** Fake candidate identity — these runs never touch real user data. */
 const EVAL_INFO: Info = {
   name: 'Eval Candidate',
   email: 'eval@example.invalid',
@@ -29,7 +28,6 @@ export interface AiEvalReportEntry {
 export class AiEvalRunner {
   private lab = inject(AiLabService);
 
-  /** Roadmap's minimum CV test set: five roles, one per named category. */
   readonly cvCases: AiEvalCase[] = [
     { name: 'junior-software-engineer', career: 'rich', job: 'juniorSoftwareEngineer' },
     { name: 'frontend-engineer', career: 'rich', job: 'frontendEngineer' },
@@ -38,7 +36,6 @@ export class AiEvalRunner {
     { name: 'unrelated-role', career: 'rich', job: 'unrelatedRole' },
   ];
 
-  /** Roadmap's minimum cover-letter test set. */
   readonly coverLetterCases: AiEvalCase[] = [
     { name: 'technical-role', career: 'rich', job: 'frontendEngineer' },
     { name: 'creative-role', career: 'rich', job: 'creativeTechnology' },
@@ -46,11 +43,6 @@ export class AiEvalRunner {
     { name: 'strong-candidate-overlap', career: 'rich', job: 'manyMatchingTechnologies' },
   ];
 
-  /**
-   * Roadmap's edge cases. 'multiple-career-profiles' and 'no-career-profile'
-   * both use the 'frontendEngineer' job so the only variable is the career
-   * shape — richCareer carries two career profiles, noProfile carries none.
-   */
   readonly edgeCases: AiEvalCase[] = [
     { name: 'sparse-cv', career: 'sparse', job: 'frontendEngineer' },
     { name: 'long-cv', career: 'rich', job: 'frontendEngineer' },

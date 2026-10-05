@@ -1,5 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { AuthBrandPanel } from '../auth-brand-panel/auth-brand-panel';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';

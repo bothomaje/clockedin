@@ -1,6 +1,5 @@
 import { Evidence } from './evidence';
 import { Link } from './link';
-import { Skill } from './skill';
 
 export interface Project {
   id?: string;

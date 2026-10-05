@@ -27,8 +27,6 @@ export class FirebaseGeminiProvider implements AiProvider {
     'cover-letter-generation',
   ];
 
-  // One model per capability. Each capability has a fixed schema, system
-  // instruction and temperature today, so capability is a safe cache key.
   private models = new Map<AiGenerativeCapability, GenerativeModel>();
 
   async isAvailable(): Promise<boolean> {

@@ -1,5 +1,4 @@
 import { Evidence } from './evidence';
-import { Skill } from './skill';
 
 export interface Experience {
   id?: string;

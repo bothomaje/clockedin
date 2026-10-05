@@ -1,6 +1,5 @@
 import { AiJsonSchema } from '../ai-provider';
 
-/** Plain JSON Schema (draft-07 shape), for providers that don't take Firebase's Schema builder. */
 export function toJsonSchema(schema: AiJsonSchema): Record<string, unknown> {
   switch (schema.type) {
     case 'string':

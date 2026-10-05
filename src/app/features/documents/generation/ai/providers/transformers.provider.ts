@@ -12,18 +12,6 @@ import { KeywordExtractor } from '../local/keyword-extraction';
 
 const MODEL_LABEL = 'transformers-js/all-MiniLM-L6-v2';
 
-/**
- * Local, non-generative job-analysis provider (roadmap Phase 4).
- *
- * Extracts keywords already present in the job description — nothing invented,
- * so it needs none of Gemini's factual guardrails. It does NOT attempt
- * requiredSkills / preferredSkills / technologies / domains / seniority /
- * responsibilities: those need judgement about what's required vs implied,
- * which is classification/reasoning, not extraction. Those fields come back
- * empty; the caller decides whether that's good enough or needs Gemini.
- *
- * Not wired into AiService yet — that's the Phase 6/7 orchestrator's job.
- */
 @Service()
 export class TransformersProvider implements AiProvider {
   readonly id = 'transformers' as const;
@@ -76,12 +64,6 @@ export class TransformersProvider implements AiProvider {
     }
   }
 
-  /**
-   * job-analysis.task.ts wraps the description in <job_description> tags.
-   * This is a leaky coupling to that prompt convention — flagged for the
-   * Phase 6/7 orchestrator, which should carry structured input alongside
-   * the prompt so local providers don't need to parse it back out.
-   */
   private extractJobDescription(prompt: string): string {
     const match = prompt.match(/<job_description>\n?([\s\S]*?)\n?<\/job_description>/);
     return (match?.[1] ?? prompt).trim();

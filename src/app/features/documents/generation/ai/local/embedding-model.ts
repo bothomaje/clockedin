@@ -53,7 +53,6 @@ export class EmbeddingModel {
   private async createExtractor(): Promise<FeatureExtractionPipeline> {
     const { pipeline, env } = await import('@huggingface/transformers');
 
-    // Only ever fetch from the HF hub/CDN — never look for models bundled with the app.
     env.allowLocalModels = false;
 
     this.status.set('downloading');

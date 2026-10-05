@@ -1,7 +1,6 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { JobState } from '../state/job-state';
-import { JobDetail, StatusChangeEvent } from '../job-detail/job-detail';
 import { getLatestJobUpdate, getSavedAt, JobStatus } from '../models/job';
 import { AssociatedAssets } from '../../documents/associated-assets/associated-assets';
 import { DocumentState } from '../../documents/state/document-state';
@@ -18,7 +17,7 @@ import { Breadcrumbs, Crumb } from '../../../shared/ui/breadcrumbs/breadcrumbs';
   templateUrl: './job-spec-page.html',
   styleUrl: './job-spec-page.scss',
 })
-export class JobSpecPage implements OnInit {
+export class JobSpecPage {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   protected jobState = inject(JobState);
@@ -26,7 +25,10 @@ export class JobSpecPage implements OnInit {
   protected profileState = inject(ProfileState);
   private toast = inject(ToastService);
 
+  id = input.required<string>();
   confirmingDelete = signal(false);
+  deleting = signal(false);
+  notFound = signal(false);
 
   linked = computed(() => {
     const job = this.jobState.selectedJob();
@@ -41,23 +43,37 @@ export class JobSpecPage implements OnInit {
     { label: `${this.jobState.selectedJob()?.role || 'Untitled'} specification` },
   ]);
 
-  async ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id')!;
-    if (this.jobState.jobs().length === 0) await this.jobState.loadJobs();
-    this.jobState.selectJob(id);
-    await this.profileState.load();
+  constructor() {
+    effect(() => {
+      const id = this.id();
+      untracked(() => void this.load(id));
+    });
+  }
+
+  private async load(id: string): Promise<void> {
+    this.notFound.set(false);
+    const [job] = await Promise.all([this.jobState.openJob(id), this.profileState.load()]);
+    if (this.id() !== id) return;
+    if (!job) {
+      this.notFound.set(true);
+      return;
+    }
     this.documentState.loadForJob(id);
   }
 
   async applyNow(): Promise<void> {
     const job = this.jobState.selectedJob();
     if (!job?.id) return;
-    await this.jobState.updateJobStatus(job.id, JobStatus.APPLIED);
-    this.toast.success('Moved to Applications.', {
-      label: 'Create tailored CV',
-      link: ['/applications', job.id, 'cv'],
-    });
-    this.router.navigate(['/applications', job.id]);
+    try {
+      await this.jobState.updateJobStatus(job.id, JobStatus.APPLIED);
+      this.toast.success('Moved to Applications.', {
+        label: 'Create tailored CV',
+        link: ['/applications', job.id, 'cv'],
+      });
+      this.router.navigate(['/applications', job.id]);
+    } catch {
+      this.toast.error('Could not update this job. Try again.');
+    }
   }
 
   beginDelete(): void {
@@ -70,8 +86,16 @@ export class JobSpecPage implements OnInit {
 
   async confirmDelete(): Promise<void> {
     const job = this.jobState.selectedJob();
-    if (!job?.id) return;
-    await this.jobState.deleteJob(job.id);
-    this.router.navigate(['/jobs']);
+    if (!job?.id || this.deleting()) return;
+    this.deleting.set(true);
+    try {
+      await this.jobState.deleteJob(job.id);
+      this.router.navigate(['/jobs']);
+    } catch {
+      this.confirmingDelete.set(false);
+      this.toast.error('Could not delete this job. Try again.');
+    } finally {
+      this.deleting.set(false);
+    }
   }
 }

@@ -168,7 +168,6 @@ const richCareerProfiles: Career['careerProfiles'] = [
   },
 ];
 
-/** Full, realistic career — multi-role history, education, projects, 2 career profiles. Base for most cases. */
 export const richCareer: Career = {
   experience: richExperience,
   education: richEducation,
@@ -177,7 +176,6 @@ export const richCareer: Career = {
   careerProfiles: richCareerProfiles,
 };
 
-/** Minimal career: one short recent role, no education/projects, few skills, no career profile. */
 export const sparseCareer: Career = {
   experience: [
     {
@@ -203,13 +201,11 @@ export const sparseCareer: Career = {
   careerProfiles: [],
 };
 
-/** Same rich history, but the user hasn't set up any career profile lens yet. */
 export const noCareerProfileCareer: Career = {
   ...richCareer,
   careerProfiles: [],
 };
 
-/** Rich history, but most optional metadata fields left blank — tests robustness, not just happy-path data. */
 export const missingOptionalFieldsCareer: Career = {
   experience: [
     {
@@ -217,22 +213,19 @@ export const missingOptionalFieldsCareer: Career = {
       endDate: null,
       company: 'Unnamed Startup',
       role: 'Developer',
-      // no location, employmentType, description, evidence, skillIds, domains
     },
   ],
   education: [
     {
       institution: 'Open University',
-      // no qualification, field, dates, description, achievements
     },
   ],
   projects: [
     {
       name: 'Untitled Project',
-      // no description, technologies, links, evidence, skillIds, domains
     },
   ],
-  skills: [{ name: 'JavaScript' }], // no id, no category
+  skills: [{ name: 'JavaScript' }],
   careerProfiles: [],
 };
 

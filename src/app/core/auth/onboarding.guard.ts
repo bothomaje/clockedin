@@ -16,7 +16,9 @@ export const onboardingGuard: CanActivateFn = () => {
       return profileState
         .load()
         .then(() =>
-          profileState.onboardingComplete() ? router.createUrlTree(['/dashboard']) : true,
+          profileState.error() || profileState.onboardingComplete()
+            ? router.createUrlTree(['/dashboard'])
+            : true,
         );
     }),
   );

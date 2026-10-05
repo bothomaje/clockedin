@@ -25,11 +25,6 @@ interface MlcEngine {
   unload(): Promise<void>;
 }
 
-/**
- * Lazily loads a small instruct model in the browser via WebLLM (WebGPU).
- * One engine instance is shared by every capability that uses it. Nothing
- * here talks to Firebase or leaves the device.
- */
 @Service()
 export class WebLlmEngine {
   readonly status = signal<ModelStatus>('unavailable');

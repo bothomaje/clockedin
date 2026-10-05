@@ -85,13 +85,8 @@ const STOPWORDS = new Set([
 
 const MAX_CANDIDATES = 60;
 const DEFAULT_TOP_N = 12;
-const DIVERSITY_THRESHOLD = 0.85; // drop a candidate this close to one already picked
+const DIVERSITY_THRESHOLD = 0.85;
 
-/**
- * Extractive keyword ranking, KeyBERT-style: candidate phrases come only from
- * the text itself, ranked by embedding similarity to the whole document.
- * Nothing is invented, so this is safe to run without Gemini's factual guardrails.
- */
 @Service()
 export class KeywordExtractor {
   private model = inject(EmbeddingModel);
@@ -122,7 +117,6 @@ export class KeywordExtractor {
     return selected.map((candidate) => candidate.phrase);
   }
 
-  /** 1–3 word phrases pulled straight from the text. */
   private candidatePhrases(text: string): string[] {
     const words = text
       .replace(/[^\p{L}\p{N}+.#\s-]/gu, ' ')

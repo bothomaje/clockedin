@@ -3,9 +3,20 @@
   <app-job-form
     [job]="job"
     [pipeline]="pipeline()"
-    [showStatus]="isApplication && !isEditing"
+    [showStatus]="isApplication() && !isEditing()"
     [submitLabel]="heading().submit"
     (save)="onSave($event)"
     (cancel)="onCancel()"
   />
+} @else if (notFound()) {
+  <app-empty-state
+    title="Job not found"
+    [description]="
+      jobState.error()
+        ? 'Could not load this job. Check your connection and try again.'
+        : 'It may have been deleted, or the link is wrong.'
+    "
+  >
+    <a routerLink="/jobs" class="btn btn-primary">Back to Jobs</a>
+  </app-empty-state>
 }

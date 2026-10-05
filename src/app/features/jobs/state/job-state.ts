@@ -37,6 +37,12 @@ export class JobState {
     this.selectedJobIdSignal.set(jobId);
   }
 
+  async openJob(jobId: string): Promise<Job | undefined> {
+    this.selectedJobIdSignal.set(jobId);
+    if (this.jobsSignal().length === 0) await this.loadJobs();
+    return this.selectedJob();
+  }
+
   async addJob(job: Job): Promise<Job> {
     const saved = await this.jobRepository.addJob(job);
     this.jobsSignal.update((jobs) => [...jobs, saved]);
@@ -60,16 +66,13 @@ export class JobState {
   }
 
   async updateJobStatus(jobId: string, newStatus: JobStatus, note?: string): Promise<void> {
-    await this.jobRepository.updateJobStatus(jobId, newStatus, note);
+    const entry = await this.jobRepository.updateJobStatus(jobId, newStatus, note);
     this.jobsSignal.update((jobs) =>
       jobs.map((job) =>
         job.id === jobId
           ? {
               ...job,
-              jobUpdates: [
-                ...job.jobUpdates,
-                { status: newStatus, updatedAt: new Date(), ...(note ? { note } : {}) },
-              ],
+              jobUpdates: [...job.jobUpdates, entry],
             }
           : job,
       ),

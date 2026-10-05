@@ -46,13 +46,17 @@ export class VerifyEmail implements OnInit, OnDestroy {
     void this.startPending();
   }
 
+  private destroyed = false;
+
   ngOnDestroy(): void {
+    this.destroyed = true;
     clearInterval(this.pollTimer);
     clearInterval(this.cooldownTimer);
   }
 
   private async startPending(): Promise<void> {
     const user = await firstValueFrom(this.authService.currentUser$);
+    if (this.destroyed) return;
 
     if (!user) {
       this.router.navigate(['/login']);

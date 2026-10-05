@@ -144,7 +144,6 @@ export class DocumentWizardPage implements OnInit {
   canGenerate = computed(() => this.profileState.experience().length > 0);
   aiAllowed = this.authService.isEmailVerified;
 
-  // Themes offered as emphasis toggles come from the stored job analysis.
   emphasisChoices = computed(() => {
     const a = this.analysis();
     if (!a) return [];
@@ -168,7 +167,6 @@ export class DocumentWizardPage implements OnInit {
     }));
   });
 
-  // Derived from stored analysis + profile. String match on skill names, so a hint not a score.
   tailoringSummary = computed(() => {
     const doc = this.active();
     if (!doc) return undefined;
@@ -259,7 +257,6 @@ export class DocumentWizardPage implements OnInit {
     }
   }
 
-  // Old JobAnalysisPanel saved analysis. Panel is gone; save here so regenerations skip re-analysis (Spark quota).
   private async persistAnalysis(job: Job, analysis: JobAnalysis): Promise<void> {
     if (job.jobAnalysis || !job.id) return;
     try {

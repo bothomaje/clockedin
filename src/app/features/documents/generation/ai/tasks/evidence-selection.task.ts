@@ -10,7 +10,6 @@ import { DATA_BOUNDARY, FACTUAL_RULES, MAX_SELECTED_FACTS } from '../prompts/sha
 import { evidenceSelectionSchema } from '../schemas/ai-schemas';
 import { AiRun } from './ai-task';
 
-// A score gap this small right at the selection cutoff counts as a tie — ambiguous, ask the LLM.
 const TIE_MARGIN = 0.5;
 const SEMANTIC_WEIGHT = 3;
 
@@ -38,7 +37,6 @@ export async function selectEvidenceTask(
   return { selection, facts };
 }
 
-/** Selected facts plus the children of any selected parent fact. */
 export function pickSelectedFacts(facts: CareerFact[], selection: EvidenceSelection): CareerFact[] {
   const selectedIds = new Set(selection.selectedFactIds);
 
@@ -47,14 +45,6 @@ export function pickSelectedFacts(facts: CareerFact[], selection: EvidenceSelect
   );
 }
 
-/**
- * Deterministic pass (Phase 8): experience and education are always included —
- * that rule was never up for debate — and everything else is scored by keyword
- * overlap, blended with semantic similarity when the local embedding model is
- * available. Returns null when the result is genuinely ambiguous (a tie at the
- * cutoff, or no signal at all), so the caller can fall back to the LLM instead
- * of shipping a coin-flip selection.
- */
 async function selectDeterministically(
   facts: CareerFact[],
   analysis: JobAnalysis,
@@ -141,7 +131,6 @@ async function semanticScoresFor(
   }
 }
 
-/** Original LLM-based selection. Now only reached for genuinely ambiguous cases. */
 async function selectViaLlm(
   run: AiRun,
   analysis: JobAnalysis,

@@ -1,0 +1,29 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "job-ingestion",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-10-01",
+	"observability": {
+		"enabled": true,
+	},
+	"env": {
+		"staging": {
+			"vars": {
+				"ENVIRONMENT": "staging",
+				"FIREBASE_PROJECT_ID": "clockedin-staging",
+				"FIRESTORE_DATABASE_ID": "default",
+			},
+		},
+		"production": {
+			"vars": {
+				"ENVIRONMENT": "production",
+				"FIREBASE_PROJECT_ID": "clockedin-prod",
+				"FIRESTORE_DATABASE_ID": "default",
+			},
+		},
+	},
+}

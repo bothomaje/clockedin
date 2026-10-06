@@ -1,3 +1,4 @@
+import { placeLabel } from '../../../shared/location/location.model';
 import { User } from '../models/user';
 
 export type CompletenessId =
@@ -52,7 +53,7 @@ export function getCompleteness(user: User): Completeness {
       badge: 'Missing',
       hint: 'Name and location appear on every generated document.',
       action: 'Add details',
-      done: !!info.name?.trim() && !!info.location?.trim(),
+      done: !!info.name?.trim() && !!placeLabel(info.location, info.legacyLocation),
     },
     {
       id: 'summary',

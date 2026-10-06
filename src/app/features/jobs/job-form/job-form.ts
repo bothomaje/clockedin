@@ -4,10 +4,12 @@ import { APPLICATION_STATUSES, getDateApplied, Job, JobStatus, JobUpdate } from 
 import { statusLabel } from '../../../shared/ui/status-chip/status-chip';
 import { DateField } from '../../../shared/ui/date-field/date-field';
 import { Select, SelectOption } from '../../../shared/ui/select/select';
+import { LocationInput } from '../../../shared/ui/location-input/location-input';
+import { WORK_MODE_LABELS, WorkMode } from '../../../shared/location/location.model';
 
 @Component({
   selector: 'app-job-form',
-  imports: [FormsModule, DateField, Select],
+  imports: [FormsModule, DateField, Select, LocationInput],
   templateUrl: './job-form.html',
 })
 export class JobForm {
@@ -25,6 +27,19 @@ export class JobForm {
     value: status,
     label: statusLabel(status),
   }));
+  workModeSelectOptions: SelectOption<WorkMode | ''>[] = [
+    { value: '', label: 'Not specified' },
+    ...(Object.keys(WORK_MODE_LABELS) as WorkMode[]).map((value) => ({
+      value,
+      label: WORK_MODE_LABELS[value],
+    })),
+  ];
+  get workModeValue(): WorkMode | '' {
+    return this.editedJob.workMode ?? '';
+  }
+  set workModeValue(value: WorkMode | '') {
+    this.editedJob.workMode = value || null;
+  }
 
   constructor() {
     effect(() => {
@@ -35,6 +50,7 @@ export class JobForm {
 
   onSubmit(): void {
     const job = { ...this.editedJob };
+    if (job.workMode === 'remote') job.location = null;
     if (!job.id && this.showStatus()) {
       job.jobUpdates = this.newApplicationUpdates();
     } else if (job.id) {

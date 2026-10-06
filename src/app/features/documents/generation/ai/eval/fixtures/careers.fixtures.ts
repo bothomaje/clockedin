@@ -1,11 +1,12 @@
 import { Career } from '../../../../../profile/models/career';
+import { CAPE_TOWN, JOHANNESBURG } from './locations.fixtures';
 
 const richExperience: Career['experience'] = [
   {
     id: 'exp-1',
     company: 'Nimbus Retail Systems',
     role: 'Software Engineer',
-    location: 'Johannesburg, South Africa',
+    location: JOHANNESBURG,
     employmentType: 'Full-time',
     startDate: new Date('2023-02-01'),
     endDate: null,
@@ -29,7 +30,7 @@ const richExperience: Career['experience'] = [
     id: 'exp-2',
     company: 'Lightbeam Studio',
     role: 'Frontend Developer',
-    location: 'Remote',
+    workMode: 'remote',
     employmentType: 'Contract',
     startDate: new Date('2021-06-01'),
     endDate: new Date('2023-01-31'),
@@ -48,7 +49,7 @@ const richExperience: Career['experience'] = [
     id: 'exp-3',
     company: 'Solace Interactive',
     role: 'Creative Developer',
-    location: 'Cape Town, South Africa',
+    location: CAPE_TOWN,
     employmentType: 'Full-time',
     startDate: new Date('2019-08-01'),
     endDate: new Date('2021-05-31'),
@@ -67,7 +68,7 @@ const richExperience: Career['experience'] = [
     id: 'exp-4',
     company: 'Kestrel QA Labs',
     role: 'Junior Test Engineer',
-    location: 'Johannesburg, South Africa',
+    location: JOHANNESBURG,
     employmentType: 'Full-time',
     startDate: new Date('2018-01-01'),
     endDate: new Date('2019-07-31'),

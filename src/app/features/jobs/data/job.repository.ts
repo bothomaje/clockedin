@@ -13,6 +13,7 @@ import {
 } from 'firebase/firestore';
 import { firestore, firebaseAuth } from '../../../core/firebase/firebase';
 import { JobAnalysis } from '../models/job-analysis';
+import { Location } from '../../../shared/location/location.model';
 
 @Service()
 export class JobRepository {
@@ -40,7 +41,8 @@ export class JobRepository {
       role: job.role ?? '',
       jobDescription: job.jobDescription ?? '',
       url: job.url ?? '',
-      location: job.location ?? '',
+      location: job.location ?? null,
+      workMode: job.workMode ?? null,
       employmentType: job.employmentType ?? '',
       salary: job.salary ?? '',
       notes: job.notes ?? '',
@@ -77,6 +79,12 @@ export class JobRepository {
     await deleteDoc(doc(this.db, 'users', uid, 'jobs', jobId));
   }
 
+  private toLocationFields(raw: unknown): Pick<Job, 'location' | 'legacyLocation'> {
+    if (typeof raw === 'string') return raw.trim() ? { legacyLocation: raw } : {};
+    if (raw && typeof raw === 'object') return { location: raw as Location };
+    return {};
+  }
+
   private toDateOrNull(value: unknown): Date | null {
     if (!value) return null;
     return value instanceof Timestamp ? value.toDate() : (value as Date);
@@ -95,7 +103,8 @@ export class JobRepository {
       role: data['role'],
       jobDescription: data['jobDescription'] ?? '',
       url: data['url'],
-      location: data['location'],
+      ...this.toLocationFields(data['location']),
+      workMode: data['workMode'] ?? null,
       employmentType: data['employmentType'],
       salary: data['salary'],
       notes: data['notes'],
@@ -114,7 +123,8 @@ export class JobRepository {
     if (!uid) throw new Error('Cannot update job: No user is signed in.');
 
     const jobRef = doc(this.db, 'users', uid, 'jobs', jobId);
-    await updateDoc(jobRef, this.withoutUndefined(updates) as DocumentData);
+    const { legacyLocation: _legacy, ...writable } = updates;
+    await updateDoc(jobRef, this.withoutUndefined(writable) as DocumentData);
   }
 
   async saveJobAnalysis(jobId: string, analysis: JobAnalysis): Promise<void> {

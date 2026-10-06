@@ -15,9 +15,17 @@ import { Info } from '../models/info';
 import { CompletenessId, getCompleteness, READY_SCORE } from '../state/profile-completeness';
 import { ErrorState } from '../../../shared/ui/error-state/error-state';
 import { DateField } from '../../../shared/ui/date-field/date-field';
+import { LocationInput } from '../../../shared/ui/location-input/location-input';
+import { Select, SelectOption } from '../../../shared/ui/select/select';
+import {
+  placeLabel,
+  WORK_MODE_LABELS,
+  workLocationLabel,
+  WorkMode,
+} from '../../../shared/location/location.model';
 
 @Component({
-  imports: [FormsModule, DatePipe, PageHeader, Modal, ErrorState, DateField],
+  imports: [FormsModule, DatePipe, PageHeader, Modal, ErrorState, DateField, LocationInput, Select],
   selector: 'app-profile',
   templateUrl: './profile-page.html',
   styleUrl: './profile-page.scss',
@@ -77,6 +85,26 @@ export class Profile implements OnInit {
 
   get info() {
     return this.profileState.info();
+  }
+
+  get infoLocation(): string {
+    return placeLabel(this.info.location, this.info.legacyLocation);
+  }
+  experienceLocation(experience: Experience): string {
+    return workLocationLabel(experience);
+  }
+  workModeSelectOptions: SelectOption<WorkMode | ''>[] = [
+    { value: '', label: 'Not specified' },
+    ...(Object.keys(WORK_MODE_LABELS) as WorkMode[]).map((value) => ({
+      value,
+      label: WORK_MODE_LABELS[value],
+    })),
+  ];
+  get experienceWorkMode(): WorkMode | '' {
+    return this.editedExperience?.workMode ?? '';
+  }
+  set experienceWorkMode(value: WorkMode | '') {
+    if (this.editedExperience) this.editedExperience.workMode = value || null;
   }
 
   get experience() {
@@ -217,6 +245,7 @@ export class Profile implements OnInit {
 
   async saveExperience() {
     if (!this.editedExperience) return;
+    if (this.editedExperience.workMode === 'remote') this.editedExperience.location = null;
 
     const updated = this.editedExperience.id
       ? this.experience.map((e) =>

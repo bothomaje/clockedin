@@ -52,7 +52,12 @@ export class JobState {
   async updateJob(jobId: string, updates: Partial<Job>): Promise<void> {
     await this.jobRepository.updateJob(jobId, updates);
     this.jobsSignal.update((jobs) =>
-      jobs.map((job) => (job.id === jobId ? { ...job, ...updates } : job)),
+      jobs.map((job) => {
+        if (job.id !== jobId) return job;
+        const next = { ...job, ...updates };
+        if (updates.location !== undefined) delete next.legacyLocation;
+        return next;
+      }),
     );
   }
 

@@ -33,7 +33,7 @@
           <header class="clk-card__header">
             <h3>Job you're applying for</h3>
             <span class="clk-muted">
-              {{ job.company }}{{ job.location ? ' (' + job.location + ')' : '' }}
+              {{ job.company }}{{ (job | jobLocation) ? ' (' + (job | jobLocation) + ')' : '' }}
             </span>
           </header>
           <p class="clk-strong">{{ job.role }}</p>

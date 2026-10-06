@@ -2,6 +2,7 @@ import { GeneratedCv } from '../../models/generated-cv';
 import { Career } from '../../../profile/models/career';
 import { Info } from '../../../profile/models/info';
 import { Link } from '../../../profile/models/link';
+import { workLocationLabel } from '../../../../shared/location/location.model';
 
 export interface SkillGroup {
   category: string;
@@ -69,7 +70,7 @@ export function buildCvPayload(cv: GeneratedCv, info: Info, career: Career) {
         return {
           role: entry.role,
           company: entry.company,
-          location: source?.location ?? '',
+          location: source ? workLocationLabel(source) : '',
           startDate: isoDate(source?.startDate),
           endDate: isoDate(source?.endDate),
           bullets: entry.bullets ?? [],

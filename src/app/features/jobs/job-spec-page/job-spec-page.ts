@@ -10,10 +10,19 @@ import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog'
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { DatePipe } from '@angular/common';
 import { Breadcrumbs, Crumb } from '../../../shared/ui/breadcrumbs/breadcrumbs';
+import { JobLocationPipe } from '../models/job-location.pipe';
 
 @Component({
   selector: 'app-job-spec-page',
-  imports: [RouterLink, DatePipe, Breadcrumbs, AssociatedAssets, ConfirmDialog, EmptyState],
+  imports: [
+    RouterLink,
+    DatePipe,
+    Breadcrumbs,
+    AssociatedAssets,
+    ConfirmDialog,
+    EmptyState,
+    JobLocationPipe,
+  ],
   templateUrl: './job-spec-page.html',
   styleUrl: './job-spec-page.scss',
 })

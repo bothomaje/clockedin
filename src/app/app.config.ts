@@ -5,6 +5,8 @@ import { routes } from './app.routes';
 import { provideMarkdown } from 'ngx-markdown';
 import { NgbDateAdapter, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap/datepicker';
 import { DisplayDateParserFormatter, UtcDateAdapter } from './shared/ui/date-field/date-adapters';
+import { LocationProvider } from './shared/location/location.provider';
+import { GeoapifyLocationProvider } from './shared/location/geoapify/geoapify-location.provider';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,5 +16,6 @@ export const appConfig: ApplicationConfig = {
     provideMarkdown(),
     { provide: NgbDateAdapter, useClass: UtcDateAdapter },
     { provide: NgbDateParserFormatter, useClass: DisplayDateParserFormatter },
+    { provide: LocationProvider, useClass: GeoapifyLocationProvider },
   ],
 };

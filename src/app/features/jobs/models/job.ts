@@ -1,3 +1,9 @@
+import {
+  Location,
+  locationLabel,
+  WORK_MODE_LABELS,
+  WorkMode,
+} from '../../../shared/location/location.model';
 import { JobAnalysis } from './job-analysis';
 
 export enum JobStatus {
@@ -23,7 +29,9 @@ export interface Job {
   role?: string;
   jobDescription: string;
   url?: string;
-  location?: string;
+  location?: Location | null;
+  legacyLocation?: string;
+  workMode?: WorkMode | null;
   employmentType?: string;
   salary?: string;
   notes?: string;
@@ -62,4 +70,17 @@ export function getSavedAt(job: Job): Date {
     (earliest, u) => (u.updatedAt < earliest ? u.updatedAt : earliest),
     job.jobUpdates[0].updatedAt,
   );
+}
+
+export function jobPlaceLabel(job: Pick<Job, 'location' | 'legacyLocation'>): string {
+  return locationLabel(job.location) || job.legacyLocation?.trim() || '';
+}
+
+export function jobLocationLabel(
+  job: Pick<Job, 'location' | 'legacyLocation' | 'workMode'>,
+): string {
+  const mode = job.workMode ? WORK_MODE_LABELS[job.workMode] : '';
+  const place = jobPlaceLabel(job);
+  if (place.toLowerCase() === mode.toLowerCase()) return mode;
+  return [mode, place].filter(Boolean).join(' · ');
 }

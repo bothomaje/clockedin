@@ -22,7 +22,7 @@
     <dl class="clk-spec__facts">
       <div>
         <dt>Location</dt>
-        <dd>{{ job.location || '—' }}</dd>
+        <dd>{{ (job | jobLocation) || '—' }}</dd>
       </div>
       <div>
         <dt>Type</dt>

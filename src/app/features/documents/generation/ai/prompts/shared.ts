@@ -1,3 +1,4 @@
+import { aiLocation } from '../../../../../shared/location/location.model';
 import { Info } from '../../../../profile/models/info';
 
 export const MAX_JOB_DESCRIPTION_CHARS = 12000;
@@ -19,7 +20,7 @@ export const FACTUAL_RULES =
 export function publicInfo(info: Info) {
   return {
     name: info?.name ?? '',
-    location: info?.location ?? '',
+    location: aiLocation(info?.location, info?.legacyLocation),
     summary: info?.summary ?? '',
   };
 }

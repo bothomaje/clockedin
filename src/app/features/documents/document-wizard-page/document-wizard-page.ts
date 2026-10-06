@@ -29,6 +29,7 @@ import {
 import { GeneratedCoverLetter } from '../models/generated-cover-letter';
 import { GENERATION_STAGES } from '../models/generation-stage';
 import { AuthService } from '../../../core/auth/auth.service';
+import { JobLocationPipe } from '../../jobs/models/job-location.pipe';
 
 type WizardView = 'setup' | 'processing' | 'preview' | 'error';
 
@@ -44,6 +45,7 @@ type WizardView = 'setup' | 'processing' | 'preview' | 'error';
     PageHeader,
     CvEditor,
     CoverLetterEditor,
+    JobLocationPipe,
   ],
   templateUrl: './document-wizard-page.html',
   styleUrl: './document-wizard-page.scss',

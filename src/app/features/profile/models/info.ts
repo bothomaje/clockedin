@@ -1,3 +1,4 @@
+import { Location } from '../../../shared/location/location.model';
 import { Link } from './link';
 
 export interface Todo {
@@ -11,7 +12,8 @@ export interface Info {
   title?: string;
   email: string;
   phone?: string;
-  location?: string;
+  location?: Location | null;
+  legacyLocation?: string;
   summary?: string;
   links?: Link[];
   targetRoles?: string;

@@ -7,6 +7,7 @@ import { RouterLink } from '@angular/router';
 import { Breadcrumbs, Crumb } from '../../../shared/ui/breadcrumbs/breadcrumbs';
 import { Modal } from '../../../shared/ui/modal/modal';
 import { Select, SelectOption } from '../../../shared/ui/select/select';
+import { JobLocationPipe } from '../models/job-location.pipe';
 
 export interface StatusChangeEvent {
   status: JobStatus;
@@ -17,7 +18,16 @@ type DetailModal = 'status' | 'event' | null;
 
 @Component({
   selector: 'app-job-detail',
-  imports: [FormsModule, DatePipe, StatusChip, RouterLink, Breadcrumbs, Modal, Select],
+  imports: [
+    FormsModule,
+    DatePipe,
+    StatusChip,
+    RouterLink,
+    Breadcrumbs,
+    Modal,
+    Select,
+    JobLocationPipe,
+  ],
   templateUrl: './job-detail.html',
   styleUrl: './job-detail.scss',
 })

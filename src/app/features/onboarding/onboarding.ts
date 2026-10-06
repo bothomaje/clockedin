@@ -7,10 +7,12 @@ import { ProfileState } from '../profile/state/profile-state';
 import { getCompleteness } from '../profile/state/profile-completeness';
 import { Skill } from '../profile/models/skill';
 import { Experience } from '../profile/models/experience';
+import { LocationInput } from '../../shared/ui/location-input/location-input';
+import { Location } from '../../shared/location/location.model';
 
 @Component({
   selector: 'app-onboarding',
-  imports: [FormsModule, AuthBrandPanel],
+  imports: [FormsModule, AuthBrandPanel, LocationInput],
   templateUrl: './onboarding.html',
   styleUrl: './onboarding.scss',
 })
@@ -38,7 +40,8 @@ export class Onboarding implements OnInit {
 
   name = '';
   jobTitle = '';
-  location = '';
+  location?: Location | null;
+  legacyLocation = '';
   summary = '';
   skillsDraft = '';
   expCompany = '';
@@ -64,7 +67,8 @@ export class Onboarding implements OnInit {
     const info = this.profileState.info();
     this.name = info.name ?? '';
     this.jobTitle = info.title ?? '';
-    this.location = info.location ?? '';
+    this.location = info.location;
+    this.legacyLocation = info.legacyLocation ?? '';
     this.summary = info.summary ?? '';
   }
 
@@ -90,7 +94,7 @@ export class Onboarding implements OnInit {
         ...info,
         name: this.name.trim(),
         title: this.jobTitle.trim(),
-        location: this.location.trim(),
+        location: this.location,
         summary: this.summary.trim(),
         links: otherLinks,
       });

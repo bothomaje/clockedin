@@ -1,6 +1,13 @@
 import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import { JobState } from '../state/job-state';
-import { getDateApplied, getLatestJobUpdate, getSavedAt, Job, JobStatus } from '../models/job';
+import {
+  getDateApplied,
+  getLatestJobUpdate,
+  getSavedAt,
+  Job,
+  jobPlaceLabel,
+  JobStatus,
+} from '../models/job';
 import { JobCard, JobRowVariant } from '../job-card/job-card';
 import { FormsModule } from '@angular/forms';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
@@ -97,7 +104,7 @@ export class JobList implements OnInit {
     return allowed ? jobs.filter((j) => allowed.includes(getLatestJobUpdate(j).status)) : jobs;
   });
 
-  locationOptions = computed(() => this.distinct((j) => j.location));
+  locationOptions = computed(() => this.distinct(jobPlaceLabel));
 
   statusSelectOptions = computed<SelectOption<JobStatus | ''>[]>(() => [
     { value: '', label: this.allStatusesLabel() },
@@ -136,7 +143,7 @@ export class JobList implements OnInit {
     const filtered = this.scoped().filter((job) => {
       if (term && !`${job.company} ${job.role}`.toLowerCase().includes(term)) return false;
       if (status && getLatestJobUpdate(job).status !== status) return false;
-      if (location && job.location !== location) return false;
+      if (location && jobPlaceLabel(job) !== location) return false;
       return true;
     });
 

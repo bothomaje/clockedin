@@ -8,6 +8,7 @@ import { Project } from '../models/project';
 import { Skill } from '../models/skill';
 import { CareerProfile } from '../models/career-profile';
 import { DocTemplates } from '../models/doc-templates';
+import { settleLegacy } from '../../../shared/location/location.model';
 
 @Service()
 export class ProfileState {
@@ -95,12 +96,12 @@ export class ProfileState {
 
   async saveInfo(info: Info): Promise<void> {
     await this.profileRepository.updateInfo(info);
-    this.infoSignal.set(info);
+    this.infoSignal.set(settleLegacy(info));
   }
 
   async saveExperience(experience: Experience[]): Promise<void> {
     await this.profileRepository.updateExperience(experience);
-    this.experienceSignal.set(experience);
+    this.experienceSignal.set(experience.map(settleLegacy));
   }
 
   async saveEducation(education: Education[]): Promise<void> {

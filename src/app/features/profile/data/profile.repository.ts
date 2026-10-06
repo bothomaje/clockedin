@@ -18,6 +18,7 @@ import { Project } from '../models/project';
 import { Skill } from '../models/skill';
 import { CareerProfile } from '../models/career-profile';
 import { DocTemplates } from '../models/doc-templates';
+import { readStoredLocation, toStoredLocation } from '../../../shared/location/location.model';
 
 @Service()
 export class ProfileRepository {
@@ -51,6 +52,11 @@ export class ProfileRepository {
     }));
   }
 
+  private withLocation<T extends { location?: unknown }>(item: T) {
+    const { location: raw, ...rest } = item;
+    return { ...rest, ...readStoredLocation(raw) };
+  }
+
   async createUserDoc(uid: string, email: string, name?: string): Promise<void> {
     const initialUser: Omit<User, 'id'> = {
       info: { email, ...(name?.trim() ? { name: name.trim() } : {}) },
@@ -78,7 +84,7 @@ export class ProfileRepository {
 
     return {
       id: snapshot.id,
-      info: data['info'],
+      info: this.withLocation(data['info'] ?? {}) as Info,
       templates: data['templates'] ?? {},
       onboardingComplete: data['onboardingComplete'] ?? false,
       aiConsentAt:
@@ -87,7 +93,9 @@ export class ProfileRepository {
           : (data['aiConsentAt'] ?? null),
       career: {
         ...data['career'],
-        experience: this.normalizeDates(data['career']?.experience),
+        experience: this.normalizeDates<Experience>(data['career']?.experience).map((e) =>
+          this.withLocation(e),
+        ) as Experience[],
         education: this.normalizeDates(data['career']?.education),
       },
     };
@@ -95,12 +103,19 @@ export class ProfileRepository {
 
   async updateInfo(info: Info): Promise<void> {
     const uid = this.currentUid();
-    await setDoc(this.userDoc(uid), { info }, { merge: true });
+    const { legacyLocation, ...rest } = info;
+    const stored = { ...rest, location: toStoredLocation({ ...info, legacyLocation }) };
+    await setDoc(this.userDoc(uid), { info: stored }, { merge: true });
   }
 
   async updateExperience(experience: Experience[]): Promise<void> {
     const uid = this.currentUid();
-    await setDoc(this.userDoc(uid), { career: { experience } }, { merge: true });
+    const stored = experience.map(({ legacyLocation, ...rest }) => ({
+      ...rest,
+      location: toStoredLocation({ ...rest, legacyLocation }),
+      workMode: rest.workMode ?? null,
+    }));
+    await setDoc(this.userDoc(uid), { career: { experience: stored } }, { merge: true });
   }
 
   async updateEducation(education: Education[]): Promise<void> {

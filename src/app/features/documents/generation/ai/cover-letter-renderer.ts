@@ -1,6 +1,7 @@
 import { GeneratedCoverLetter } from '../../models/generated-cover-letter';
 import { Job } from '../../../jobs/models/job';
 import { Info } from '../../../profile/models/info';
+import { placeLabel } from '../../../../shared/location/location.model';
 
 export function renderCoverLetterMarkdown(
   letter: GeneratedCoverLetter,
@@ -11,7 +12,9 @@ export function renderCoverLetterMarkdown(
 
   lines.push(`**${info.name ?? ''}**`);
 
-  const contact = [info.email, info.phone, info.location].filter(Boolean).join(' · ');
+  const contact = [info.email, info.phone, placeLabel(info.location, info.legacyLocation)]
+    .filter(Boolean)
+    .join(' · ');
   if (contact) lines.push('', contact);
 
   lines.push('', '---', '');

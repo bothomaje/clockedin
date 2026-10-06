@@ -4,11 +4,12 @@ import { AiProviderId } from '../ai-provider';
 import { AiLabRunResult, AiLabService } from '../ai-lab.service';
 import { CAREER_FIXTURES, CareerFixtureName } from './fixtures/careers.fixtures';
 import { JOB_FIXTURES, JobFixtureName } from './fixtures/jobs.fixtures';
+import { JOHANNESBURG } from './fixtures/locations.fixtures';
 
 const EVAL_INFO: Info = {
   name: 'Eval Candidate',
   email: 'eval@example.invalid',
-  location: 'Johannesburg, South Africa',
+  location: JOHANNESBURG,
   summary: 'Fixture profile used only for AI provider evaluation runs.',
 };
 

@@ -87,14 +87,15 @@
             <section class="clk-field">
               <label class="form-label" for="jobTitle">Current or Target Role</label>
               <input id="jobTitle" class="form-control" name="jobTitle" [(ngModel)]="jobTitle" />
-              <p class="clk-field__hint">
-                Example: Marketing Manager, Software Engineer, Graphic Designer
-              </p>
             </section>
             <section class="clk-field">
               <label class="form-label" for="location">Location</label>
-              <input id="location" class="form-control" name="location" [(ngModel)]="location" />
-              <p class="clk-field__hint">Example: Johannesburg, South Africa</p>
+              <app-location-input
+                inputId="location"
+                name="location"
+                [legacyValue]="legacyLocation"
+                [(ngModel)]="location"
+              />
             </section>
             <section class="clk-field">
               <label class="form-label" for="summary">About You</label>

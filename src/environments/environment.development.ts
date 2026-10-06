@@ -8,4 +8,5 @@ export const environment = {
   appId: import.meta.env.NG_APP_APP_ID,
   measurementId: import.meta.env.NG_APP_MEASUREMENT_ID,
   recaptchaEnterpriseSiteKey: import.meta.env.NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY,
+  geoapifyApiKey: import.meta.env.NG_APP_GEOAPIFY_API_KEY,
 };

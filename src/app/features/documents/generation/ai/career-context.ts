@@ -1,6 +1,7 @@
 import { CareerFact } from '../../models/career-fact';
 import { Career } from '../../../profile/models/career';
 import { CareerProfile } from '../../../profile/models/career-profile';
+import { workLocationLabel } from '../../../../shared/location/location.model';
 
 function yearMonth(value?: Date | null): string {
   if (!value) return '';
@@ -32,7 +33,7 @@ export function buildCareerFacts(career: Career): CareerFact[] {
       meta: {
         company: experience.company ?? '',
         role: experience.role ?? '',
-        location: experience.location ?? '',
+        location: workLocationLabel(experience),
         employmentType: experience.employmentType ?? '',
         startDate: yearMonth(experience.startDate),
         endDate: yearMonth(experience.endDate) || 'Present',

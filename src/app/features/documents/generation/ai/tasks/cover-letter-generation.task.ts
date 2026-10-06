@@ -1,4 +1,4 @@
-import { Job } from '../../../../jobs/models/job';
+import { Job, jobLocationLabel } from '../../../../jobs/models/job';
 import { JobAnalysis } from '../../../../jobs/models/job-analysis';
 import { Info } from '../../../../profile/models/info';
 import { Career } from '../../../../profile/models/career';
@@ -12,6 +12,7 @@ import { emphasisLines, letterOptionRules } from '../generation-prompts';
 import { DATA_BOUNDARY, FACTUAL_RULES, publicInfo } from '../prompts/shared';
 import { coverLetterSchema } from '../schemas/ai-schemas';
 import { AiRun } from './ai-task';
+import { compareLocations } from '../../../../../shared/location/location-match';
 
 export interface CoverLetterTaskInput {
   info: Info;
@@ -35,7 +36,9 @@ export async function generateCoverLetterTask(
     `<job_target>${JSON.stringify({
       company: input.job.company ?? '',
       role: input.job.role ?? '',
-      location: input.job.location ?? '',
+      location: jobLocationLabel(input.job),
+      workMode: input.job.workMode ?? '',
+      locationMatch: compareLocations(input.info.location, input.job.location, input.job.workMode),
       recipientName: input.options?.recipient.trim().slice(0, 80) ?? '',
     })}</job_target>`,
     `<selected_facts>${JSON.stringify(input.selectedFacts)}</selected_facts>`,

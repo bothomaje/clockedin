@@ -36,15 +36,24 @@
         />
       </section>
       <section class="clk-field">
-        <label class="form-label" for="location">Location</label>
-        <input
-          id="location"
-          class="form-control"
-          name="location"
-          placeholder="San Francisco (Hybrid)"
-          [(ngModel)]="editedJob.location"
+        <label class="form-label" for="workMode">Work Mode</label>
+        <app-select
+          inputId="workMode"
+          [options]="workModeSelectOptions"
+          [(value)]="workModeValue"
         />
       </section>
+      @if (editedJob.workMode !== 'remote') {
+        <section class="clk-field">
+          <label class="form-label" for="location">Location</label>
+          <app-location-input
+            inputId="location"
+            name="location"
+            [legacyValue]="editedJob.legacyLocation"
+            [(ngModel)]="editedJob.location"
+          />
+        </section>
+      }
       <section class="clk-field">
         <label class="form-label" for="employmentType">Employment Type</label>
         <input

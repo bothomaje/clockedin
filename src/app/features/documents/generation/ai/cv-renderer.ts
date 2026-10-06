@@ -2,13 +2,16 @@ import { GeneratedCv } from '../../models/generated-cv';
 import { Career } from '../../../profile/models/career';
 import { Info } from '../../../profile/models/info';
 import { groupSkills } from './cv-payload';
+import { placeLabel } from '../../../../shared/location/location.model';
 
 export function renderCvMarkdown(cv: GeneratedCv, info: Info, career: Career): string {
   const lines: string[] = [];
 
   lines.push(`# ${info.name ?? 'Curriculum Vitae'}`);
 
-  const contact = [info.email, info.phone, info.location].filter(Boolean).join(' · ');
+  const contact = [info.email, info.phone, placeLabel(info.location, info.legacyLocation)]
+    .filter(Boolean)
+    .join(' · ');
   if (contact) lines.push('', contact);
 
   const links = (info.links ?? []).map((link) => `[${link.type}](${link.url})`).join(' · ');

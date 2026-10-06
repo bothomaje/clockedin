@@ -9,6 +9,7 @@ declare interface Env {
   readonly NG_APP_MEASUREMENT_ID: string;
   readonly NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY: string;
   readonly NG_APP_FIREBASE_APPCHECK_DEBUG_TOKEN: string;
+  readonly NG_APP_GEOAPIFY_API_KEY: string;
 }
 
 declare interface ImportMeta {

@@ -8,9 +8,9 @@
     </section>
     <section class="clk-detail__meta">
       <span class="clk-detail__company">{{ job().company }}</span>
-      @if (job().location) {
+      @if (job() | jobLocation) {
         <span class="clk-detail__sep"></span>
-        <span class="clk-detail__location">{{ job().location }}</span>
+        <span class="clk-detail__location">{{ job() | jobLocation }}</span>
       }
       @if (job().url) {
         <span class="clk-detail__sep"></span>

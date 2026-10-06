@@ -6,6 +6,8 @@ export interface Env {
 	FIRESTORE_DATABASE_ID: string;
 	GOOGLE_SERVICE_ACCOUNT_JSON: string;
 	DIAGNOSTICS_TOKEN: string;
+	ADZUNA_APP_ID?: string;
+	ADZUNA_APP_KEY?: string;
 }
 
 const EXPECTED_PROJECT = {

@@ -51,6 +51,7 @@ export interface Job {
   firstSeenAt?: Date | null;
   lastSeenAt?: Date | null;
   externalStatus?: string;
+  postedAt?: Date | null;
 }
 
 export const APPLICATION_STATUSES: JobStatus[] = Object.values(JobStatus).filter(

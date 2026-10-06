@@ -2,6 +2,8 @@ import { Env, loadServiceAccount } from './env';
 import { getAccessToken } from './google/auth';
 import { FirestoreClient } from './firestore/client';
 import { runConnectivityCheck } from './firestore/connectivity';
+import { SourceError } from './sources/types';
+import { buildSources, findSource } from './sources/registry';
 
 const json = (body: unknown, status = 200) =>
 	new Response(JSON.stringify(body), {
@@ -42,6 +44,40 @@ export default {
 				);
 			} catch (e) {
 				return json({ ok: false, error: (e as Error).message }, 500);
+			}
+		}
+
+		const sourceRoute = pathname.match(/^\/diagnostics\/sources\/([a-z0-9-]+)$/);
+		if (request.method === 'POST' && sourceRoute) {
+			if (!isAuthorised(request, env)) return json({ error: 'unauthorised' }, 401);
+			if (env.ENVIRONMENT !== 'staging') return json({ error: 'staging only' }, 403);
+
+			const source = findSource(buildSources(env), sourceRoute[1]);
+			if (!source) return json({ error: 'unknown or unconfigured source' }, 404);
+
+			const input = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+			const str = (v: unknown) => (typeof v === 'string' && v.trim() ? v.trim() : undefined);
+			const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : undefined);
+
+			try {
+				const page = await source.fetchJobs({
+					page: num(input.page) ?? 1,
+					pageSize: Math.min(num(input.pageSize) ?? 5, 10),
+					what: str(input.what),
+					where: str(input.where),
+					category: str(input.category),
+					maxDaysOld: num(input.maxDaysOld),
+				});
+				return json({
+					source: source.id,
+					page: page.page,
+					total: page.total,
+					hasMore: page.hasMore,
+					jobs: page.jobs.map((j) => source.mapJob(j)),
+				});
+			} catch (e) {
+				const status = e instanceof SourceError ? 502 : 500;
+				return json({ ok: false, source: source.id, error: (e as Error).message }, status);
 			}
 		}
 

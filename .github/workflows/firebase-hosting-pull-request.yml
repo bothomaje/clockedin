@@ -27,6 +27,7 @@ jobs:
           NG_APP_APP_ID=${{ vars.NG_APP_APP_ID }}
           NG_APP_MEASUREMENT_ID=${{ vars.NG_APP_MEASUREMENT_ID }}
           NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY=${{ vars.NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY }}
+          NG_APP_GEOAPIFY_API_KEY=${{ secrets.NG_APP_GEOAPIFY_API_KEY }}
           EOF
 
       - name: Install dependencies

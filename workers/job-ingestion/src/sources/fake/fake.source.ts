@@ -39,7 +39,6 @@ export const fakeSource: JobSource<FakeExternalJob> = {
 			jobUpdates: [],
 			source: { provider: 'fake', externalId: job.uid, url: job.link },
 			origin: 'imported',
-			externalStatus: 'active',
 		};
 	},
 };

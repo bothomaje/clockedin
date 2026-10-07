@@ -80,7 +80,6 @@ export function mapAdzunaJob(job: AdzunaJob): Job {
 			url,
 		},
 		origin: 'imported',
-		externalStatus: 'active',
 		postedAt: parseDate(job.created),
 	};
 }

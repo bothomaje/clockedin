@@ -56,17 +56,19 @@ export class FirestoreError extends Error {
 
 export class FirestoreClient {
 	private readonly base: string;
+	private readonly docRoot: string;
 
 	constructor(
 		projectId: string,
 		databaseId: string,
 		private readonly getToken: () => Promise<string>,
 	) {
-		this.base = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/${databaseId}/documents`;
+		this.docRoot = `projects/${projectId}/databases/${databaseId}/documents`;
+		this.base = `https://firestore.googleapis.com/v1/${this.docRoot}`;
 	}
 
 	private async request(path: string, init: RequestInit = {}, allowNotFound = false): Promise<Response> {
-		const res = await fetch(`${this.base}/${path}`, {
+		const res = await fetch(path.startsWith(':') ? `${this.base}${path}` : `${this.base}/${path}`, {
 			...init,
 			headers: {
 				authorization: `Bearer ${await this.getToken()}`,
@@ -96,5 +98,18 @@ export class FirestoreClient {
 
 	async delete(collection: string, id: string): Promise<void> {
 		await this.request(`${collection}/${encodeURIComponent(id)}`, { method: 'DELETE' });
+	}
+
+	async commit(writes: Array<{ collection: string; id: string; data: FsRecord; fieldPaths: string[] }>): Promise<void> {
+		if (writes.length > 500) throw new Error('Firestore commit limited to 500 writes');
+		await this.request(':commit', {
+			method: 'POST',
+			body: JSON.stringify({
+				writes: writes.map((w) => ({
+					update: { name: `${this.docRoot}/${w.collection}/${w.id}`, fields: encodeFields(w.data) },
+					updateMask: { fieldPaths: w.fieldPaths },
+				})),
+			}),
+		});
 	}
 }

@@ -2,8 +2,11 @@ import { Env, loadServiceAccount } from './env';
 import { getAccessToken } from './google/auth';
 import { FirestoreClient } from './firestore/client';
 import { runConnectivityCheck } from './firestore/connectivity';
-import { SourceError } from './sources/types';
+import { JobSource, SourceError } from './sources/types';
 import { buildSources, findSource } from './sources/registry';
+import { SEARCH_PLANS } from './ingestion/search-plans';
+import { runIngestion } from './ingestion/ingestion.service';
+import { CollectingSink } from './ingestion/sink';
 
 const json = (body: unknown, status = 200) =>
 	new Response(JSON.stringify(body), {
@@ -79,6 +82,22 @@ export default {
 				const status = e instanceof SourceError ? 502 : 500;
 				return json({ ok: false, source: source.id, error: (e as Error).message }, status);
 			}
+		}
+
+		const ingestRoute = pathname.match(/^\/diagnostics\/ingest\/([a-z0-9-]+)$/);
+		if (request.method === 'POST' && ingestRoute) {
+			if (!isAuthorised(request, env)) return json({ error: 'unauthorised' }, 401);
+			if (env.ENVIRONMENT !== 'staging') return json({ error: 'staging only' }, 403);
+
+			const source = findSource(buildSources(env), ingestRoute[1]);
+			if (!source) return json({ error: 'unknown or unconfigured source' }, 404);
+
+			const plan = SEARCH_PLANS[source.id];
+			if (!plan) return json({ error: 'no search plan for source' }, 404);
+
+			const sink = new CollectingSink();
+			const stats = await runIngestion(source, sink, plan);
+			return json({ stats, jobs: sink.items.slice(0, 20).map((i) => i.job) }, stats.failed ? 502 : 200);
 		}
 
 		return json({ error: 'not found' }, 404);

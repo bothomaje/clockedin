@@ -48,9 +48,6 @@ export interface Job {
     url: string;
   };
   origin?: 'manual' | 'imported';
-  firstSeenAt?: Date | null;
-  lastSeenAt?: Date | null;
-  externalStatus?: string;
   postedAt?: Date | null;
 }
 

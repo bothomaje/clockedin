@@ -17,6 +17,16 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
+    // Backend-written job recommendations
+    match /users/{userId}/recommendations/{recId} {
+      allow read, delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // User's dismissed/saved recommendation keys
+    match /users/{userId}/discovery/{docId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
     // User's generated cv and cover letter docs
     match /users/{userId}/jobs/{jobId}/generatedDocuments/{documentId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;

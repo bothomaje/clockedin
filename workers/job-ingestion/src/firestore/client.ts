@@ -100,14 +100,14 @@ export class FirestoreClient {
 		await this.request(`${collection}/${encodeURIComponent(id)}`, { method: 'DELETE' });
 	}
 
-	async commit(writes: Array<{ collection: string; id: string; data: FsRecord; fieldPaths: string[] }>): Promise<void> {
+	async commit(writes: Array<{ collection: string; id: string; data: FsRecord; fieldPaths?: string[] }>): Promise<void> {
 		if (writes.length > 500) throw new Error('Firestore commit limited to 500 writes');
 		await this.request(':commit', {
 			method: 'POST',
 			body: JSON.stringify({
 				writes: writes.map((w) => ({
 					update: { name: `${this.docRoot}/${w.collection}/${w.id}`, fields: encodeFields(w.data) },
-					updateMask: { fieldPaths: w.fieldPaths },
+					...(w.fieldPaths ? { updateMask: { fieldPaths: w.fieldPaths } } : {}),
 				})),
 			}),
 		});

@@ -7,6 +7,9 @@ import { buildSources, findSource } from './sources/registry';
 import { SEARCH_PLANS } from './ingestion/search-plans';
 import { runIngestion } from './ingestion/ingestion.service';
 import { CollectingSink } from './ingestion/sink';
+import { DiscoveryStateRepository } from './firestore/discovery-state.repository';
+import { RecommendationSink } from './matching/recommendation.sink';
+import { RecommendationsRepository } from './firestore/recommendations.repository';
 
 const json = (body: unknown, status = 200) =>
 	new Response(JSON.stringify(body), {
@@ -98,6 +101,30 @@ export default {
 			const sink = new CollectingSink();
 			const stats = await runIngestion(source, sink, plan);
 			return json({ stats, jobs: sink.items.slice(0, 20).map((i) => i.job) }, stats.failed ? 502 : 200);
+		}
+
+		const recRoute = pathname.match(/^\/diagnostics\/recommendations\/([A-Za-z0-9]{6,128})\/([a-z0-9-]+)$/);
+		if (request.method === 'POST' && recRoute) {
+			if (!isAuthorised(request, env)) return json({ error: 'unauthorised' }, 401);
+			if (env.ENVIRONMENT !== 'staging') return json({ error: 'staging only' }, 403);
+
+			const [, uid, sourceId] = recRoute;
+			const source = findSource(buildSources(env), sourceId);
+			if (!source) return json({ error: 'unknown or unconfigured source' }, 404);
+			const plan = SEARCH_PLANS[source.id];
+			if (!plan) return json({ error: 'no search plan for source' }, 404);
+
+			try {
+				const key = loadServiceAccount(env);
+				const db = new FirestoreClient(env.FIREBASE_PROJECT_ID, env.FIRESTORE_DATABASE_ID, () => getAccessToken(key));
+				const state = await new DiscoveryStateRepository(db).load(uid);
+
+				const sink = new RecommendationSink(uid, new RecommendationsRepository(db), state, () => ({ score: 50, matchedSignals: ['stub'] }));
+				const stats = await runIngestion(source, sink, plan);
+				return json({ stats, recommendations: sink.stats }, stats.failed ? 502 : 200);
+			} catch (e) {
+				return json({ ok: false, error: (e as Error).message }, 500);
+			}
 		}
 
 		return json({ error: 'not found' }, 404);

@@ -10,6 +10,7 @@ import {
   Timestamp,
   DocumentData,
   deleteDoc,
+  WriteBatch,
 } from 'firebase/firestore';
 import { firestore, firebaseAuth } from '../../../core/firebase/firebase';
 import { JobAnalysis } from '../models/job-analysis';
@@ -35,13 +36,13 @@ export class JobRepository {
     return snapshot.docs.map((d) => this.toJob(d.id, d.data()));
   }
 
-  async addJob(job: Job): Promise<Job> {
-    const docRef = await addDoc(this.jobsCollection(), {
+  private toJobData(job: Job): DocumentData {
+    return {
       company: job.company ?? '',
       role: job.role ?? '',
       jobDescription: job.jobDescription ?? '',
       url: job.url ?? '',
-      location: job.location ?? null,
+      location: job.location ?? job.legacyLocation ?? null,
       workMode: job.workMode ?? null,
       employmentType: job.employmentType ?? '',
       salary: job.salary ?? '',
@@ -53,9 +54,22 @@ export class JobRepository {
         updatedAt: u.updatedAt,
         ...(u.note ? { note: u.note } : {}),
       })),
-    });
+      ...(job.source ? { source: job.source } : {}),
+      ...(job.origin ? { origin: job.origin } : {}),
+      ...(job.postedAt ? { postedAt: job.postedAt } : {}),
+    };
+  }
+
+  async addJob(job: Job): Promise<Job> {
+    const docRef = await addDoc(this.jobsCollection(), this.toJobData(job));
 
     return { ...job, id: docRef.id };
+  }
+
+  addJobInBatch(batch: WriteBatch, job: Job): Job {
+    const ref = doc(this.jobsCollection());
+    batch.set(ref, this.toJobData(job));
+    return { ...job, id: ref.id };
   }
 
   async updateJobStatus(jobId: string, newStatus: JobStatus, note?: string): Promise<JobUpdate> {
@@ -115,6 +129,9 @@ export class JobRepository {
       jobAnalysis: data['jobAnalysis'] ?? null,
       jobAnalysedAt: this.toDateOrNull(data['jobAnalysedAt']),
       contact: data['contact'],
+      source: data['source'],
+      origin: data['origin'],
+      postedAt: this.toDateOrNull(data['postedAt']),
     };
   }
 

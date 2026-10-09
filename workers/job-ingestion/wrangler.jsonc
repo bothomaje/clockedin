@@ -12,6 +12,9 @@
 	},
 	"env": {
 		"staging": {
+			"triggers": {
+				"crons": ["0 */12 * * *"],
+			},
 			"vars": {
 				"ENVIRONMENT": "staging",
 				"FIREBASE_PROJECT_ID": "clockedin-staging",

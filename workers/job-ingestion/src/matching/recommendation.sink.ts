@@ -1,48 +1,79 @@
-import type { DiscoveryKeys } from '../firestore/discovery-state.repository';
-import type { RecommendationsRepository, ScoredJob } from '../firestore/recommendations.repository';
+import type { RecommendationsRepository, UserScoredJob } from '../firestore/recommendations.repository';
+import type { ActiveUser } from '../firestore/users.repository';
 import type { JobSink, KeyedJob } from '../ingestion/sink';
-import type { Job } from '../model/job';
 import { RECOMMENDATION_LIMITS } from './limits';
+import { MatchIndex } from './match-index';
+import { jobText, scoreJob } from './scorer';
 
-export type ScoreFn = (job: Job) => { score: number; matchedSignals: string[] };
-
-export interface RecommendationSinkStats {
-	written: number;
+export interface MatchingStats {
+	users: number;
+	jobsSeen: number;
+	scored: number;
 	skippedDismissedOrSaved: number;
 	belowMinScore: number;
-	overRunCap: number;
+	usersWithMatches: number;
+	written: number;
 }
 
-export class RecommendationSink implements JobSink {
-	readonly stats: RecommendationSinkStats = { written: 0, skippedDismissedOrSaved: 0, belowMinScore: 0, overRunCap: 0 };
-	private readonly now = new Date();
+/** Scores each job against candidate users, keeps each user's top matches, writes them in finish(). */
+export class MatchingSink implements JobSink {
+	readonly stats: MatchingStats;
+	private readonly index: MatchIndex;
+	private readonly noSignals: ActiveUser[];
+	private readonly byUid = new Map<string, ActiveUser>();
+	private readonly pending = new Map<string, UserScoredJob[]>();
 
 	constructor(
-		private readonly uid: string,
+		users: ActiveUser[],
 		private readonly repo: RecommendationsRepository,
-		private readonly state: DiscoveryKeys,
-		private readonly score: ScoreFn,
-	) {}
+		private readonly now: Date,
+	) {
+		users.forEach((u) => this.byUid.set(u.profile.uid, u));
+		this.index = new MatchIndex(users.map((u) => u.profile));
+		this.noSignals = this.index.withoutSignals().map((p) => this.byUid.get(p.uid)!);
+		this.stats = {
+			users: users.length,
+			jobsSeen: 0,
+			scored: 0,
+			skippedDismissedOrSaved: 0,
+			belowMinScore: 0,
+			usersWithMatches: 0,
+			written: 0,
+		};
+	}
 
 	async accept(jobs: KeyedJob[]): Promise<void> {
-		const batch: ScoredJob[] = [];
 		for (const { key, job } of jobs) {
-			if (this.state.dismissed.has(key) || this.state.saved.has(key)) {
-				this.stats.skippedDismissedOrSaved++;
-				continue;
+			this.stats.jobsSeen++;
+			const text = jobText(job);
+			const candidates = new Set([...this.index.candidates(text.allTokens).map((p) => this.byUid.get(p.uid)!), ...this.noSignals]);
+
+			for (const user of candidates) {
+				if (user.keys.dismissed.has(key) || user.keys.saved.has(key)) {
+					this.stats.skippedDismissedOrSaved++;
+					continue;
+				}
+				this.stats.scored++;
+				const { score, matchedSignals } = scoreJob(user.profile, job, text);
+				if (score < RECOMMENDATION_LIMITS.minScore) {
+					this.stats.belowMinScore++;
+					continue;
+				}
+				const list = this.pending.get(user.profile.uid) ?? [];
+				list.push({ uid: user.profile.uid, key, job, score, matchedSignals });
+				this.pending.set(user.profile.uid, list);
 			}
-			const { score, matchedSignals } = this.score(job);
-			if (score < RECOMMENDATION_LIMITS.minScore) {
-				this.stats.belowMinScore++;
-				continue;
-			}
-			if (this.stats.written + batch.length >= RECOMMENDATION_LIMITS.maxPerUserPerRun) {
-				this.stats.overRunCap++;
-				continue;
-			}
-			batch.push({ key, job, score, matchedSignals });
 		}
-		await this.repo.upsert(this.uid, batch, this.now);
-		this.stats.written += batch.length;
+	}
+
+	async finish(): Promise<void> {
+		const items: UserScoredJob[] = [];
+		for (const list of this.pending.values()) {
+			list.sort((a, b) => b.score - a.score);
+			items.push(...list.slice(0, RECOMMENDATION_LIMITS.maxPerUserPerRun));
+		}
+		this.stats.usersWithMatches = this.pending.size;
+		await this.repo.upsertMany(items, this.now);
+		this.stats.written = items.length;
 	}
 }

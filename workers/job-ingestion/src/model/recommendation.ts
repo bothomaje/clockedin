@@ -12,5 +12,7 @@ export interface Recommendation {
 export interface DiscoveryState {
 	dismissed: Record<string, Date>;
 	saved: Record<string, Date>;
+	enabled?: boolean;
+	lastActiveAt?: Date;
 	refreshRequestedAt?: Date;
 }

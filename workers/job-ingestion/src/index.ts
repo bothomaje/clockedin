@@ -7,9 +7,10 @@ import { buildSources, findSource } from './sources/registry';
 import { SEARCH_PLANS } from './ingestion/search-plans';
 import { runIngestion } from './ingestion/ingestion.service';
 import { CollectingSink } from './ingestion/sink';
-import { DiscoveryStateRepository } from './firestore/discovery-state.repository';
-import { RecommendationSink } from './matching/recommendation.sink';
+import { MatchingSink } from './matching/recommendation.sink';
 import { RecommendationsRepository } from './firestore/recommendations.repository';
+import { UsersRepository } from './firestore/users.repository';
+import { planFromUsers } from './matching/query-planner';
 
 const json = (body: unknown, status = 200) =>
 	new Response(JSON.stringify(body), {
@@ -25,7 +26,47 @@ function isAuthorised(request: Request, env: Env): boolean {
 	return crypto.subtle.timingSafeEqual(supplied, expected);
 }
 
+async function runMatching(env: Env, source: JobSource) {
+	const plan = SEARCH_PLANS[source.id];
+	if (!plan) throw new Error(`No search plan for source "${source.id}"`);
+
+	const key = loadServiceAccount(env);
+	const db = new FirestoreClient(env.FIREBASE_PROJECT_ID, env.FIRESTORE_DATABASE_ID, () => getAccessToken(key));
+	const recs = new RecommendationsRepository(db);
+	const now = new Date();
+
+	const expiredDeleted = await recs.deleteExpired(now);
+	const users = await new UsersRepository(db).loadActive(now);
+	if (!users.length) return { source: source.id, expiredDeleted, users: 0 };
+
+	const sink = new MatchingSink(users, recs, now);
+	const ingestion = await runIngestion(
+		source,
+		sink,
+		planFromUsers(
+			plan,
+			users.map((u) => u.profile),
+		),
+		now,
+	);
+	return { source: source.id, expiredDeleted, ingestion, matching: sink.stats };
+}
+
 export default {
+	async scheduled(_event, env, ctx): Promise<void> {
+		ctx.waitUntil(
+			(async () => {
+				for (const source of buildSources(env).filter((s) => s.id !== 'fake')) {
+					try {
+						console.log(JSON.stringify(await runMatching(env, source)));
+					} catch (e) {
+						console.error(`matching failed: ${source.id}: ${(e as Error).message}`);
+					}
+				}
+			})(),
+		);
+	},
+
 	async fetch(request, env): Promise<Response> {
 		const { pathname } = new URL(request.url);
 
@@ -103,25 +144,17 @@ export default {
 			return json({ stats, jobs: sink.items.slice(0, 20).map((i) => i.job) }, stats.failed ? 502 : 200);
 		}
 
-		const recRoute = pathname.match(/^\/diagnostics\/recommendations\/([A-Za-z0-9]{6,128})\/([a-z0-9-]+)$/);
-		if (request.method === 'POST' && recRoute) {
+		const matchRoute = pathname.match(/^\/diagnostics\/matching\/([a-z0-9-]+)$/);
+		if (request.method === 'POST' && matchRoute) {
 			if (!isAuthorised(request, env)) return json({ error: 'unauthorised' }, 401);
 			if (env.ENVIRONMENT !== 'staging') return json({ error: 'staging only' }, 403);
 
-			const [, uid, sourceId] = recRoute;
-			const source = findSource(buildSources(env), sourceId);
+			const source = findSource(buildSources(env), matchRoute[1]);
 			if (!source) return json({ error: 'unknown or unconfigured source' }, 404);
-			const plan = SEARCH_PLANS[source.id];
-			if (!plan) return json({ error: 'no search plan for source' }, 404);
 
 			try {
-				const key = loadServiceAccount(env);
-				const db = new FirestoreClient(env.FIREBASE_PROJECT_ID, env.FIRESTORE_DATABASE_ID, () => getAccessToken(key));
-				const state = await new DiscoveryStateRepository(db).load(uid);
-
-				const sink = new RecommendationSink(uid, new RecommendationsRepository(db), state, () => ({ score: 50, matchedSignals: ['stub'] }));
-				const stats = await runIngestion(source, sink, plan);
-				return json({ stats, recommendations: sink.stats }, stats.failed ? 502 : 200);
+				const result = await runMatching(env, source);
+				return json(result, 'ingestion' in result && result.ingestion.failed ? 502 : 200);
 			} catch (e) {
 				return json({ ok: false, error: (e as Error).message }, 500);
 			}

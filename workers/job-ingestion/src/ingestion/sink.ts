@@ -7,6 +7,7 @@ export interface KeyedJob {
 
 export interface JobSink {
 	accept(jobs: KeyedJob[]): Promise<void>;
+	finish?(): Promise<void>;
 }
 
 export class CollectingSink implements JobSink {

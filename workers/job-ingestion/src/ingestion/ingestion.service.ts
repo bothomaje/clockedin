@@ -92,5 +92,11 @@ export async function runIngestion(source: JobSource, sink: JobSink, plan: Searc
 			if (!result.hasMore) break;
 		}
 	}
+	try {
+		await sink.finish?.();
+	} catch (e) {
+		stats.failed++;
+		fail(`sink finish: ${(e as Error).message}`);
+	}
 	return stats;
 }

@@ -112,4 +112,50 @@ export class FirestoreClient {
 			}),
 		});
 	}
+
+	async collectionGroup(
+		collectionId: string,
+		field: string,
+		op: 'LESS_THAN' | 'GREATER_THAN_OR_EQUAL',
+		value: Date,
+		limit: number,
+		direction: 'ASCENDING' | 'DESCENDING' = 'ASCENDING',
+	): Promise<Array<{ path: string; data: FsRecord }>> {
+		const res = await this.request(':runQuery', {
+			method: 'POST',
+			body: JSON.stringify({
+				structuredQuery: {
+					from: [{ collectionId, allDescendants: true }],
+					where: { fieldFilter: { field: { fieldPath: field }, op, value: { timestampValue: value.toISOString() } } },
+					orderBy: [{ field: { fieldPath: field }, direction }],
+					limit,
+				},
+			}),
+		});
+		const rows = (await res.json()) as Array<{ document?: { name: string; fields?: Record<string, FsValue> } }>;
+		return rows.flatMap((r) =>
+			r.document ? [{ path: r.document.name.slice(this.docRoot.length + 1), data: decodeFields(r.document.fields ?? {}) }] : [],
+		);
+	}
+
+	async getMany(paths: string[]): Promise<Map<string, FsRecord>> {
+		if (!paths.length) return new Map();
+		const res = await this.request(':batchGet', {
+			method: 'POST',
+			body: JSON.stringify({ documents: paths.map((p) => `${this.docRoot}/${p}`) }),
+		});
+		const rows = (await res.json()) as Array<{ found?: { name: string; fields?: Record<string, FsValue> } }>;
+		return new Map(
+			rows.flatMap((r) => (r.found ? [[r.found.name.slice(this.docRoot.length + 1), decodeFields(r.found.fields ?? {})] as const] : [])),
+		);
+	}
+
+	async deleteDocs(paths: string[]): Promise<void> {
+		for (let i = 0; i < paths.length; i = 500) {
+			await this.request(':commit', {
+				method: 'POST',
+				body: JSON.stringify({ writes: paths.slice(i, i + 500).map((p) => ({ delete: `${this.docRoot}/${p}` })) }),
+			});
+		}
+	}
 }

@@ -12,12 +12,14 @@ export interface ScoredJob {
 	matchedSignals: string[];
 }
 
+export type UserScoredJob = ScoredJob & { uid: string };
+
 export class RecommendationsRepository {
 	constructor(private readonly db: FirestoreClient) {}
 
-	async upsert(uid: string, items: ScoredJob[], now: Date): Promise<void> {
+	async upsertMany(items: UserScoredJob[], now: Date): Promise<void> {
 		const expireAt = new Date(now.getTime() + RECOMMENDATION_LIMITS.freshnessDays * DAY_MS);
-		const writes = items.map(({ key, job, score, matchedSignals }) => ({
+		const writes = items.map(({ uid, key, job, score, matchedSignals }) => ({
 			collection: `users/${uid}/recommendations`,
 			id: key,
 			data: {
@@ -32,5 +34,17 @@ export class RecommendationsRepository {
 		for (let i = 0; i < writes.length; i += BATCH_SIZE) {
 			await this.db.commit(writes.slice(i, i + BATCH_SIZE));
 		}
+	}
+
+	async deleteExpired(now: Date): Promise<number> {
+		const expired = await this.db.collectionGroup(
+			'recommendations',
+			'expireAt',
+			'LESS_THAN',
+			now,
+			RECOMMENDATION_LIMITS.maxExpiredDeletesPerRun,
+		);
+		await this.db.deleteDocs(expired.map((e) => e.path));
+		return expired.length;
 	}
 }

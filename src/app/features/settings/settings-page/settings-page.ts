@@ -6,8 +6,10 @@ import { ProfileState } from '../../profile/state/profile-state';
 import { PageHeader } from '../../../shared/ui/page-header/page-header';
 import { DatePipe } from '@angular/common';
 import { DataExportService } from '../data-export.service';
+import { DiscoveryRepository } from '../../explore/data/discovery.repository';
+import { DISCOVERY_SOURCES } from '../../explore/models/discovery-sources';
 
-type Pane = 'account' | 'security' | 'ai' | 'data';
+type Pane = 'account' | 'security' | 'discovery' | 'ai' | 'data';
 
 @Component({
   imports: [FormsModule, DatePipe, RouterLink, PageHeader],
@@ -19,10 +21,12 @@ export class Settings {
   private authService = inject(AuthService);
   private profileState = inject(ProfileState);
   private exporter = inject(DataExportService);
+  private discovery = inject(DiscoveryRepository);
 
   readonly panes: { id: Pane; label: string }[] = [
     { id: 'account', label: 'Account Information' },
     { id: 'security', label: 'Password & Security' },
+    { id: 'discovery', label: 'Job Matches' },
     { id: 'ai', label: 'AI Document Settings' },
     { id: 'data', label: 'Data Export / Backup' },
   ];
@@ -33,6 +37,17 @@ export class Settings {
   revoking = signal(false);
   exporting = signal(false);
   exportError = signal('');
+
+  readonly discoverySources = DISCOVERY_SOURCES;
+  discoveryLoaded = signal(false);
+  discoveryBusy = signal(false);
+  discoveryError = signal('');
+  discoveryEnabled = signal(false);
+  selectedSources = signal<string[]>([]);
+
+  constructor() {
+    void this.loadDiscovery();
+  }
 
   email = this.authService.currentUserSnapshot()?.email ?? '';
   emailVerified = this.authService.isEmailVerified;
@@ -111,6 +126,54 @@ export class Settings {
       await this.profileState.revokeAiConsent();
     } finally {
       this.revoking.set(false);
+    }
+  }
+
+  private async loadDiscovery() {
+    try {
+      const prefs = await this.discovery.loadPreferences();
+      this.discoveryEnabled.set(prefs.enabled);
+      this.selectedSources.set(prefs.sources);
+      this.discoveryLoaded.set(true);
+    } catch {
+      this.discoveryError.set('Could not load job match settings.');
+    }
+  }
+
+  async toggleSource(id: string, checked: boolean) {
+    const previous = this.selectedSources();
+    const next = checked ? [...previous, id] : previous.filter((s) => s !== id);
+    if (!next.length) return;
+    await this.saveDiscovery(
+      () => this.discovery.setSources(next),
+      () => {
+        this.selectedSources.set(next);
+      },
+      () => this.selectedSources.set(previous),
+    );
+  }
+
+  async setDiscoveryEnabled(enabled: boolean) {
+    await this.saveDiscovery(
+      () => this.discovery.setEnabled(enabled),
+      () => {
+        this.discoveryEnabled.set(enabled);
+      },
+    );
+  }
+
+  private async saveDiscovery(write: () => Promise<void>, apply: () => void, revert?: () => void) {
+    this.discoveryError.set('');
+    this.discoveryBusy.set(true);
+    apply();
+    try {
+      await write();
+    } catch {
+      revert?.();
+      this.discoveryError.set('Could not save. Try again.');
+      if (!revert) void this.loadDiscovery();
+    } finally {
+      this.discoveryBusy.set(false);
     }
   }
 

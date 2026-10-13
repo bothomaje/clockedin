@@ -49,6 +49,10 @@ export class JobState {
     return saved;
   }
 
+  adoptJob(job: Job): void {
+    this.jobsSignal.update((jobs) => [...jobs, job]);
+  }
+
   async updateJob(jobId: string, updates: Partial<Job>): Promise<void> {
     await this.jobRepository.updateJob(jobId, updates);
     this.jobsSignal.update((jobs) =>

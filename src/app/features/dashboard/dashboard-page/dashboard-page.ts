@@ -8,6 +8,9 @@ import { StatCard } from '../../../shared/ui/stat-card/stat-card';
 import { JobState } from '../../jobs/state/job-state';
 import { APPLICATION_STATUSES, getLatestJobUpdate, Job, JobStatus } from '../../jobs/models/job';
 import { Todo } from '../../profile/models/info';
+import { JobLocationPipe } from '../../jobs/models/job-location.pipe';
+import { TopMatchesState } from '../../explore/state/top-matches-state';
+import { WORK_MODE_LABELS } from '../../../shared/location/location.model';
 
 const FOLLOW_UP_AFTER_DAYS = 7;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -19,7 +22,7 @@ interface FollowUp {
 }
 
 @Component({
-  imports: [RouterLink, PageHeader, StatCard, StatusChip, FormsModule],
+  imports: [RouterLink, PageHeader, StatCard, StatusChip, FormsModule, JobLocationPipe],
   selector: 'app-dashboard',
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.scss',
@@ -27,8 +30,10 @@ interface FollowUp {
 export class Dashboard implements OnInit {
   protected profileState = inject(ProfileState);
   protected jobState = inject(JobState);
+  protected matches = inject(TopMatchesState);
 
   getLatestJobUpdate = getLatestJobUpdate;
+  workModeLabels = WORK_MODE_LABELS;
 
   newTodoText = '';
   targetRolesDraft = '';
@@ -124,6 +129,7 @@ export class Dashboard implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    void this.matches.load();
     await this.profileState.load();
     await this.jobState.loadJobs();
     this.targetRolesDraft = this.profileState.info().targetRoles ?? '';

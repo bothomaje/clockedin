@@ -42,6 +42,13 @@ export interface Job {
   jobAnalysis?: JobAnalysis | null;
   jobAnalysedAt?: Date | null;
   contact?: string;
+  source?: {
+    provider: string;
+    externalId: string;
+    url: string;
+  };
+  origin?: 'manual' | 'imported';
+  postedAt?: Date | null;
 }
 
 export const APPLICATION_STATUSES: JobStatus[] = Object.values(JobStatus).filter(

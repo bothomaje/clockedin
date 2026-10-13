@@ -1,0 +1,141 @@
+<app-page-header
+  title="Job matches"
+  eyebrow="Explore"
+  subtitle="Opportunities matched to your profile."
+  [compact]="true"
+/>
+
+@if (state.loading() && state.enabled() === null) {
+  <p aria-busy="true" aria-live="polite" class="text-secondary">Loading your matches...</p>
+} @else if (state.error() && !state.items().length) {
+  <app-error-state
+    title="We couldn't load your matches."
+    message="Your saved data has not been changed."
+    [details]="state.error()"
+  >
+    <button type="button" class="btn btn-primary" (click)="state.init()">Try again</button>
+  </app-error-state>
+} @else if (state.enabled() === false) {
+  <app-empty-state
+    title="Get matched to opportunities"
+    description="Turn on job matches and we'll look for opportunities that fit your profile. The more you complete your profile, the better they matches."
+  >
+    <button type="button" class="btn btn-primary" (click)="state.enable()">
+      Turn on job matches
+    </button>
+  </app-empty-state>
+} @else if (!state.items().length && !state.loading()) {
+  <app-empty-state
+    title="No matches yet"
+    description="Please check again later. Adding target roles, skills and a location to your profile improves job recommendations."
+  />
+} @else {
+  <section class="clk-toolbar">
+    <section class="clk-toolbar__filters">
+      <section class="clk-search">
+        <input
+          class="form-control"
+          placeholder="Search title, company or place..."
+          aria-label="Search"
+          [(ngModel)]="search"
+          name="search"
+        />
+      </section>
+      @if (sourceOptions().length > 2) {
+        <app-select
+          ariaLabel="Source"
+          [options]="sourceOptions()"
+          [highlight]="!!source()"
+          [(value)]="source"
+        />
+      }
+      @if (workModeOptions().length > 1) {
+        <app-select
+          ariaLabel="Work mode"
+          [options]="workModeOptions()"
+          [highlight]="!!workMode()"
+          [(value)]="workMode"
+        />
+      }
+      @if (employmentOptions().length > 1) {
+        <app-select
+          ariaLabel="Employment type"
+          [options]="employmentOptions()"
+          [highlight]="!!employment()"
+          [(value)]="employment"
+        />
+      }
+      <app-select
+        ariaLabel="Date posted"
+        [options]="postedOptions"
+        [highlight]="!!posted()"
+        [(value)]="posted"
+      />
+      <app-select
+        ariaLabel="Match quality"
+        [options]="qualityOptions"
+        [highlight]="!!quality()"
+        [(value)]="quality"
+      />
+      @if (activeFilterCount() > 0) {
+        <button
+          type="button"
+          class="btn btn-outline-secondary clk-toolbar__reset"
+          (click)="clearFilters()"
+        >
+          Reset filters ({{ activeFilterCount() }})
+        </button>
+      }
+    </section>
+
+    <section class="clk-toolbar__meta">
+      @if (hasActiveFilters()) {
+        <span>Showing {{ filtered().length }} of {{ state.items().length }} loaded</span>
+      }
+      <section class="clk-sort">
+        <label for="exploreSort">Sort by:</label>
+        <app-select
+          inputId="exploreSort"
+          appearance="inline"
+          [options]="sortOptions"
+          [value]="state.sort()"
+          (valueChange)="state.setSort($event)"
+        />
+      </section>
+    </section>
+  </section>
+
+  @if (actionError()) {
+    <p class="text-danger" role="alert">{{ actionError() }}</p>
+  }
+
+  @for (rec of filtered(); track rec.id) {
+    <app-recommendation-card
+      [rec]="rec"
+      [busy]="busyId() === rec.id"
+      (view)="onView($event)"
+      (save)="onSave($event)"
+      (dismiss)="onDismiss($event)"
+    />
+  } @empty {
+    <p class="text-secondary">
+      No loaded matches fit these filters.
+      @if (state.hasMore()) {
+        Load more to look further.
+      }
+    </p>
+  }
+
+  @if (state.hasMore()) {
+    <div class="text-center my-3">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        [disabled]="state.loadingMore()"
+        (click)="state.loadMore()"
+      >
+        {{ state.loadingMore() ? 'Loading...' : 'Load more' }}
+      </button>
+    </div>
+  }
+}

@@ -53,6 +53,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'explore',
+        loadChildren: () =>
+          import('./features/explore/explore.routes').then((m) => m.exploreRoutes),
+      },
+      {
         path: 'applications',
         loadChildren: () =>
           import('./features/applications/applications.routes').then((m) => m.applicationsRoutes),

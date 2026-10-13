@@ -7,6 +7,7 @@
 		"deploy:staging": "wrangler deploy --env staging",
 		"deploy:production": "wrangler deploy --env production",
 		"start": "wrangler dev --test-scheduled",
+		"typecheck": "tsc --noEmit",
 		"cf-typegen": "wrangler types"
 	},
 	"devDependencies": {

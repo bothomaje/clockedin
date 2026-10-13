@@ -1,0 +1,431 @@
+name: Clockedin CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - "feature/**"
+
+  pull_request:
+    branches:
+      - main
+      - "feature/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: clockedin-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-frontend:
+    name: Build frontend
+    runs-on: ubuntu-latest
+
+    environment: >-
+      ${{ (github.event_name == 'pull_request' ||
+          startsWith(github.ref, 'refs/heads/feature/'))
+          && 'staging' || 'production' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Create environment file
+        env:
+          NG_APP_API_KEY: ${{ vars.NG_APP_API_KEY }}
+          NG_APP_AUTH_DOMAIN: ${{ vars.NG_APP_AUTH_DOMAIN }}
+          NG_APP_PROJECT_ID: ${{ vars.NG_APP_PROJECT_ID }}
+          NG_APP_STORAGE_BUCKET: ${{ vars.NG_APP_STORAGE_BUCKET }}
+          NG_APP_MESSAGING_SENDER_ID: ${{ vars.NG_APP_MESSAGING_SENDER_ID }}
+          NG_APP_APP_ID: ${{ vars.NG_APP_APP_ID }}
+          NG_APP_MEASUREMENT_ID: ${{ vars.NG_APP_MEASUREMENT_ID }}
+          NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY: ${{ vars.NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY }}
+          NG_APP_GEOAPIFY_API_KEY: ${{ secrets.NG_APP_GEOAPIFY_API_KEY }}
+        run: |
+          cat > .env <<'EOF'
+          NG_APP_API_KEY=$NG_APP_API_KEY
+          NG_APP_AUTH_DOMAIN=$NG_APP_AUTH_DOMAIN
+          NG_APP_PROJECT_ID=$NG_APP_PROJECT_ID
+          NG_APP_STORAGE_BUCKET=$NG_APP_STORAGE_BUCKET
+          NG_APP_MESSAGING_SENDER_ID=$NG_APP_MESSAGING_SENDER_ID
+          NG_APP_APP_ID=$NG_APP_APP_ID
+          NG_APP_MEASUREMENT_ID=$NG_APP_MEASUREMENT_ID
+          NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY=$NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY
+          NG_APP_GEOAPIFY_API_KEY=$NG_APP_GEOAPIFY_API_KEY
+          EOF
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+  check-worker:
+    name: Check Cloudflare Worker
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: workers/job-ingestion
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: workers/job-ingestion/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check worker
+        run: npm run typecheck
+
+  deploy-hosting-staging:
+    name: Deploy Hosting to staging
+    needs: build-frontend
+
+    if: >-
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/heads/feature/')
+
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Create environment file
+        env:
+          NG_APP_API_KEY: ${{ vars.NG_APP_API_KEY }}
+          NG_APP_AUTH_DOMAIN: ${{ vars.NG_APP_AUTH_DOMAIN }}
+          NG_APP_PROJECT_ID: ${{ vars.NG_APP_PROJECT_ID }}
+          NG_APP_STORAGE_BUCKET: ${{ vars.NG_APP_STORAGE_BUCKET }}
+          NG_APP_MESSAGING_SENDER_ID: ${{ vars.NG_APP_MESSAGING_SENDER_ID }}
+          NG_APP_APP_ID: ${{ vars.NG_APP_APP_ID }}
+          NG_APP_MEASUREMENT_ID: ${{ vars.NG_APP_MEASUREMENT_ID }}
+          NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY: ${{ vars.NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY }}
+          NG_APP_GEOAPIFY_API_KEY: ${{ secrets.NG_APP_GEOAPIFY_API_KEY }}
+        run: |
+          cat > .env <<'EOF'
+          NG_APP_API_KEY=$NG_APP_API_KEY
+          NG_APP_AUTH_DOMAIN=$NG_APP_AUTH_DOMAIN
+          NG_APP_PROJECT_ID=$NG_APP_PROJECT_ID
+          NG_APP_STORAGE_BUCKET=$NG_APP_STORAGE_BUCKET
+          NG_APP_MESSAGING_SENDER_ID=$NG_APP_MESSAGING_SENDER_ID
+          NG_APP_APP_ID=$NG_APP_APP_ID
+          NG_APP_MEASUREMENT_ID=$NG_APP_MEASUREMENT_ID
+          NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY=$NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY
+          NG_APP_GEOAPIFY_API_KEY=$NG_APP_GEOAPIFY_API_KEY
+          EOF
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CLOCKEDIN_STAGING }}
+          channelId: live
+          projectId: clockedin-staging
+
+  deploy-hosting-production:
+    name: Deploy Hosting to production
+    needs: build-frontend
+
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Create environment file
+        env:
+          NG_APP_API_KEY: ${{ vars.NG_APP_API_KEY }}
+          NG_APP_AUTH_DOMAIN: ${{ vars.NG_APP_AUTH_DOMAIN }}
+          NG_APP_PROJECT_ID: ${{ vars.NG_APP_PROJECT_ID }}
+          NG_APP_STORAGE_BUCKET: ${{ vars.NG_APP_STORAGE_BUCKET }}
+          NG_APP_MESSAGING_SENDER_ID: ${{ vars.NG_APP_MESSAGING_SENDER_ID }}
+          NG_APP_APP_ID: ${{ vars.NG_APP_APP_ID }}
+          NG_APP_MEASUREMENT_ID: ${{ vars.NG_APP_MEASUREMENT_ID }}
+          NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY: ${{ vars.NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY }}
+          NG_APP_GEOAPIFY_API_KEY: ${{ secrets.NG_APP_GEOAPIFY_API_KEY }}
+        run: |
+          cat > .env <<'EOF'
+          NG_APP_API_KEY=$NG_APP_API_KEY
+          NG_APP_AUTH_DOMAIN=$NG_APP_AUTH_DOMAIN
+          NG_APP_PROJECT_ID=$NG_APP_PROJECT_ID
+          NG_APP_STORAGE_BUCKET=$NG_APP_STORAGE_BUCKET
+          NG_APP_MESSAGING_SENDER_ID=$NG_APP_MESSAGING_SENDER_ID
+          NG_APP_APP_ID=$NG_APP_APP_ID
+          NG_APP_MEASUREMENT_ID=$NG_APP_MEASUREMENT_ID
+          NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY=$NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY
+          NG_APP_GEOAPIFY_API_KEY=$NG_APP_GEOAPIFY_API_KEY
+          EOF
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CLOCKEDIN_PROD }}
+          channelId: live
+          projectId: clockedin-prod
+
+  deploy-hosting-preview:
+    name: Deploy Hosting preview
+    needs: build-frontend
+
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+
+    runs-on: ubuntu-latest
+    environment: staging
+
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Create environment file
+        env:
+          NG_APP_API_KEY: ${{ vars.NG_APP_API_KEY }}
+          NG_APP_AUTH_DOMAIN: ${{ vars.NG_APP_AUTH_DOMAIN }}
+          NG_APP_PROJECT_ID: ${{ vars.NG_APP_PROJECT_ID }}
+          NG_APP_STORAGE_BUCKET: ${{ vars.NG_APP_STORAGE_BUCKET }}
+          NG_APP_MESSAGING_SENDER_ID: ${{ vars.NG_APP_MESSAGING_SENDER_ID }}
+          NG_APP_APP_ID: ${{ vars.NG_APP_APP_ID }}
+          NG_APP_MEASUREMENT_ID: ${{ vars.NG_APP_MEASUREMENT_ID }}
+          NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY: ${{ vars.NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY }}
+          NG_APP_GEOAPIFY_API_KEY: ${{ secrets.NG_APP_GEOAPIFY_API_KEY }}
+        run: |
+          cat > .env <<'EOF'
+          NG_APP_API_KEY=$NG_APP_API_KEY
+          NG_APP_AUTH_DOMAIN=$NG_APP_AUTH_DOMAIN
+          NG_APP_PROJECT_ID=$NG_APP_PROJECT_ID
+          NG_APP_STORAGE_BUCKET=$NG_APP_STORAGE_BUCKET
+          NG_APP_MESSAGING_SENDER_ID=$NG_APP_MESSAGING_SENDER_ID
+          NG_APP_APP_ID=$NG_APP_APP_ID
+          NG_APP_MEASUREMENT_ID=$NG_APP_MEASUREMENT_ID
+          NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY=$NG_APP_RECAPTCHA_ENTERPRISE_SITE_KEY
+          NG_APP_GEOAPIFY_API_KEY=$NG_APP_GEOAPIFY_API_KEY
+          EOF
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Deploy preview
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CLOCKEDIN_STAGING }}
+          projectId: clockedin-staging
+
+  deploy-firestore-staging:
+    name: Deploy Firestore to staging
+    needs:
+      - build-frontend
+      - check-worker
+
+    if: >-
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/heads/feature/')
+
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Write credentials
+        env:
+          SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CLOCKEDIN_STAGING }}
+        run: |
+          printf '%s' "$SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
+
+      - name: Deploy Firestore rules and indexes
+        env:
+          PROJECT_ID: clockedin-staging
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+        run: |
+          npx --yes firebase-tools deploy \
+            --only firestore:rules,firestore:indexes \
+            --project "$PROJECT_ID" \
+            --non-interactive
+
+      - name: Remove credentials
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"
+
+  deploy-firestore-production:
+    name: Deploy Firestore to production
+    needs:
+      - build-frontend
+      - check-worker
+
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Write credentials
+        env:
+          SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CLOCKEDIN_PROD }}
+        run: |
+          printf '%s' "$SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
+
+      - name: Deploy Firestore rules and indexes
+        env:
+          PROJECT_ID: clockedin-prod
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+        run: |
+          npx --yes firebase-tools deploy \
+            --only firestore:rules,firestore:indexes \
+            --project "$PROJECT_ID" \
+            --non-interactive
+
+      - name: Remove credentials
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"
+
+  deploy-worker-staging:
+    name: Deploy Worker to staging
+    needs:
+      - build-frontend
+      - check-worker
+
+    if: >-
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/heads/feature/')
+
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: workers/job-ingestion/package-lock.json
+
+      - name: Install dependencies
+        working-directory: workers/job-ingestion
+        run: npm ci
+
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: workers/job-ingestion
+          command: deploy --env staging
+
+  deploy-worker-production:
+    name: Deploy Worker to production
+    needs:
+      - build-frontend
+      - check-worker
+
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: workers/job-ingestion/package-lock.json
+
+      - name: Install dependencies
+        working-directory: workers/job-ingestion
+        run: npm ci
+
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: workers/job-ingestion
+          command: deploy --env production

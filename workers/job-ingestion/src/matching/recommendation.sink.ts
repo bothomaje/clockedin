@@ -12,6 +12,7 @@ export interface MatchingStats {
 	scored: number;
 	skippedDismissedOrSaved: number;
 	belowMinScore: number;
+	droppedByBudget: number;
 	usersWithMatches: number;
 	written: number;
 	aiRefined: number;
@@ -29,6 +30,7 @@ export class MatchingSink implements JobSink {
 		users: ActiveUser[],
 		private readonly repo: RecommendationsRepository,
 		private readonly now: Date,
+		private readonly writeBudget: number,
 		private readonly refiner?: AiRefiner,
 	) {
 		users.forEach((u) => this.byUid.set(u.profile.uid, u));
@@ -40,6 +42,7 @@ export class MatchingSink implements JobSink {
 			scored: 0,
 			skippedDismissedOrSaved: 0,
 			belowMinScore: 0,
+			droppedByBudget: 0,
 			usersWithMatches: 0,
 			written: 0,
 			aiRefined: 0,
@@ -78,6 +81,9 @@ export class MatchingSink implements JobSink {
 			items.push(...list.slice(0, RECOMMENDATION_LIMITS.maxPerUserPerRun));
 		}
 		this.stats.usersWithMatches = this.pending.size;
+		items.sort((a, b) => b.score - a.score);
+		this.stats.droppedByBudget = Math.max(0, items.length - this.writeBudget);
+		items.length = Math.min(items.length, Math.max(0, this.writeBudget));
 		await this.refine(items);
 		await this.repo.upsertMany(items, this.now);
 		this.stats.written = items.length;

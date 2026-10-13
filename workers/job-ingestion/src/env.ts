@@ -8,6 +8,7 @@ export interface Env {
 	DIAGNOSTICS_TOKEN: string;
 	ADZUNA_APP_ID?: string;
 	ADZUNA_APP_KEY?: string;
+	SUBREQUEST_LIMIT?: string;
 	AI?: Ai;
 }
 

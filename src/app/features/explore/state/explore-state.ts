@@ -79,6 +79,7 @@ export class ExploreState {
     this.loadingMore.set(true);
     try {
       const page = await this.recommendations.getPage(this.sort(), this.cursor);
+      this.prune(page.items);
       this.itemsSignal.update((items) => [...items, ...page.items]);
       this.cursor = page.cursor;
       this.hasMore.set(page.hasMore);
@@ -109,6 +110,10 @@ export class ExploreState {
     this.itemsSignal.update((items) => items.filter((r) => r.id !== rec.id));
   }
 
+  private prune(items: Recommendation[]): void {
+    this.recommendations.pruneExpired(items).catch(() => undefined);
+  }
+
   private touch(): void {
     if (this.touched) return;
     this.touched = true;
@@ -118,6 +123,7 @@ export class ExploreState {
   private async loadFirst(): Promise<void> {
     this.cursor = null;
     const page = await this.recommendations.getPage(this.sort(), null);
+    this.prune(page.items);
     this.itemsSignal.set(page.items);
     this.cursor = page.cursor;
     this.hasMore.set(page.hasMore);

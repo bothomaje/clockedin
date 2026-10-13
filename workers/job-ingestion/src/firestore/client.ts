@@ -1,3 +1,5 @@
+import { UsageMeter } from '../budget/usage-meter';
+
 type FsValue =
 	| { stringValue: string }
 	| { integerValue: string }
@@ -62,12 +64,14 @@ export class FirestoreClient {
 		projectId: string,
 		databaseId: string,
 		private readonly getToken: () => Promise<string>,
+		private readonly meter?: UsageMeter,
 	) {
 		this.docRoot = `projects/${projectId}/databases/${databaseId}/documents`;
 		this.base = `https://firestore.googleapis.com/v1/${this.docRoot}`;
 	}
 
 	private async request(path: string, init: RequestInit = {}, allowNotFound = false): Promise<Response> {
+		this.meter?.reserve('requests', 1);
 		const res = await fetch(path.startsWith(':') ? `${this.base}${path}` : `${this.base}/${path}`, {
 			...init,
 			headers: {
@@ -92,6 +96,7 @@ export class FirestoreClient {
 	async get(collection: string, id: string): Promise<FsRecord | null> {
 		const res = await this.request(`${collection}/${encodeURIComponent(id)}`, {}, true);
 		if (res.status === 404) return null;
+		this.meter?.charge('reads');
 		const doc = (await res.json()) as { fields?: Record<string, FsValue> };
 		return decodeFields(doc.fields ?? {});
 	}
@@ -101,7 +106,9 @@ export class FirestoreClient {
 	}
 
 	async commit(writes: Array<{ collection: string; id: string; data: FsRecord; fieldPaths?: string[] }>): Promise<void> {
+		if (!writes.length) return;
 		if (writes.length > 500) throw new Error('Firestore commit limited to 500 writes');
+		this.meter?.reserve('writes', writes.length);
 		await this.request(':commit', {
 			method: 'POST',
 			body: JSON.stringify({
@@ -133,6 +140,7 @@ export class FirestoreClient {
 			}),
 		});
 		const rows = (await res.json()) as Array<{ document?: { name: string; fields?: Record<string, FsValue> } }>;
+		this.meter?.charge('reads', rows.filter((r) => r.document).length || 1);
 		return rows.flatMap((r) =>
 			r.document ? [{ path: r.document.name.slice(this.docRoot.length + 1), data: decodeFields(r.document.fields ?? {}) }] : [],
 		);
@@ -145,13 +153,25 @@ export class FirestoreClient {
 			body: JSON.stringify({ documents: paths.map((p) => `${this.docRoot}/${p}`) }),
 		});
 		const rows = (await res.json()) as Array<{ found?: { name: string; fields?: Record<string, FsValue> } }>;
+		this.meter?.charge('reads', paths.length);
 		return new Map(
 			rows.flatMap((r) => (r.found ? [[r.found.name.slice(this.docRoot.length + 1), decodeFields(r.found.fields ?? {})] as const] : [])),
 		);
 	}
 
+	async list(collection: string, fieldPaths: string[], pageSize: number): Promise<Array<{ path: string; data: FsRecord }>> {
+		const mask = fieldPaths.map((f) => `mask.fieldPaths=${encodeURIComponent(f)}`).join('&');
+		const res = await this.request(`${collection}?pageSize=${pageSize}&${mask}`, {}, true);
+		if (res.status === 404) return [];
+		const body = (await res.json()) as { documents?: Array<{ name: string; fields?: Record<string, FsValue> }> };
+		const docs = body.documents ?? [];
+		this.meter?.charge('reads', docs.length || 1);
+		return docs.map((d) => ({ path: d.name.slice(this.docRoot.length + 1), data: decodeFields(d.fields ?? {}) }));
+	}
+
 	async deleteDocs(paths: string[]): Promise<void> {
-		for (let i = 0; i < paths.length; i = 500) {
+		if (paths.length) this.meter?.reserve('deletes', paths.length);
+		for (let i = 0; i < paths.length; i += 500) {
 			await this.request(':commit', {
 				method: 'POST',
 				body: JSON.stringify({ writes: paths.slice(i, i + 500).map((p) => ({ delete: `${this.docRoot}/${p}` })) }),

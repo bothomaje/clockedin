@@ -5,7 +5,15 @@ export const RECOMMENDATION_LIMITS = {
 	maxDescriptionChars: 5_000,
 	maxActiveUsersPerRun: 100,
 	activeWindowDays: 30,
-	maxExpiredDeletesPerRun: 200,
+	maxStoredPerUser: 100,
+} as const;
+
+export const SWEEP_LIMITS = {
+	intervalDays: 3,
+	maxUsersPerRun: 15,
+	maxReadsPerRun: 1_500,
+	listPageSize: 300,
+	requestShare: 0.3,
 } as const;
 
 export const AI_LIMITS = {

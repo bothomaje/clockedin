@@ -11,6 +11,7 @@ export interface ActiveUser {
 	profile: MatchingProfile;
 	keys: DiscoveryKeys;
 	sources: Set<string> | null;
+	lastSweptAt: Date | null;
 }
 
 const DAY_MS = 86_400_000;
@@ -50,6 +51,7 @@ export class UsersRepository {
 					profile: toMatchingProfile(uid, user),
 					keys: { dismissed: keysOf(data['dismissed']), saved: keysOf(data['saved']) },
 					sources: sourcesOf(data['sources']),
+					lastSweptAt: data['lastSweptAt'] instanceof Date ? data['lastSweptAt'] : null,
 				},
 			];
 		});

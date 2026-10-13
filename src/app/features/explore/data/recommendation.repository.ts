@@ -9,6 +9,7 @@ import {
   query,
   QueryDocumentSnapshot,
   startAfter,
+  writeBatch,
 } from 'firebase/firestore';
 import { firebaseAuth, firestore } from '../../../core/firebase/firebase';
 import { Recommendation } from '../models/recommendation';
@@ -52,6 +53,15 @@ export class RecommendationRepository {
     const col = collection(firestore, 'users', this.uid(), 'recommendations');
     const snap = await getDocs(query(col, orderBy('score', 'desc'), limit(count)));
     return snap.docs.map((d) => toRecommendation(d.id, d.data()));
+  }
+
+  async pruneExpired(items: readonly Recommendation[], now = new Date()): Promise<void> {
+    const ids = items.filter((r) => r.id && r.expireAt <= now).map((r) => r.id as string);
+    if (!ids.length) return;
+    const uid = this.uid();
+    const batch = writeBatch(firestore);
+    ids.forEach((id) => batch.delete(doc(firestore, 'users', uid, 'recommendations', id)));
+    await batch.commit();
   }
 
   async get(id: string): Promise<Recommendation | undefined> {

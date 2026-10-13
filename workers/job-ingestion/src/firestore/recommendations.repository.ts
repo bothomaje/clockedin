@@ -38,16 +38,4 @@ export class RecommendationsRepository {
 			await this.db.commit(writes.slice(i, i + BATCH_SIZE));
 		}
 	}
-
-	async deleteExpired(now: Date): Promise<number> {
-		const expired = await this.db.collectionGroup(
-			'recommendations',
-			'expireAt',
-			'LESS_THAN',
-			now,
-			RECOMMENDATION_LIMITS.maxExpiredDeletesPerRun,
-		);
-		await this.db.deleteDocs(expired.map((e) => e.path));
-		return expired.length;
-	}
 }

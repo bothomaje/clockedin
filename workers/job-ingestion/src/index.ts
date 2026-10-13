@@ -12,6 +12,9 @@ import { RecommendationsRepository } from './firestore/recommendations.repositor
 import { UsersRepository } from './firestore/users.repository';
 import { planFromUsers } from './matching/query-planner';
 import { WorkersAiRefiner } from './matching/ai-refiner';
+import { UsageMeter } from './budget/usage-meter';
+import { estimateDaily, parseSubrequestLimit, runCaps } from './budget/budget';
+import { ExpirySweeper } from './lifecycle/expiry-sweeper';
 
 const json = (body: unknown, status = 200) =>
 	new Response(JSON.stringify(body), {
@@ -27,21 +30,37 @@ function isAuthorised(request: Request, env: Env): boolean {
 	return crypto.subtle.timingSafeEqual(supplied, expected);
 }
 
-async function runMatching(env: Env, source: JobSource) {
+function newMeter(env: Env, sources: JobSource[]): UsageMeter {
+	const pages = Math.max(0, ...sources.map((s) => SEARCH_PLANS[s.id]?.maxPagesPerRun ?? 0)) * Math.max(1, sources.length);
+	return new UsageMeter(runCaps(parseSubrequestLimit(env.SUBREQUEST_LIMIT), pages));
+}
+
+async function runMatching(env: Env, source: JobSource, meter: UsageMeter, sourcesLeft = 1) {
 	const plan = SEARCH_PLANS[source.id];
 	if (!plan) throw new Error(`No search plan for source "${source.id}"`);
 
 	const key = loadServiceAccount(env);
-	const db = new FirestoreClient(env.FIREBASE_PROJECT_ID, env.FIRESTORE_DATABASE_ID, () => getAccessToken(key));
+	const db = new FirestoreClient(env.FIREBASE_PROJECT_ID, env.FIRESTORE_DATABASE_ID, () => getAccessToken(key), meter);
 	const recs = new RecommendationsRepository(db);
 	const now = new Date();
 
-	const expiredDeleted = await recs.deleteExpired(now);
 	const users = await new UsersRepository(db).loadActive(now);
-	const wanted = users.filter((u) => !u.sources || u.sources.has(source.id));
-	if (!wanted.length) return { source: source.id, expiredDeleted, users: 0, skipped: users.length };
+	const usersArr = [];
 
-	const sink = new MatchingSink(wanted, recs, now, env.AI ? new WorkersAiRefiner(env.AI) : undefined);
+	for (const user of users) {
+		const u = {
+			uid: user.profile.uid,
+			lastSweptAt: user.lastSweptAt,
+		};
+		usersArr.push(u);
+	}
+
+	const sweep = await new ExpirySweeper(db, meter).sweep(usersArr, now);
+	const wanted = users.filter((u) => !u.sources || u.sources.has(source.id));
+	if (!wanted.length) return { source: source.id, sweep, users: 0, skipped: users.length, usage: meter.snapshot().used };
+
+	const writeBudget = Math.floor(meter.remaining('writes') / sourcesLeft);
+	const sink = new MatchingSink(wanted, recs, now, writeBudget, env.AI ? new WorkersAiRefiner(env.AI) : undefined);
 	const ingestion = await runIngestion(
 		source,
 		sink,
@@ -51,16 +70,18 @@ async function runMatching(env: Env, source: JobSource) {
 		),
 		now,
 	);
-	return { source: source.id, expiredDeleted, ingestion, matching: sink.stats };
+	return { source: source.id, sweep, ingestion, matching: sink.stats, usage: meter.snapshot().used };
 }
 
 export default {
 	async scheduled(_event, env, ctx): Promise<void> {
 		ctx.waitUntil(
 			(async () => {
-				for (const source of buildSources(env).filter((s) => s.id !== 'fake')) {
+				const sources = buildSources(env).filter((s) => s.id !== 'fake');
+				const meter = newMeter(env, sources);
+				for (const [i, source] of sources.entries()) {
 					try {
-						console.log(JSON.stringify(await runMatching(env, source)));
+						console.log(JSON.stringify(await runMatching(env, source, meter, sources.length - i)));
 					} catch (e) {
 						console.error(`matching failed: ${source.id}: ${(e as Error).message}`);
 					}
@@ -94,6 +115,22 @@ export default {
 			} catch (e) {
 				return json({ ok: false, error: (e as Error).message }, 500);
 			}
+		}
+
+		if (request.method === 'POST' && pathname === '/diagnostics/budget') {
+			if (!isAuthorised(request, env)) return json({ error: 'unauthorised' }, 401);
+			if (env.ENVIRONMENT !== 'staging') return json({ error: 'staging only' }, 403);
+
+			const input = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+			const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : undefined);
+			return json(
+				estimateDaily({
+					activeUsers: num(input.activeUsers) ?? 0,
+					recsPerUserPerRun: num(input.recsPerUserPerRun),
+					avgStoredPerUser: num(input.avgStoredPerUser),
+					clientReadsPerUserPerDay: num(input.clientReadsPerUserPerDay),
+				}),
+			);
 		}
 
 		const sourceRoute = pathname.match(/^\/diagnostics\/sources\/([a-z0-9-]+)$/);
@@ -155,7 +192,7 @@ export default {
 			if (!source) return json({ error: 'unknown or unconfigured source' }, 404);
 
 			try {
-				const result = await runMatching(env, source);
+				const result = await runMatching(env, source, newMeter(env, [source]));
 				return json(result, 'ingestion' in result && result.ingestion?.failed ? 502 : 200);
 			} catch (e) {
 				return json({ ok: false, error: (e as Error).message }, 500);

@@ -10,11 +10,17 @@ export interface DiscoveryKeys {
 export interface ActiveUser {
 	profile: MatchingProfile;
 	keys: DiscoveryKeys;
+	sources: Set<string> | null;
 }
 
 const DAY_MS = 86_400_000;
 const STATE_PATH = /^users\/([^/]+)\/discovery\/state$/;
 const keysOf = (value: unknown): Set<string> => new Set(value && typeof value === 'object' ? Object.keys(value) : []);
+const sourcesOf = (value: unknown): Set<string> | null => {
+	if (!Array.isArray(value)) return null;
+	const ids = value.filter((v): v is string => typeof v === 'string');
+	return ids.length ? new Set(ids) : null;
+};
 
 export class UsersRepository {
 	constructor(private readonly db: FirestoreClient) {}
@@ -39,7 +45,13 @@ export class UsersRepository {
 		return enabled.flatMap(({ uid, data }) => {
 			const user = users.get(`users/${uid}`);
 			if (!user) return [];
-			return [{ profile: toMatchingProfile(uid, user), keys: { dismissed: keysOf(data['dismissed']), saved: keysOf(data['saved']) } }];
+			return [
+				{
+					profile: toMatchingProfile(uid, user),
+					keys: { dismissed: keysOf(data['dismissed']), saved: keysOf(data['saved']) },
+					sources: sourcesOf(data['sources']),
+				},
+			];
 		});
 	}
 }

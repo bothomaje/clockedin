@@ -14,6 +14,7 @@ export interface DiscoveryState {
   dismissed: Record<string, Date>;
   saved: Record<string, Date>;
   enabled?: boolean;
+  sources?: string[];
   lastActiveAt?: Date;
   refreshRequestedAt?: Date;
 }

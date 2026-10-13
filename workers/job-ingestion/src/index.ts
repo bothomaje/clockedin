@@ -37,15 +37,16 @@ async function runMatching(env: Env, source: JobSource) {
 
 	const expiredDeleted = await recs.deleteExpired(now);
 	const users = await new UsersRepository(db).loadActive(now);
-	if (!users.length) return { source: source.id, expiredDeleted, users: 0 };
+	const wanted = users.filter((u) => !u.sources || u.sources.has(source.id));
+	if (!wanted.length) return { source: source.id, expiredDeleted, users: 0, skipped: users.length };
 
-	const sink = new MatchingSink(users, recs, now);
+	const sink = new MatchingSink(wanted, recs, now);
 	const ingestion = await runIngestion(
 		source,
 		sink,
 		planFromUsers(
 			plan,
-			users.map((u) => u.profile),
+			wanted.map((u) => u.profile),
 		),
 		now,
 	);
@@ -154,7 +155,7 @@ export default {
 
 			try {
 				const result = await runMatching(env, source);
-				return json(result, 'ingestion' in result && result.ingestion.failed ? 502 : 200);
+				return json(result, 'ingestion' in result && result.ingestion?.failed ? 502 : 200);
 			} catch (e) {
 				return json({ ok: false, error: (e as Error).message }, 500);
 			}

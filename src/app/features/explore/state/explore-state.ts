@@ -5,6 +5,7 @@ import { ExploreSort, RecommendationRepository } from '../data/recommendation.re
 import { Job } from '../../jobs/models/job';
 import { JobState } from '../../jobs/state/job-state';
 import { Recommendation } from '../models/recommendation';
+import { DISCOVERY_SOURCES } from '../models/discovery-sources';
 
 @Service()
 export class ExploreState {
@@ -18,6 +19,7 @@ export class ExploreState {
 
   sort = signal<ExploreSort>('score');
   enabled = signal<boolean | null>(null);
+  sources = signal<string[]>(DISCOVERY_SOURCES.map((s) => s.id));
   loading = signal(false);
   loadingMore = signal(false);
   hasMore = signal(false);
@@ -25,16 +27,20 @@ export class ExploreState {
 
   items = computed(() => {
     const now = new Date();
-    return this.itemsSignal().filter((r) => r.expireAt > now);
+    const sources = this.sources();
+    return this.itemsSignal().filter(
+      (r) => r.expireAt > now && (!r.job.source || sources.includes(r.job.source.provider)),
+    );
   });
 
   async init(): Promise<void> {
     this.loading.set(true);
     this.error.set('');
     try {
-      const enabled = await this.discovery.isEnabled();
-      this.enabled.set(enabled);
-      if (enabled) {
+      const prefs = await this.discovery.loadPreferences();
+      this.enabled.set(prefs.enabled);
+      this.sources.set(prefs.sources);
+      if (prefs.enabled) {
         this.touch();
         await this.loadFirst();
       }

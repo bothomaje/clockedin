@@ -5,6 +5,7 @@ import { JobRepository } from '../../jobs/data/job.repository';
 import { Job } from '../../jobs/models/job';
 import { Recommendation } from '../models/recommendation';
 import { recommendationToJob } from './recommendation.mapper';
+import { DiscoveryPreferences, resolveSources } from '../models/discovery-sources';
 
 @Service()
 export class DiscoveryRepository {
@@ -20,9 +21,13 @@ export class DiscoveryRepository {
     return doc(firestore, 'users', uid, 'discovery', 'state');
   }
 
-  async isEnabled(): Promise<boolean> {
-    const snap = await getDoc(this.stateRef(this.currentUid()));
-    return snap.data()?.['enabled'] === true;
+  async loadPreferences(): Promise<DiscoveryPreferences> {
+    const data = (await getDoc(this.stateRef(this.currentUid()))).data();
+    return { enabled: data?.['enabled'] === true, sources: resolveSources(data?.['sources']) };
+  }
+
+  async setSources(sources: string[]): Promise<void> {
+    await setDoc(this.stateRef(this.currentUid()), { sources }, { merge: true });
   }
 
   async setEnabled(enabled: boolean): Promise<void> {

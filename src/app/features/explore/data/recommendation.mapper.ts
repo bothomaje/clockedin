@@ -1,11 +1,24 @@
 import { DocumentData, Timestamp } from 'firebase/firestore';
 import { Job, JobStatus } from '../../jobs/models/job';
-import { Recommendation } from '../models/recommendation';
+import { AiInsight, Recommendation } from '../models/recommendation';
 
 const toDate = (value: unknown): Date | null =>
   !value ? null : value instanceof Timestamp ? value.toDate() : (value as Date);
 
-/** Reads a users/{uid}/recommendations document. The document ID is the recommendation key. */
+function toAiInsight(value: unknown): AiInsight | undefined {
+  const v = value as Partial<Record<keyof AiInsight, unknown>> | null | undefined;
+  if (!v || typeof v['whyItMatches'] !== 'string' || typeof v['matchScore'] !== 'number')
+    return undefined;
+  return {
+    matchScore: v['matchScore'],
+    whyItMatches: v['whyItMatches'],
+    potentialConcerns: Array.isArray(v['potentialConcerns'])
+      ? (v['potentialConcerns'] as string[])
+      : [],
+    refinedAt: toDate(v['refinedAt']) ?? new Date(0),
+  };
+}
+
 export function toRecommendation(id: string, data: DocumentData): Recommendation {
   const job = (data['job'] ?? {}) as Partial<Job>;
   return {
@@ -18,6 +31,7 @@ export function toRecommendation(id: string, data: DocumentData): Recommendation
     },
     score: typeof data['score'] === 'number' ? data['score'] : 0,
     matchedSignals: Array.isArray(data['matchedSignals']) ? data['matchedSignals'] : [],
+    ai: toAiInsight(data['ai']),
     generatedAt: toDate(data['generatedAt']) ?? new Date(0),
     lastSeenAt: toDate(data['lastSeenAt']) ?? new Date(0),
     expireAt: toDate(data['expireAt']) ?? new Date(0),

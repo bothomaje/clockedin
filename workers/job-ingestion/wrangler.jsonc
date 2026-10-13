@@ -7,6 +7,7 @@
 	"name": "job-ingestion",
 	"main": "src/index.ts",
 	"compatibility_date": "2026-10-01",
+	"ai": { "binding": "AI" },
 	"observability": {
 		"enabled": true,
 	},

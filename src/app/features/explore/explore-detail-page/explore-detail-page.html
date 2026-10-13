@@ -33,9 +33,24 @@
       }
     </p>
 
+    @if (r.ai; as ai) {
+      <section class="small mb-3" aria-label="Why this job">
+        <p class="mb-1"><strong>Why this job:</strong> {{ ai.whyItMatches }}</p>
+        @if (ai.potentialConcerns.length) {
+          <p class="mb-1"><strong>Possible gaps:</strong></p>
+          <ul class="mb-1">
+            @for (c of ai.potentialConcerns; track c) {
+              <li>{{ c }}</li>
+            }
+          </ul>
+        }
+        <p class="text-secondary mb-0">AI-generated. Check the original listing.</p>
+      </section>
+    }
+
     @if (r.matchedSignals.length) {
       <p class="small">
-        <strong>Why this match:</strong>
+        <strong>Matched on:</strong>
         {{ r.matchedSignals.join(', ') }}
       </p>
     }

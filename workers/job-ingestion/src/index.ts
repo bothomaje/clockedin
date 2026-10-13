@@ -11,6 +11,7 @@ import { MatchingSink } from './matching/recommendation.sink';
 import { RecommendationsRepository } from './firestore/recommendations.repository';
 import { UsersRepository } from './firestore/users.repository';
 import { planFromUsers } from './matching/query-planner';
+import { WorkersAiRefiner } from './matching/ai-refiner';
 
 const json = (body: unknown, status = 200) =>
 	new Response(JSON.stringify(body), {
@@ -40,7 +41,7 @@ async function runMatching(env: Env, source: JobSource) {
 	const wanted = users.filter((u) => !u.sources || u.sources.has(source.id));
 	if (!wanted.length) return { source: source.id, expiredDeleted, users: 0, skipped: users.length };
 
-	const sink = new MatchingSink(wanted, recs, now);
+	const sink = new MatchingSink(wanted, recs, now, env.AI ? new WorkersAiRefiner(env.AI) : undefined);
 	const ingestion = await runIngestion(
 		source,
 		sink,

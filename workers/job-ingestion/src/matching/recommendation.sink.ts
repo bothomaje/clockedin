@@ -1,7 +1,8 @@
 import type { RecommendationsRepository, UserScoredJob } from '../firestore/recommendations.repository';
 import type { ActiveUser } from '../firestore/users.repository';
 import type { JobSink, KeyedJob } from '../ingestion/sink';
-import { RECOMMENDATION_LIMITS } from './limits';
+import { AiRefiner } from './ai-refiner';
+import { AI_LIMITS, RECOMMENDATION_LIMITS } from './limits';
 import { MatchIndex } from './match-index';
 import { jobText, scoreJob } from './scorer';
 
@@ -13,9 +14,10 @@ export interface MatchingStats {
 	belowMinScore: number;
 	usersWithMatches: number;
 	written: number;
+	aiRefined: number;
+	aiFailed: number;
 }
 
-/** Scores each job against candidate users, keeps each user's top matches, writes them in finish(). */
 export class MatchingSink implements JobSink {
 	readonly stats: MatchingStats;
 	private readonly index: MatchIndex;
@@ -27,6 +29,7 @@ export class MatchingSink implements JobSink {
 		users: ActiveUser[],
 		private readonly repo: RecommendationsRepository,
 		private readonly now: Date,
+		private readonly refiner?: AiRefiner,
 	) {
 		users.forEach((u) => this.byUid.set(u.profile.uid, u));
 		this.index = new MatchIndex(users.map((u) => u.profile));
@@ -39,6 +42,8 @@ export class MatchingSink implements JobSink {
 			belowMinScore: 0,
 			usersWithMatches: 0,
 			written: 0,
+			aiRefined: 0,
+			aiFailed: 0,
 		};
 	}
 
@@ -73,7 +78,34 @@ export class MatchingSink implements JobSink {
 			items.push(...list.slice(0, RECOMMENDATION_LIMITS.maxPerUserPerRun));
 		}
 		this.stats.usersWithMatches = this.pending.size;
+		await this.refine(items);
 		await this.repo.upsertMany(items, this.now);
 		this.stats.written = items.length;
+	}
+
+	private async refine(items: UserScoredJob[]): Promise<void> {
+		if (!this.refiner) return;
+		const byUser = new Map<string, UserScoredJob[]>();
+		for (const item of items) {
+			const list = byUser.get(item.uid) ?? [];
+			if (list.length < AI_LIMITS.maxPerUserPerRun) list.push(item);
+			byUser.set(item.uid, list);
+		}
+		const queue: UserScoredJob[] = [];
+		for (let rank = 0; rank < AI_LIMITS.maxPerUserPerRun; rank++) {
+			for (const list of byUser.values()) if (list[rank]) queue.push(list[rank]);
+		}
+		const batch = queue.slice(0, AI_LIMITS.maxPerRun);
+		for (let i = 0; i < batch.length; i += AI_LIMITS.concurrency) {
+			await Promise.all(
+				batch.slice(i, i + AI_LIMITS.concurrency).map(async (item) => {
+					const insight = await this.refiner!.refine(this.byUid.get(item.uid)!.profile, item.job);
+					if (!insight) return void this.stats.aiFailed++;
+					item.ai = insight;
+					item.score = Math.round(AI_LIMITS.blend * insight.matchScore + (1 - AI_LIMITS.blend) * item.score);
+					this.stats.aiRefined++;
+				}),
+			);
+		}
 	}
 }

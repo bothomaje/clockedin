@@ -1,10 +1,18 @@
 import { Job } from '../../jobs/models/job';
 
+export interface AiInsight {
+  matchScore: number;
+  whyItMatches: string;
+  potentialConcerns: string[];
+  refinedAt: Date;
+}
+
 export interface Recommendation {
   id?: string;
   job: Job;
   score: number;
   matchedSignals: string[];
+  ai?: AiInsight;
   generatedAt: Date;
   lastSeenAt: Date;
   expireAt: Date;

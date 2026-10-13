@@ -1,6 +1,7 @@
 import type { Job } from '../model/job';
 import { RECOMMENDATION_LIMITS } from '../matching/limits';
 import type { FirestoreClient } from './client';
+import { AiInsight } from '../model/recommendation';
 
 const DAY_MS = 86_400_000;
 const BATCH_SIZE = 500;
@@ -10,6 +11,7 @@ export interface ScoredJob {
 	job: Job;
 	score: number;
 	matchedSignals: string[];
+	ai?: AiInsight;
 }
 
 export type UserScoredJob = ScoredJob & { uid: string };
@@ -19,13 +21,14 @@ export class RecommendationsRepository {
 
 	async upsertMany(items: UserScoredJob[], now: Date): Promise<void> {
 		const expireAt = new Date(now.getTime() + RECOMMENDATION_LIMITS.freshnessDays * DAY_MS);
-		const writes = items.map(({ uid, key, job, score, matchedSignals }) => ({
+		const writes = items.map(({ uid, key, job, score, matchedSignals, ai }) => ({
 			collection: `users/${uid}/recommendations`,
 			id: key,
 			data: {
 				job: { ...job, jobDescription: job.jobDescription.slice(0, RECOMMENDATION_LIMITS.maxDescriptionChars) },
 				score,
 				matchedSignals,
+				...(ai && { ai }),
 				generatedAt: now,
 				lastSeenAt: now,
 				expireAt,

@@ -7,12 +7,12 @@
 	"name": "job-ingestion",
 	"main": "src/index.ts",
 	"compatibility_date": "2026-10-01",
-	"ai": { "binding": "AI" },
 	"observability": {
 		"enabled": true,
 	},
 	"env": {
 		"staging": {
+			"ai": { "binding": "AI" },
 			"triggers": {
 				"crons": ["0 */12 * * *"],
 			},
@@ -23,6 +23,10 @@
 			},
 		},
 		"production": {
+			"ai": { "binding": "AI" },
+			"triggers": {
+				"crons": ["0 */12 * * *"],
+			},
 			"vars": {
 				"ENVIRONMENT": "production",
 				"FIREBASE_PROJECT_ID": "clockedin-prod",

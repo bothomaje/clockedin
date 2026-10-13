@@ -1,0 +1,77 @@
+<a routerLink="/explore" class="btn btn-link px-0 mb-2">&larr; Back to matches</a>
+
+@if (loading()) {
+  <p aria-busy="true" class="text-secondary">Loading...</p>
+} @else if (!rec()) {
+  <p>This match is no longer available. It may have expired or already been handled.</p>
+} @else {
+  @let r = rec()!;
+  <article class="clk-card p-4">
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+      <h1 class="h3 mb-0">{{ r.job.role }}</h1>
+      <span class="badge text-bg-light">{{ r.score }}% match</span>
+    </div>
+    <p class="mb-1">{{ r.job.company }}</p>
+    <p class="text-secondary small">
+      @if (r.job | jobLocation) {
+        <span>{{ r.job | jobLocation }}</span>
+      }
+      @if (r.job.workMode) {
+        <span> · {{ workModeLabels[r.job.workMode] }}</span>
+      }
+      @if (r.job.employmentType) {
+        <span> · {{ r.job.employmentType }}</span>
+      }
+      @if (r.job.salary) {
+        <span> · {{ r.job.salary }}</span>
+      }
+      @if (r.job.postedAt) {
+        <span> · Posted {{ r.job.postedAt | date: 'd MMM y' }}</span>
+      }
+      @if (r.job.source) {
+        <span> · {{ providerLabel(r.job.source.provider) }}</span>
+      }
+    </p>
+
+    @if (r.matchedSignals.length) {
+      <p class="small">
+        <strong>Why this match:</strong>
+        {{ r.matchedSignals.join(', ') }}
+      </p>
+    }
+
+    @if (error()) {
+      <p class="text-danger" role="alert">{{ error() }}</p>
+    }
+
+    <div class="d-flex flex-wrap gap-2 my-3">
+      <button type="button" class="btn btn-primary" [disabled]="busy()" (click)="save()">
+        Save
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        [disabled]="busy()"
+        (click)="dismiss()"
+      >
+        Dismiss
+      </button>
+      @if (r.job.url) {
+        <a
+          class="btn btn-outline-primary"
+          [href]="r.job.url"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Apply on {{ providerLabel(r.job.source?.provider) || 'the original listing' }}
+        </a>
+      }
+    </div>
+
+    <h2 class="h6">Description</h2>
+    <p class="mb-0" style="white-space: pre-line">{{ r.job.jobDescription }}</p>
+    <p class="text-secondary small mt-3 mb-0">
+      This is a summary from the listing. The full description is on the original posting.
+    </p>
+  </article>
+}

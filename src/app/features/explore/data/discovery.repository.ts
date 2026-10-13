@@ -1,5 +1,5 @@
 import { Service, inject } from '@angular/core';
-import { doc, serverTimestamp, writeBatch } from 'firebase/firestore';
+import { doc, getDoc, serverTimestamp, setDoc, writeBatch } from 'firebase/firestore';
 import { firebaseAuth, firestore } from '../../../core/firebase/firebase';
 import { JobRepository } from '../../jobs/data/job.repository';
 import { Job } from '../../jobs/models/job';
@@ -12,8 +12,33 @@ export class DiscoveryRepository {
 
   private currentUid(): string {
     const uid = firebaseAuth.currentUser?.uid;
-    if (!uid) throw new Error('Cannot save recommendation: No user is signed in.');
+    if (!uid) throw new Error('Cannot access discovery: No user is signed in.');
     return uid;
+  }
+
+  private stateRef(uid: string) {
+    return doc(firestore, 'users', uid, 'discovery', 'state');
+  }
+
+  async isEnabled(): Promise<boolean> {
+    const snap = await getDoc(this.stateRef(this.currentUid()));
+    return snap.data()?.['enabled'] === true;
+  }
+
+  async setEnabled(enabled: boolean): Promise<void> {
+    await setDoc(
+      this.stateRef(this.currentUid()),
+      { enabled, lastActiveAt: serverTimestamp() },
+      { merge: true },
+    );
+  }
+
+  async touchActive(): Promise<void> {
+    await setDoc(
+      this.stateRef(this.currentUid()),
+      { lastActiveAt: serverTimestamp() },
+      { merge: true },
+    );
   }
 
   async saveRecommendation(rec: Recommendation): Promise<Job> {
@@ -22,14 +47,20 @@ export class DiscoveryRepository {
 
     const batch = writeBatch(firestore);
     const job = this.jobRepository.addJobInBatch(batch, recommendationToJob(rec));
-    batch.set(
-      doc(firestore, 'users', uid, 'discovery', 'state'),
-      { saved: { [rec.id]: serverTimestamp() } },
-      { merge: true },
-    );
+    batch.set(this.stateRef(uid), { saved: { [rec.id]: serverTimestamp() } }, { merge: true });
     batch.delete(doc(firestore, 'users', uid, 'recommendations', rec.id));
     await batch.commit();
 
     return job;
+  }
+
+  async dismissRecommendation(rec: Recommendation): Promise<void> {
+    if (!rec.id) throw new Error('Cannot dismiss a recommendation without an id.');
+    const uid = this.currentUid();
+
+    const batch = writeBatch(firestore);
+    batch.set(this.stateRef(uid), { dismissed: { [rec.id]: serverTimestamp() } }, { merge: true });
+    batch.delete(doc(firestore, 'users', uid, 'recommendations', rec.id));
+    await batch.commit();
   }
 }

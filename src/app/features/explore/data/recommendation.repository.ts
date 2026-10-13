@@ -48,6 +48,12 @@ export class RecommendationRepository {
     };
   }
 
+  async getTop(count: number): Promise<Recommendation[]> {
+    const col = collection(firestore, 'users', this.uid(), 'recommendations');
+    const snap = await getDocs(query(col, orderBy('score', 'desc'), limit(count)));
+    return snap.docs.map((d) => toRecommendation(d.id, d.data()));
+  }
+
   async get(id: string): Promise<Recommendation | undefined> {
     const snap = await getDoc(doc(firestore, 'users', this.uid(), 'recommendations', id));
     return snap.exists() ? toRecommendation(snap.id, snap.data()) : undefined;

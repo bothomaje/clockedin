@@ -4,7 +4,7 @@ import { DiscoveryRepository } from '../data/discovery.repository';
 import { ExploreSort, RecommendationRepository } from '../data/recommendation.repository';
 import { Job } from '../../jobs/models/job';
 import { JobState } from '../../jobs/state/job-state';
-import { Recommendation } from '../models/recommendation';
+import { isVisible, Recommendation } from '../models/recommendation';
 import { DISCOVERY_SOURCES } from '../models/discovery-sources';
 
 @Service()
@@ -26,11 +26,8 @@ export class ExploreState {
   error = signal('');
 
   items = computed(() => {
-    const now = new Date();
     const sources = this.sources();
-    return this.itemsSignal().filter(
-      (r) => r.expireAt > now && (!r.job.source || sources.includes(r.job.source.provider)),
-    );
+    return this.itemsSignal().filter((r) => isVisible(r, sources));
   });
 
   async init(): Promise<void> {

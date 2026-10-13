@@ -19,6 +19,14 @@ export interface DiscoveryState {
   refreshRequestedAt?: Date;
 }
 
+export function isVisible(
+  rec: Recommendation,
+  sources: readonly string[],
+  now = new Date(),
+): boolean {
+  return rec.expireAt > now && (!rec.job.source || sources.includes(rec.job.source.provider));
+}
+
 export function recommendationKey(job: Pick<Job, 'source'>): string | null {
   if (!job.source) return null;
   return `${job.source.provider}_${job.source.externalId}`.replace(/[^A-Za-z0-9_-]/g, '_');

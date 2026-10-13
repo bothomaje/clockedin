@@ -76,6 +76,56 @@
         }
       </article>
 
+      @if (!matches.error() && matches.enabled() !== null) {
+        <article class="clk-card clk-card--lg clk-card--stack">
+          <header class="clk-widget__head">
+            <h3 class="clk-dashboard__title">Top matches for you</h3>
+            <a routerLink="/explore" class="clk-dashboard__link">View all matches →</a>
+          </header>
+
+          @if (!matches.enabled()) {
+            <p class="clk-widget__empty">
+              Get matched to jobs that fit your profile.
+              <a routerLink="/explore">Turn on job matches</a>.
+            </p>
+          } @else {
+            @if (matches.actionError()) {
+              <p class="text-danger m-0" role="alert">{{ matches.actionError() }}</p>
+            }
+            <ul class="list-unstyled m-0">
+              @for (rec of matches.items(); track rec.id) {
+                <li class="d-flex justify-content-between align-items-center gap-3 py-2">
+                  <a
+                    class="text-decoration-none text-reset flex-grow-1"
+                    [routerLink]="['/explore', rec.id]"
+                  >
+                    <strong>{{ rec.job.role }}</strong>
+                    <span class="badge text-bg-light ms-2">{{ rec.score }}% match</span>
+                    <span class="d-block">{{ rec.job.company }}</span>
+                    <span class="d-block text-secondary small">
+                      {{ rec.job | jobLocation }}
+                      @if (rec.job.workMode; as mode) {
+                        · {{ workModeLabels[mode] }}
+                      }
+                    </span>
+                  </a>
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary btn-sm"
+                    [disabled]="matches.busyId() === rec.id"
+                    (click)="matches.save(rec)"
+                  >
+                    Save
+                  </button>
+                </li>
+              } @empty {
+                <li class="clk-widget__empty">No matches yet. Check back soon.</li>
+              }
+            </ul>
+          }
+        </article>
+      }
+
       <article class="clk-card clk-card--lg clk-card--stack">
         <h3 class="clk-dashboard__title">Follow-ups</h3>
         @if (followUps().length === 0) {

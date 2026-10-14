@@ -7,6 +7,7 @@ import { NgbDateAdapter, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstr
 import { DisplayDateParserFormatter, UtcDateAdapter } from './shared/ui/date-field/date-adapters';
 import { LocationProvider } from './shared/location/location.provider';
 import { GeoapifyLocationProvider } from './shared/location/geoapify/geoapify-location.provider';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,6 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(),
     provideMarkdown(),
+    provideClientHydration(withEventReplay()),
     { provide: NgbDateAdapter, useClass: UtcDateAdapter },
     { provide: NgbDateParserFormatter, useClass: DisplayDateParserFormatter },
     { provide: LocationProvider, useClass: GeoapifyLocationProvider },

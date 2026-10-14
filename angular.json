@@ -20,6 +20,8 @@
         "build": {
           "builder": "@ngx-env/builder:application",
           "options": {
+            "server": "src/main.server.ts",
+            "outputMode": "static",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",

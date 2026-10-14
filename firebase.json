@@ -7,11 +7,8 @@
   },
   "hosting": {
     "public": "dist/clockedin/browser",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [{ "source": "**", "destination": "/index.csr.html" }]
   },
   "auth": {
     "providers": {

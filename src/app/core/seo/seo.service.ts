@@ -21,8 +21,6 @@ export class SeoService {
   private readonly document = inject(DOCUMENT);
 
   constructor() {
-    this.applyRouteMetadata();
-
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe(() => this.applyRouteMetadata());

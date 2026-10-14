@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
-import { onboardingGuard } from './core/auth/onboarding.guard';
+import { onboardingGuard } from './features/profile/state/onboarding.guard';
 
 export const routes: Routes = [
   {

@@ -1,6 +1,6 @@
 <td class="clk-cell-company">{{ job().company }}</td>
 <td class="clk-cell-role">{{ job().role }}</td>
-<td><app-status-chip [status]="getLatestJobUpdate(job()).status" /></td>
+<td><app-job-status-chip [status]="getLatestJobUpdate(job()).status" /></td>
 <td class="clk-cell-role">
   {{ (job() | jobLocation) || '—' }}
   @if (job().employmentType) {

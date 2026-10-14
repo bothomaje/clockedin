@@ -11,9 +11,9 @@ import {
 import { JobCard, JobRowVariant } from '../job-card/job-card';
 import { FormsModule } from '@angular/forms';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
-import { statusLabel } from '../../../shared/ui/status-chip/status-chip';
 import { ErrorState } from '../../../shared/ui/error-state/error-state';
 import { Select, SelectOption } from '../../../shared/ui/select/select';
+import { statusLabel } from '../models/job-status-meta';
 
 export type SortField = 'updatedAt' | 'dateApplied' | 'savedAt' | 'company' | 'role';
 

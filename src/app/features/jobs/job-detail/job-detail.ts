@@ -2,12 +2,13 @@ import { Component, computed, effect, input, output, signal } from '@angular/cor
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Job, JobStatus, getDateApplied, getLatestJobUpdate } from '../models/job';
-import { StatusChip, statusLabel } from '../../../shared/ui/status-chip/status-chip';
 import { RouterLink } from '@angular/router';
 import { Breadcrumbs, Crumb } from '../../../shared/ui/breadcrumbs/breadcrumbs';
 import { Modal } from '../../../shared/ui/modal/modal';
 import { Select, SelectOption } from '../../../shared/ui/select/select';
 import { JobLocationPipe } from '../models/job-location.pipe';
+import { JobStatusChip } from '../job-status-chip/job-status-chip';
+import { statusLabel } from '../models/job-status-meta';
 
 export interface StatusChangeEvent {
   status: JobStatus;
@@ -21,7 +22,7 @@ type DetailModal = 'status' | 'event' | null;
   imports: [
     FormsModule,
     DatePipe,
-    StatusChip,
+    JobStatusChip,
     RouterLink,
     Breadcrumbs,
     Modal,

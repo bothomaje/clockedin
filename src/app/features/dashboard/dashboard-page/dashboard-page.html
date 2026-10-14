@@ -67,7 +67,7 @@
                   <tr [routerLink]="['/applications', job.id]" class="clk-clickable-row">
                     <td>{{ job.company }}</td>
                     <td>{{ job.role }}</td>
-                    <td><app-status-chip [status]="getLatestJobUpdate(job).status" /></td>
+                    <td><app-job-status-chip [status]="getLatestJobUpdate(job).status" /></td>
                   </tr>
                 }
               </tbody>

@@ -3,7 +3,6 @@ import { RouterLink } from '@angular/router';
 import { PageHeader } from '../../../shared/ui/page-header/page-header';
 import { ProfileState } from '../../profile/state/profile-state';
 import { FormsModule } from '@angular/forms';
-import { StatusChip } from '../../../shared/ui/status-chip/status-chip';
 import { StatCard } from '../../../shared/ui/stat-card/stat-card';
 import { JobState } from '../../jobs/state/job-state';
 import { APPLICATION_STATUSES, getLatestJobUpdate, Job, JobStatus } from '../../jobs/models/job';
@@ -11,6 +10,7 @@ import { Todo } from '../../profile/models/info';
 import { JobLocationPipe } from '../../jobs/models/job-location.pipe';
 import { TopMatchesState } from '../../explore/state/top-matches-state';
 import { WORK_MODE_LABELS } from '../../../shared/location/location.model';
+import { JobStatusChip } from '../../jobs/job-status-chip/job-status-chip';
 
 const FOLLOW_UP_AFTER_DAYS = 7;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -22,7 +22,7 @@ interface FollowUp {
 }
 
 @Component({
-  imports: [RouterLink, PageHeader, StatCard, StatusChip, FormsModule, JobLocationPipe],
+  imports: [RouterLink, PageHeader, StatCard, JobStatusChip, FormsModule, JobLocationPipe],
   selector: 'app-dashboard',
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.scss',

@@ -1,11 +1,11 @@
 import { Component, effect, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { APPLICATION_STATUSES, getDateApplied, Job, JobStatus, JobUpdate } from '../models/job';
-import { statusLabel } from '../../../shared/ui/status-chip/status-chip';
 import { DateField } from '../../../shared/ui/date-field/date-field';
 import { Select, SelectOption } from '../../../shared/ui/select/select';
 import { LocationInput } from '../../../shared/ui/location-input/location-input';
 import { WORK_MODE_LABELS, WorkMode } from '../../../shared/location/location.model';
+import { statusLabel } from '../models/job-status-meta';
 
 @Component({
   selector: 'app-job-form',

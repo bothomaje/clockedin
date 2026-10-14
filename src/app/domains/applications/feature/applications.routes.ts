@@ -69,7 +69,7 @@ export const applicationsRoutes: Routes = [
       base: 'applications',
     },
     loadComponent: () =>
-      import('../../../features/documents/document-wizard-page/document-wizard-page').then(
+      import('../../documents/feature/document-wizard-page/document-wizard-page').then(
         (m) => m.DocumentWizardPage,
       ),
   },
@@ -86,7 +86,7 @@ export const applicationsRoutes: Routes = [
       base: 'applications',
     },
     loadComponent: () =>
-      import('../../../features/documents/document-wizard-page/document-wizard-page').then(
+      import('../../documents/feature/document-wizard-page/document-wizard-page').then(
         (m) => m.DocumentWizardPage,
       ),
   },

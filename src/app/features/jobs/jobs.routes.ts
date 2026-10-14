@@ -67,7 +67,7 @@ export const jobsRoutes: Routes = [
       base: 'jobs',
     },
     loadComponent: () =>
-      import('../documents/document-wizard-page/document-wizard-page').then(
+      import('../../domains/documents/feature/document-wizard-page/document-wizard-page').then(
         (m) => m.DocumentWizardPage,
       ),
   },
@@ -84,7 +84,7 @@ export const jobsRoutes: Routes = [
       base: 'jobs',
     },
     loadComponent: () =>
-      import('../documents/document-wizard-page/document-wizard-page').then(
+      import('../../domains/documents/feature/document-wizard-page/document-wizard-page').then(
         (m) => m.DocumentWizardPage,
       ),
   },

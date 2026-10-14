@@ -1,10 +1,10 @@
 import { Component, effect, inject, input, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { JobState } from '../../../jobs/data/state/job-state';
-import { DocumentState } from '../../../../features/documents/state/document-state';
+import { DocumentState } from '../../../documents/data/state/document-state';
 import { ProfileState } from '../../../profile/data/state/profile-state';
 import { JobDetail, StatusChangeEvent } from '../../../jobs/ui/job-detail/job-detail';
-import { AssociatedAssets } from '../../../../features/documents/associated-assets/associated-assets';
+import { AssociatedAssets } from '../../../documents/feature/associated-assets/associated-assets';
 import { ConfirmDialog } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
 import { getLatestJobUpdate, JobStatus } from '../../../jobs/data/models/job';
 import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';

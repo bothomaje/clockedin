@@ -2,8 +2,8 @@ import { Component, computed, effect, inject, input, signal, untracked } from '@
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { JobState } from '../../../domains/jobs/data/state/job-state';
 import { getLatestJobUpdate, getSavedAt, JobStatus } from '../../../domains/jobs/data/models/job';
-import { AssociatedAssets } from '../../documents/associated-assets/associated-assets';
-import { DocumentState } from '../../documents/state/document-state';
+import { AssociatedAssets } from '../../../domains/documents/feature/associated-assets/associated-assets';
+import { DocumentState } from '../../../domains/documents/data/state/document-state';
 import { ProfileState } from '../../../domains/profile/data/state/profile-state';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog';

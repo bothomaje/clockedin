@@ -1,6 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { ProfileState } from '../../../profile/data/state/profile-state';
-import { User } from '../../../profile/data/models/user';
+import { ProfileFacade, User } from '@domains/profile';
 import { AiGenerativeCapability } from '../ai/ai-provider';
 import { AiService } from '../ai/ai.service';
 
@@ -8,7 +7,7 @@ type GenerationKind = 'cv-generation' | 'cover-letter-generation';
 
 @Service()
 export class AiConsentService {
-  private profileState = inject(ProfileState);
+  private profile = inject(ProfileFacade);
   private ai = inject(AiService);
 
   async ensureConsent(user: User | undefined, kind: GenerationKind): Promise<boolean> {
@@ -20,7 +19,7 @@ export class AiConsentService {
     const accepted = confirm(this.consentMessage(local, cloud));
     if (!accepted) return false;
 
-    await this.profileState.recordAiConsent();
+    await this.profile.recordAiConsent();
     if (user) user.aiConsentAt = new Date();
     return true;
   }

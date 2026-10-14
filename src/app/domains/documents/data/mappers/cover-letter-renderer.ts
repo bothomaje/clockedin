@@ -1,7 +1,7 @@
 import { GeneratedCoverLetter } from '../models/generated-cover-letter';
 import { Job } from '../../../jobs/data/models/job';
-import { Info } from '../../../profile/data/models/info';
-import { placeLabel } from '../../../../shared/location/location.model';
+import { Info } from '@domains/profile';
+import { placeLabel } from '@shared/location/location.model';
 
 export function renderCoverLetterMarkdown(
   letter: GeneratedCoverLetter,

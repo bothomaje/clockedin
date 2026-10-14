@@ -1,9 +1,9 @@
-import { ProfileState } from '../../../profile/data/state/profile-state';
 import { Component, inject, signal } from '@angular/core';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '@core/auth/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgTemplateOutlet } from '@angular/common';
+import { ProfileFacade } from '@domains/profile';
 
 @Component({
   imports: [FormsModule, RouterLink, NgTemplateOutlet],
@@ -12,7 +12,7 @@ import { NgTemplateOutlet } from '@angular/common';
 })
 export class Signup {
   private auth = inject(AuthService);
-  private profileState = inject(ProfileState);
+  private profile = inject(ProfileFacade);
   private router = inject(Router);
 
   name = '';
@@ -52,7 +52,7 @@ export class Signup {
 
     try {
       const credential = await this.auth.signUp(this.email, this.password, this.name);
-      await this.profileState.createProfile(credential.user.uid, this.email, this.name);
+      await this.profile.createProfile(credential.user.uid, this.email, this.name);
       await this.auth.sendVerificationEmail();
       this.router.navigate(['/verify-email']);
     } catch (err) {

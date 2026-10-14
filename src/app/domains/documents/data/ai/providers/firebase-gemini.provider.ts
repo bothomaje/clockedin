@@ -1,6 +1,6 @@
 import { Service } from '@angular/core';
 import { GenerativeModel, getGenerativeModel, Schema } from 'firebase/ai';
-import { firebaseAi } from '../../../../../core/firebase/firebase';
+import { firebaseAi } from '@core/firebase/firebase';
 import {
   AiErrorKind,
   AiGenerationRequest,

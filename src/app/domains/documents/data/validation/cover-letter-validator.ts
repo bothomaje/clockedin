@@ -1,6 +1,6 @@
 import { CvValidationIssue, CvValidationResult } from '../models/cv-validation';
 import { GeneratedCoverLetter } from '../models/generated-cover-letter';
-import { Career } from '../../../profile/data/models/career';
+import { Career } from '@domains/profile';
 import { buildCareerFacts, indexFacts } from '../mappers/career-context';
 
 const NUMBER_PATTERN = /\d[\d.,]*%?/g;

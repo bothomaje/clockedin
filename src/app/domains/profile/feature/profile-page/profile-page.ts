@@ -9,20 +9,20 @@ import { Skill } from '../../data/models/skill';
 import { CareerProfile } from '../../data/models/career-profile';
 import { Evidence } from '../../data/models/evidence';
 import { Link } from '../../data/models/link';
-import { PageHeader } from '../../../../shared/ui/page-header/page-header';
-import { Modal } from '../../../../shared/ui/modal/modal';
+import { PageHeader } from '@shared/ui/page-header/page-header';
+import { Modal } from '@shared/ui/modal/modal';
 import { Info } from '../../data/models/info';
 import { CompletenessId, getCompleteness, READY_SCORE } from '../../util/profile-completeness';
-import { ErrorState } from '../../../../shared/ui/error-state/error-state';
-import { DateField } from '../../../../shared/ui/date-field/date-field';
-import { LocationInput } from '../../../../shared/ui/location-input/location-input';
-import { Select, SelectOption } from '../../../../shared/ui/select/select';
+import { ErrorState } from '@shared/ui/error-state/error-state';
+import { DateField } from '@shared/ui/date-field/date-field';
+import { LocationInput } from '@shared/ui/location-input/location-input';
+import { Select, SelectOption } from '@shared/ui/select/select';
 import {
   placeLabel,
   WORK_MODE_LABELS,
   workLocationLabel,
   WorkMode,
-} from '../../../../shared/location/location.model';
+} from '@shared/location/location.model';
 
 @Component({
   imports: [FormsModule, DatePipe, PageHeader, Modal, ErrorState, DateField, LocationInput, Select],

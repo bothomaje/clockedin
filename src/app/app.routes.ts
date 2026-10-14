@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/auth/auth.guard';
-import { onboardingGuard } from './domains/profile/feature/onboarding.guard';
+import { authGuard } from '@core/auth/auth.guard';
+import { onboardingGuard } from '@domains/profile';
 
 export const routes: Routes = [
   {
@@ -13,14 +13,13 @@ export const routes: Routes = [
         canonical: false,
       },
     },
-    loadComponent: () =>
-      import('./domains/profile/feature/onboarding/onboarding').then((m) => m.Onboarding),
+    loadComponent: () => import('@domains/profile').then((m) => m.loadOnboarding()),
     canActivate: [onboardingGuard],
   },
   {
     path: '',
     loadComponent: () =>
-      import('./shared/layout/public-layout/public-layout').then((m) => m.PublicLayout),
+      import('@shared/layout/public-layout/public-layout').then((m) => m.PublicLayout),
     children: [
       {
         path: '',
@@ -40,8 +39,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    loadComponent: () =>
-      import('./shared/layout/auth-layout/auth-layout').then((m) => m.AuthLayout),
+    loadComponent: () => import('@shared/layout/auth-layout/auth-layout').then((m) => m.AuthLayout),
     data: {
       seo: {
         title: 'Your Account | clockedin',
@@ -55,7 +53,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    loadComponent: () => import('./shared/layout/app-shell/app-shell').then((m) => m.AppShell),
+    loadComponent: () => import('@shared/layout/app-shell/app-shell').then((m) => m.AppShell),
     canActivate: [authGuard],
     data: {
       seo: {
@@ -91,8 +89,7 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadComponent: () =>
-          import('./domains/profile/feature/profile-page/profile-page').then((m) => m.Profile),
+        loadComponent: () => import('@domains/profile').then((m) => m.loadProfile()),
       },
       {
         path: 'settings',

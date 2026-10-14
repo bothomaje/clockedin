@@ -1,5 +1,5 @@
-import { aiLocation } from '../../../../../shared/location/location.model';
-import { Info } from '../../../../../domains/profile/data/models/info';
+import { aiLocation } from '@shared/location/location.model';
+import { Info } from '@domains/profile';
 
 export const MAX_JOB_DESCRIPTION_CHARS = 12000;
 export const MAX_SELECTED_FACTS = 30;

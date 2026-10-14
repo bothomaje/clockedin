@@ -2,13 +2,13 @@ import { Component, effect, inject, input, signal, untracked } from '@angular/co
 import { Router, RouterLink } from '@angular/router';
 import { JobState } from '../../../jobs/data/state/job-state';
 import { DocumentState } from '../../../documents/data/state/document-state';
-import { ProfileState } from '../../../profile/data/state/profile-state';
 import { JobDetail, StatusChangeEvent } from '../../../jobs/ui/job-detail/job-detail';
 import { AssociatedAssets } from '../../../documents/feature/associated-assets/associated-assets';
-import { ConfirmDialog } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
+import { ConfirmDialog } from '@shared/ui/confirm-dialog/confirm-dialog';
 import { getLatestJobUpdate, JobStatus } from '../../../jobs/data/models/job';
-import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
-import { ToastService } from '../../../../shared/ui/toast/toast.service';
+import { EmptyState } from '@shared/ui/empty-state/empty-state';
+import { ToastService } from '@shared/ui/toast/toast.service';
+import { ProfileFacade } from '@domains/profile';
 
 @Component({
   selector: 'app-application-detail-page',
@@ -21,7 +21,7 @@ export class ApplicationDetailPage {
   private toast = inject(ToastService);
   protected jobState = inject(JobState);
   protected documentState = inject(DocumentState);
-  protected profileState = inject(ProfileState);
+  protected profile = inject(ProfileFacade);
 
   confirmingDelete = signal(false);
   deleting = signal(false);
@@ -36,7 +36,7 @@ export class ApplicationDetailPage {
 
   private async load(id: string): Promise<void> {
     this.notFound.set(false);
-    const [job] = await Promise.all([this.jobState.openJob(id), this.profileState.load()]);
+    const [job] = await Promise.all([this.jobState.openJob(id), this.profile.load()]);
     if (this.id() !== id) return;
     if (!job) {
       this.notFound.set(true);

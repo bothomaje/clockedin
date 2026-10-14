@@ -1,9 +1,8 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { PageHeader } from '../../../../shared/ui/page-header/page-header';
-import { ProfileState } from '../../../profile/data/state/profile-state';
+import { PageHeader } from '@shared/ui/page-header/page-header';
 import { FormsModule } from '@angular/forms';
-import { StatCard } from '../../../../shared/ui/stat-card/stat-card';
+import { StatCard } from '@shared/ui/stat-card/stat-card';
 import { JobState } from '../../../jobs/data/state/job-state';
 import {
   APPLICATION_STATUSES,
@@ -11,10 +10,10 @@ import {
   Job,
   JobStatus,
 } from '../../../jobs/data/models/job';
-import { Todo } from '../../../profile/data/models/info';
+import { ProfileFacade, Todo } from '@domains/profile';
 import { JobLocationPipe } from '../../../jobs/util/job-location.pipe';
 import { TopMatchesState } from '../../../recommendations/data/state/top-matches-state';
-import { WORK_MODE_LABELS } from '../../../../shared/location/location.model';
+import { WORK_MODE_LABELS } from '@shared/location/location.model';
 import { JobStatusChip } from '../../../jobs/ui/job-status-chip/job-status-chip';
 
 const FOLLOW_UP_AFTER_DAYS = 7;
@@ -33,7 +32,7 @@ interface FollowUp {
   styleUrl: './dashboard-page.scss',
 })
 export class Dashboard implements OnInit {
-  protected profileState = inject(ProfileState);
+  protected profile = inject(ProfileFacade);
   protected jobState = inject(JobState);
   protected matches = inject(TopMatchesState);
 
@@ -45,7 +44,7 @@ export class Dashboard implements OnInit {
   targetSalaryDraft = '';
   editingTargets = signal(false);
 
-  firstName = computed(() => (this.profileState.info().name ?? '').trim().split(/\s+/)[0]);
+  firstName = computed(() => (this.profile.info().name ?? '').trim().split(/\s+/)[0]);
 
   headline = computed(() => {
     const name = this.firstName();
@@ -127,7 +126,7 @@ export class Dashboard implements OnInit {
       .slice(0, 4);
   });
 
-  todos = computed(() => this.profileState.info().todos ?? []);
+  todos = computed(() => this.profile.info().todos ?? []);
 
   daysSince(date: Date): number {
     return Math.floor((Date.now() - new Date(date).getTime()) / DAY_MS);
@@ -135,15 +134,15 @@ export class Dashboard implements OnInit {
 
   async ngOnInit(): Promise<void> {
     void this.matches.load();
-    await this.profileState.load();
+    await this.profile.load();
     await this.jobState.loadJobs();
-    this.targetRolesDraft = this.profileState.info().targetRoles ?? '';
-    this.targetSalaryDraft = this.profileState.info().targetSalary ?? '';
+    this.targetRolesDraft = this.profile.info().targetRoles ?? '';
+    this.targetSalaryDraft = this.profile.info().targetSalary ?? '';
   }
 
   async saveTargets(): Promise<void> {
-    await this.profileState.saveInfo({
-      ...this.profileState.info(),
+    await this.profile.saveInfo({
+      ...this.profile.info(),
       targetRoles: this.targetRolesDraft.trim(),
       targetSalary: this.targetSalaryDraft.trim(),
     });
@@ -151,8 +150,8 @@ export class Dashboard implements OnInit {
   }
 
   editTargets(): void {
-    this.targetRolesDraft = this.profileState.info().targetRoles ?? '';
-    this.targetSalaryDraft = this.profileState.info().targetSalary ?? '';
+    this.targetRolesDraft = this.profile.info().targetRoles ?? '';
+    this.targetSalaryDraft = this.profile.info().targetSalary ?? '';
     this.editingTargets.set(true);
   }
 
@@ -160,8 +159,8 @@ export class Dashboard implements OnInit {
     const text = this.newTodoText.trim();
     if (!text) return;
     const todo: Todo = { id: crypto.randomUUID(), text, done: false };
-    await this.profileState.saveInfo({
-      ...this.profileState.info(),
+    await this.profile.saveInfo({
+      ...this.profile.info(),
       todos: [...this.todos(), todo],
     });
     this.newTodoText = '';
@@ -169,11 +168,11 @@ export class Dashboard implements OnInit {
 
   async toggleTodo(id: string): Promise<void> {
     const updated = this.todos().map((t) => (t.id === id ? { ...t, done: !t.done } : t));
-    await this.profileState.saveInfo({ ...this.profileState.info(), todos: updated });
+    await this.profile.saveInfo({ ...this.profile.info(), todos: updated });
   }
 
   async removeTodo(id: string): Promise<void> {
     const updated = this.todos().filter((t) => t.id !== id);
-    await this.profileState.saveInfo({ ...this.profileState.info(), todos: updated });
+    await this.profile.saveInfo({ ...this.profile.info(), todos: updated });
   }
 }

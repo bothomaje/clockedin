@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { JobList } from '../../../jobs/feature/job-list/job-list';
-import { PageHeader } from '../../../../shared/ui/page-header/page-header';
+import { PageHeader } from '@shared/ui/page-header/page-header';
 import { APPLICATION_STATUSES, Job } from '../../../jobs/data/models/job';
 
 @Component({

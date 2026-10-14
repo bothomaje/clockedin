@@ -6,13 +6,8 @@
     (notesSave)="onNotesSave($event)"
     (deleteRequested)="beginDelete()"
   >
-    @if (!profileState.loading()) {
-      <app-associated-assets
-        assets
-        [job]="job"
-        [user]="profileState.user()"
-        basePath="applications"
-      />
+    @if (!profile.loading()) {
+      <app-associated-assets assets [job]="job" [user]="profile.user()" basePath="applications" />
     }
   </app-job-detail>
 

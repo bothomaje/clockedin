@@ -11,7 +11,6 @@ import { GeneratedDocument, GeneratedDocumentType } from '../../data/models/gene
 import { JobState } from '../../../jobs/data/state/job-state';
 import { Job } from '../../../jobs/data/models/job';
 import { JobAnalysis } from '../../../jobs/data/models/job-analysis';
-import { ProfileState } from '../../../profile/data/state/profile-state';
 import { Breadcrumbs, Crumb } from '@shared/ui/breadcrumbs/breadcrumbs';
 import { PageHeader } from '@shared/ui/page-header/page-header';
 import { CvEditor } from '../../ui/editors/cv-editor/cv-editor';
@@ -30,6 +29,7 @@ import { GeneratedCoverLetter } from '../../data/models/generated-cover-letter';
 import { GENERATION_STAGES } from '../../data/models/generation-stage';
 import { JobLocationPipe } from '../../../jobs/util/job-location.pipe';
 import { AuthSession } from '@core/auth/auth-session';
+import { ProfileFacade } from '@domains/profile';
 
 type WizardView = 'setup' | 'processing' | 'preview' | 'error';
 
@@ -56,7 +56,7 @@ export class DocumentWizardPage implements OnInit {
   private consent = inject(AiConsentService);
   private session = inject(AuthSession);
   protected jobState = inject(JobState);
-  protected profileState = inject(ProfileState);
+  protected profile = inject(ProfileFacade);
   protected documentState = inject(DocumentState);
 
   readonly type: GeneratedDocumentType = this.route.snapshot.data['documentType'];
@@ -85,7 +85,7 @@ export class DocumentWizardPage implements OnInit {
   saveError = signal('');
   editing = computed(() => !!this.cvDraft() || !!this.letterDraft());
   ownedSkillNames = computed(() =>
-    this.profileState
+    this.profile
       .skills()
       .map((s) => s.name)
       .filter((n): n is string => !!n),
@@ -135,15 +135,15 @@ export class DocumentWizardPage implements OnInit {
   });
 
   sourceSummary = computed(() => {
-    const experience = this.profileState.experience();
+    const experience = this.profile.experience();
     return {
       roles: experience.length,
-      skills: this.profileState.skills().length,
+      skills: this.profile.skills().length,
       evidence: experience.reduce((n, e) => n + (e.evidence?.length ?? 0), 0),
     };
   });
 
-  canGenerate = computed(() => this.profileState.experience().length > 0);
+  canGenerate = computed(() => this.profile.experience().length > 0);
   aiAllowed = this.session.isEmailVerified;
 
   emphasisChoices = computed(() => {
@@ -174,16 +174,14 @@ export class DocumentWizardPage implements OnInit {
     if (!doc) return undefined;
 
     const owned = new Set(
-      this.profileState
+      this.profile
         .skills()
         .map((s) => s.name?.trim().toLowerCase())
         .filter((n): n is string => !!n),
     );
     const required = doc.jobAnalysis?.requiredSkills ?? [];
     const matched = required.filter((r) => owned.has(r.trim().toLowerCase()));
-    const profile = this.profileState
-      .careerProfiles()
-      .find((p) => p.id === doc.careerProfileId)?.name;
+    const profile = this.profile.careerProfiles().find((p) => p.id === doc.careerProfileId)?.name;
 
     return {
       evidenceCount: doc.evidenceFactIds.length,
@@ -195,7 +193,7 @@ export class DocumentWizardPage implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
-    await this.profileState.load();
+    await this.profile.load();
     if (this.jobState.jobs().length === 0) await this.jobState.loadJobs();
     this.jobState.selectJob(this.jobId);
 
@@ -215,7 +213,7 @@ export class DocumentWizardPage implements OnInit {
     const job = this.jobState.selectedJob();
     if (!job || !this.aiAllowed()) return;
 
-    const user = this.profileState.user();
+    const user = this.profile.user();
     if (
       !(await this.consent.ensureConsent(
         user,
@@ -232,7 +230,7 @@ export class DocumentWizardPage implements OnInit {
           info: user.info,
           career: user.career,
           job,
-          profile: this.profileState.careerProfiles().find((p) => p.id === this.selectedProfileId),
+          profile: this.profile.careerProfiles().find((p) => p.id === this.selectedProfileId),
           analysis: this.analysis(),
           options: this.cvOptions(),
         });
@@ -320,7 +318,7 @@ export class DocumentWizardPage implements OnInit {
     const job = this.jobState.selectedJob();
     if (!doc || !job) return;
 
-    const user = this.profileState.user();
+    const user = this.profile.user();
     const cv = this.cvDraft();
     const letter = this.letterDraft();
 

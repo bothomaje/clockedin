@@ -2,13 +2,13 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '@core/auth/auth.service';
 import { RouterLink } from '@angular/router';
-import { ProfileState } from '../../../profile/data/state/profile-state';
 import { PageHeader } from '@shared/ui/page-header/page-header';
 import { DatePipe } from '@angular/common';
 import { DataExportService } from '../../data/data-export.service';
 import { DiscoveryRepository } from '../../../recommendations/data/repositories/discovery.repository';
 import { DISCOVERY_SOURCES } from '../../../recommendations/data/models/discovery-sources';
 import { AuthSession } from '@core/auth/auth-session';
+import { ProfileFacade } from '@domains/profile';
 
 type Pane = 'account' | 'security' | 'discovery' | 'ai' | 'data';
 
@@ -21,7 +21,7 @@ type Pane = 'account' | 'security' | 'discovery' | 'ai' | 'data';
 export class Settings {
   private auth = inject(AuthService);
   private session = inject(AuthSession);
-  private profileState = inject(ProfileState);
+  private profile = inject(ProfileFacade);
   private exporter = inject(DataExportService);
   private discovery = inject(DiscoveryRepository);
 
@@ -34,8 +34,8 @@ export class Settings {
   ];
   pane = signal<Pane>('account');
 
-  name = computed(() => this.profileState.info().name ?? '');
-  consentAt = computed(() => this.profileState.user().aiConsentAt ?? null);
+  name = computed(() => this.profile.info().name ?? '');
+  consentAt = computed(() => this.profile.user().aiConsentAt ?? null);
   revoking = signal(false);
   exporting = signal(false);
   exportError = signal('');
@@ -125,7 +125,7 @@ export class Settings {
   async revokeConsent() {
     this.revoking.set(true);
     try {
-      await this.profileState.revokeAiConsent();
+      await this.profile.revokeAiConsent();
     } finally {
       this.revoking.set(false);
     }

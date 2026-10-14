@@ -1,4 +1,4 @@
-import { Location } from '../../../../../../shared/location/location.model';
+import { Location } from '@shared/location/location.model';
 
 export const JOHANNESBURG: Location = {
   formatted: 'Johannesburg, Gauteng, South Africa',

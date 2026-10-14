@@ -1,6 +1,6 @@
 import { JobAnalysis } from '../../../../../domains/jobs/data/models/job-analysis';
-import { Career } from '../../../../../domains/profile/data/models/career';
-import { CareerProfile } from '../../../../../domains/profile/data/models/career-profile';
+import { Career } from '@domains/profile';
+import { CareerProfile } from '@domains/profile';
 import { CareerFact } from '../../models/career-fact';
 import { EvidenceSelection } from '../../models/evidence-selection';
 import { buildCareerFacts, summariseProfile } from '../../mappers/career-context';

@@ -2,10 +2,10 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
-import { ProfileState } from '../../../profile/data/state/profile-state';
 import { PageHeader } from '@shared/ui/page-header/page-header';
 import { DataExportService } from '../../data/data-export.service';
 import { AuthSession } from '@core/auth/auth-session';
+import { ProfileFacade } from '@domains/profile';
 
 @Component({
   selector: 'app-delete-account-page',
@@ -16,11 +16,11 @@ import { AuthSession } from '@core/auth/auth-session';
 export class DeleteAccountPage {
   private auth = inject(AuthService);
   private session = inject(AuthSession);
-  private profileState = inject(ProfileState);
+  private profile = inject(ProfileFacade);
   private router = inject(Router);
   private exporter = inject(DataExportService);
 
-  name = computed(() => this.profileState.info().name ?? '');
+  name = computed(() => this.profile.info().name ?? '');
   understood = false;
   password = '';
   error = signal('');
@@ -48,7 +48,7 @@ export class DeleteAccountPage {
       if (!uid) throw new Error('No user is signed in.');
 
       await this.auth.reauthenticate(this.password);
-      await this.profileState.deleteAllData();
+      await this.profile.deleteAllData();
       await this.auth.deleteAuthAccount();
       this.router.navigate(['/']);
     } catch (err) {

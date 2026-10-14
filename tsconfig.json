@@ -5,7 +5,8 @@
   "compilerOptions": {
     "paths": {
       "@core/*": ["./src/app/core/*"],
-      "@shared/*": ["./src/app/shared/*"]
+      "@shared/*": ["./src/app/shared/*"],
+      "@domains/profile": ["./src/app/domains/profile/index.ts"]
     },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,

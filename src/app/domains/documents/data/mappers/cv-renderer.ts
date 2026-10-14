@@ -1,8 +1,8 @@
 import { GeneratedCv } from '../models/generated-cv';
-import { Career } from '../../../profile/data/models/career';
-import { Info } from '../../../profile/data/models/info';
+import { Career } from '@domains/profile';
+import { Info } from '@domains/profile';
 import { groupSkills } from './cv-payload';
-import { placeLabel } from '../../../../shared/location/location.model';
+import { placeLabel } from '@shared/location/location.model';
 
 export function renderCvMarkdown(cv: GeneratedCv, info: Info, career: Career): string {
   const lines: string[] = [];

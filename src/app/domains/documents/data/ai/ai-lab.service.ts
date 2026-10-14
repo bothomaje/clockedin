@@ -1,5 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { Career } from '../../../../domains/profile/data/models/career';
+import { Career } from '@domains/profile';
 import { CvValidationResult } from '../models/cv-validation';
 import { AiGenerationRequest, AiProvider, AiProviderId } from './ai-provider';
 import { AiRun } from './tasks/ai-task';

@@ -8,7 +8,7 @@ import { Project } from '../models/project';
 import { Skill } from '../models/skill';
 import { CareerProfile } from '../models/career-profile';
 import { DocTemplates } from '../models/doc-templates';
-import { settleLegacy } from '../../../../shared/location/location.model';
+import { settleLegacy } from '@shared/location/location.model';
 
 @Service()
 export class ProfileState {

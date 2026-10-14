@@ -73,8 +73,8 @@
         </p>
       </article>
 
-      @if (!profileState.loading()) {
-        <app-associated-assets [job]="job" [user]="profileState.user()" basePath="jobs" />
+      @if (!profile.loading()) {
+        <app-associated-assets [job]="job" [user]="profile.user()" basePath="jobs" />
       }
     </aside>
   </section>

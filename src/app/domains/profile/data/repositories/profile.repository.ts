@@ -1,6 +1,6 @@
 import { Service } from '@angular/core';
 import { User } from '../models/user';
-import { firebaseAuth, firestore } from '../../../../core/firebase/firebase';
+import { firebaseAuth, firestore } from '@core/firebase/firebase';
 import {
   collection,
   deleteDoc,
@@ -18,7 +18,7 @@ import { Project } from '../models/project';
 import { Skill } from '../models/skill';
 import { CareerProfile } from '../models/career-profile';
 import { DocTemplates } from '../models/doc-templates';
-import { readStoredLocation, toStoredLocation } from '../../../../shared/location/location.model';
+import { readStoredLocation, toStoredLocation } from '@shared/location/location.model';
 
 @Service()
 export class ProfileRepository {

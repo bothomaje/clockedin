@@ -24,7 +24,7 @@ import { generateCvTask } from './tasks/cv-generation.task';
 import { generateCoverLetterTask } from './tasks/cover-letter-generation.task';
 import { SemanticSimilarityService } from './local/semantic-similarity';
 import { AiTelemetry } from './local/ai-telemetry';
-import { Career } from '../../../../domains/profile/data/models/career';
+import { Career } from '@domains/profile';
 import { validateCv } from '../validation/cv-validator';
 import { GeneratedCv } from '../models/generated-cv';
 import { validateCoverLetter } from '../validation/cover-letter-validator';

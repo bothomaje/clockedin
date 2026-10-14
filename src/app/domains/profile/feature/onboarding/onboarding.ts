@@ -1,14 +1,14 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthBrandPanel } from '../../../../shared/layout/auth-brand-panel/auth-brand-panel';
-import { ONBOARDING_BRAND } from '../../../../shared/layout/auth-brand-panel/auth-brand-content';
+import { AuthBrandPanel } from '@shared/layout/auth-brand-panel/auth-brand-panel';
+import { ONBOARDING_BRAND } from '@shared/layout/auth-brand-panel/auth-brand-content';
 import { ProfileState } from '../../data/state/profile-state';
 import { getCompleteness } from '../../util/profile-completeness';
 import { Skill } from '../../data/models/skill';
 import { Experience } from '../../data/models/experience';
-import { LocationInput } from '../../../../shared/ui/location-input/location-input';
-import { Location } from '../../../../shared/location/location.model';
+import { LocationInput } from '@shared/ui/location-input/location-input';
+import { Location } from '@shared/location/location.model';
 
 @Component({
   selector: 'app-onboarding',

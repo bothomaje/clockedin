@@ -1,16 +1,16 @@
 import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { JobState } from '../../../domains/jobs/data/state/job-state';
 import { getLatestJobUpdate, getSavedAt, JobStatus } from '../../../domains/jobs/data/models/job';
 import { AssociatedAssets } from '../../../domains/documents/feature/associated-assets/associated-assets';
 import { DocumentState } from '../../../domains/documents/data/state/document-state';
-import { ProfileState } from '../../../domains/profile/data/state/profile-state';
-import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
-import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog';
-import { ToastService } from '../../../shared/ui/toast/toast.service';
+import { EmptyState } from '@shared/ui/empty-state/empty-state';
+import { ConfirmDialog } from '@shared/ui/confirm-dialog/confirm-dialog';
+import { ToastService } from '@shared/ui/toast/toast.service';
 import { DatePipe } from '@angular/common';
-import { Breadcrumbs, Crumb } from '../../../shared/ui/breadcrumbs/breadcrumbs';
+import { Breadcrumbs, Crumb } from '@shared/ui/breadcrumbs/breadcrumbs';
 import { JobLocationPipe } from '../../../domains/jobs/util/job-location.pipe';
+import { ProfileFacade } from '@domains/profile';
 
 @Component({
   selector: 'app-job-spec-page',
@@ -27,11 +27,10 @@ import { JobLocationPipe } from '../../../domains/jobs/util/job-location.pipe';
   styleUrl: './job-spec-page.scss',
 })
 export class JobSpecPage {
-  private route = inject(ActivatedRoute);
   private router = inject(Router);
   protected jobState = inject(JobState);
   protected documentState = inject(DocumentState);
-  protected profileState = inject(ProfileState);
+  protected profile = inject(ProfileFacade);
   private toast = inject(ToastService);
 
   id = input.required<string>();
@@ -61,7 +60,7 @@ export class JobSpecPage {
 
   private async load(id: string): Promise<void> {
     this.notFound.set(false);
-    const [job] = await Promise.all([this.jobState.openJob(id), this.profileState.load()]);
+    const [job] = await Promise.all([this.jobState.openJob(id), this.profile.load()]);
     if (this.id() !== id) return;
     if (!job) {
       this.notFound.set(true);

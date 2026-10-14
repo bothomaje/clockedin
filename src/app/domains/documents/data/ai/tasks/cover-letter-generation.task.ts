@@ -1,8 +1,8 @@
 import { Job, jobLocationLabel } from '../../../../../domains/jobs/data/models/job';
 import { JobAnalysis } from '../../../../../domains/jobs/data/models/job-analysis';
-import { Info } from '../../../../../domains/profile/data/models/info';
-import { Career } from '../../../../../domains/profile/data/models/career';
-import { CareerProfile } from '../../../../../domains/profile/data/models/career-profile';
+import { Info } from '@domains/profile';
+import { Career } from '@domains/profile';
+import { CareerProfile } from '@domains/profile';
 import { CareerFact } from '../../models/career-fact';
 import { GeneratedCoverLetter } from '../../models/generated-cover-letter';
 import { GeneratedCv } from '../../models/generated-cv';
@@ -12,7 +12,7 @@ import { emphasisLines, letterOptionRules } from '../generation-prompts';
 import { DATA_BOUNDARY, FACTUAL_RULES, publicInfo } from '../prompts/shared';
 import { coverLetterSchema } from '../schemas/ai-schemas';
 import { AiRun } from './ai-task';
-import { compareLocations } from '../../../../../shared/location/location-match';
+import { compareLocations } from '@shared/location/location-match';
 
 export interface CoverLetterTaskInput {
   info: Info;

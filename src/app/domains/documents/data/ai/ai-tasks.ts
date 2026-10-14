@@ -1,8 +1,8 @@
 import { JobAnalysis } from '../../../../domains/jobs/data/models/job-analysis';
 import { Job } from '../../../../domains/jobs/data/models/job';
-import { Info } from '../../../../domains/profile/data/models/info';
-import { Career } from '../../../../domains/profile/data/models/career';
-import { CareerProfile } from '../../../../domains/profile/data/models/career-profile';
+import { Info } from '@domains/profile';
+import { Career } from '@domains/profile';
+import { CareerProfile } from '@domains/profile';
 import { GeneratedCv } from '../models/generated-cv';
 import { GeneratedCoverLetter } from '../models/generated-cover-letter';
 import { EvidenceSelection } from '../models/evidence-selection';

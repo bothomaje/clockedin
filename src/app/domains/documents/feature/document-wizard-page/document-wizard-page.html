@@ -16,7 +16,7 @@
         </button>
         <app-document-actions
           [document]="doc"
-          [user]="profileState.user()"
+          [user]="profile.user()"
           [job]="job"
           [label]="isCv ? 'Export Tailored CV (PDF)' : 'Export PDF'"
           buttonClass="btn btn-primary"
@@ -75,7 +75,7 @@
           <label class="form-label">Career profile</label>
           <select class="form-select" [(ngModel)]="selectedProfileId">
             <option value="">All profile information</option>
-            @for (profile of profileState.careerProfiles(); track profile.id) {
+            @for (profile of profile.careerProfiles(); track profile.id) {
               <option [value]="profile.id">{{ profile.name }}</option>
             }
           </select>

@@ -1,8 +1,8 @@
 import { GeneratedCv } from '../models/generated-cv';
-import { Career } from '../../../profile/data/models/career';
-import { Info } from '../../../profile/data/models/info';
-import { Link } from '../../../profile/data/models/link';
-import { workLocationLabel } from '../../../../shared/location/location.model';
+import { Career } from '@domains/profile';
+import { Info } from '@domains/profile';
+import { Link } from '@domains/profile';
+import { workLocationLabel } from '@shared/location/location.model';
 
 export interface SkillGroup {
   category: string;

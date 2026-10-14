@@ -144,7 +144,9 @@ export const routes: Routes = [
           },
         },
         loadChildren: () =>
-          import('./features/applications/applications.routes').then((m) => m.applicationsRoutes),
+          import('./domains/applications/feature/applications.routes').then(
+            (m) => m.applicationsRoutes,
+          ),
       },
       {
         path: 'jobs',

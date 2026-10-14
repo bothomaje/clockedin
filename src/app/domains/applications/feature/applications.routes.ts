@@ -26,7 +26,7 @@ export const applicationsRoutes: Routes = [
       mode: 'application',
     },
     loadComponent: () =>
-      import('../../domains/jobs/feature/job-form-page/job-form-page').then((m) => m.JobFormPage),
+      import('../../jobs/feature/job-form-page/job-form-page').then((m) => m.JobFormPage),
   },
   {
     path: ':id/edit',
@@ -39,7 +39,7 @@ export const applicationsRoutes: Routes = [
       },
     },
     loadComponent: () =>
-      import('../../domains/jobs/feature/job-form-page/job-form-page').then((m) => m.JobFormPage),
+      import('../../jobs/feature/job-form-page/job-form-page').then((m) => m.JobFormPage),
   },
   {
     path: ':id',
@@ -69,7 +69,7 @@ export const applicationsRoutes: Routes = [
       base: 'applications',
     },
     loadComponent: () =>
-      import('../documents/document-wizard-page/document-wizard-page').then(
+      import('../../../features/documents/document-wizard-page/document-wizard-page').then(
         (m) => m.DocumentWizardPage,
       ),
   },
@@ -86,7 +86,7 @@ export const applicationsRoutes: Routes = [
       base: 'applications',
     },
     loadComponent: () =>
-      import('../documents/document-wizard-page/document-wizard-page').then(
+      import('../../../features/documents/document-wizard-page/document-wizard-page').then(
         (m) => m.DocumentWizardPage,
       ),
   },

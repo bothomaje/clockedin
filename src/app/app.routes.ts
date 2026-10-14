@@ -105,7 +105,7 @@ export const routes: Routes = [
           },
         },
         loadComponent: () =>
-          import('./features/settings/settings-page/settings-page').then((m) => m.Settings),
+          import('./domains/settings/feature/settings-page/settings-page').then((m) => m.Settings),
       },
       {
         path: 'settings/delete',
@@ -118,7 +118,7 @@ export const routes: Routes = [
           },
         },
         loadComponent: () =>
-          import('./features/settings/delete-account-page/delete-account-page').then(
+          import('./domains/settings/feature/delete-account-page/delete-account-page').then(
             (m) => m.DeleteAccountPage,
           ),
       },

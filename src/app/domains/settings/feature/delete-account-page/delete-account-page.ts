@@ -1,10 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../core/auth/auth.service';
-import { ProfileState } from '../../../domains/profile/data/state/profile-state';
-import { PageHeader } from '../../../shared/ui/page-header/page-header';
-import { DataExportService } from '../data-export.service';
+import { AuthService } from '@core/auth/auth.service';
+import { ProfileState } from '../../../profile/data/state/profile-state';
+import { PageHeader } from '@shared/ui/page-header/page-header';
+import { DataExportService } from '../../data/data-export.service';
 import { AuthSession } from '@core/auth/auth-session';
 
 @Component({

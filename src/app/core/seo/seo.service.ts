@@ -6,7 +6,7 @@ import { filter } from 'rxjs';
 import { SEO_SITE_URL, SeoRouteData } from './seo.config';
 
 const DEFAULT_SEO: SeoRouteData = {
-  title: 'clockedin | Job Application and Career Tracker',
+  title: 'clockedin | AI-Powered Job Application and Career Tracker',
   description:
     'Organise your job search with clockedin. Track applications and interviews, explore opportunities and prepare career documents.',
   robots: 'noindex, nofollow',

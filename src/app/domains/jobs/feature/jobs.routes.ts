@@ -37,45 +37,4 @@ export const jobsRoutes: Routes = [
     },
     loadComponent: () => import('./job-form-page/job-form-page').then((m) => m.JobFormPage),
   },
-  {
-    path: ':id',
-    data: {
-      seo: {
-        title: 'Job Details | clockedin',
-        description: 'View job details in your clockedin workspace.',
-        robots: 'noindex, nofollow',
-        canonical: false,
-      },
-    },
-    loadComponent: () =>
-      import('../../../features/jobs/job-spec-page/job-spec-page').then((m) => m.JobSpecPage),
-  },
-  {
-    path: ':id/cv',
-    data: {
-      seo: {
-        title: 'CV Builder | clockedin',
-        description: 'Prepare a CV in your clockedin workspace.',
-        robots: 'noindex, nofollow',
-        canonical: false,
-      },
-      documentType: 'cv',
-      base: 'jobs',
-    },
-    loadComponent: () => import('@domains/documents').then((m) => m.loadDocumentWizardPage()),
-  },
-  {
-    path: ':id/cover-letter',
-    data: {
-      seo: {
-        title: 'Cover Letter Builder | clockedin',
-        description: 'Prepare a cover letter in your clockedin workspace.',
-        robots: 'noindex, nofollow',
-        canonical: false,
-      },
-      documentType: 'coverLetter',
-      base: 'jobs',
-    },
-    loadComponent: () => import('@domains/documents').then((m) => m.loadDocumentWizardPage()),
-  },
 ];

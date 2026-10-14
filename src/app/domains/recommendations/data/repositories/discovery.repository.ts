@@ -1,15 +1,15 @@
 import { Service, inject } from '@angular/core';
 import { doc, getDoc, serverTimestamp, setDoc, writeBatch } from 'firebase/firestore';
 import { firebaseAuth, firestore } from '@core/firebase/firebase';
-import { JobRepository } from '../../../jobs/data/repositories/job.repository';
 import { Job } from '@domains/jobs';
 import { Recommendation } from '../models/recommendation';
 import { recommendationToJob } from './recommendation.mapper';
 import { DiscoveryPreferences, resolveSources } from '../models/discovery-sources';
+import { JobsFacade } from '@domains/jobs';
 
 @Service()
 export class DiscoveryRepository {
-  private jobRepository = inject(JobRepository);
+  private jobs = inject(JobsFacade);
 
   private currentUid(): string {
     const uid = firebaseAuth.currentUser?.uid;
@@ -51,7 +51,7 @@ export class DiscoveryRepository {
     const uid = this.currentUid();
 
     const batch = writeBatch(firestore);
-    const job = this.jobRepository.addJobInBatch(batch, recommendationToJob(rec));
+    const job = this.jobs.addJobInBatch(batch, recommendationToJob(rec));
     batch.set(this.stateRef(uid), { saved: { [rec.id]: serverTimestamp() } }, { merge: true });
     batch.delete(doc(firestore, 'users', uid, 'recommendations', rec.id));
     await batch.commit();

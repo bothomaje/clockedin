@@ -155,7 +155,10 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadChildren: () => import('@domains/jobs').then((m) => m.jobsRoutes),
+        loadChildren: async () => [
+          ...(await import('@domains/jobs')).jobsRoutes,
+          ...(await import('@domains/applications')).jobWorkspaceRoutes,
+        ],
       },
     ],
   },

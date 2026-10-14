@@ -110,7 +110,7 @@ export class DocumentState {
         options: request.options ?? null,
       });
 
-      await this.jobs.updateJob(request.job.id!, { generatedCv: content });
+      await this.jobs.saveGeneratedDocument(request.job.id!, 'cv', content);
 
       this.cvDocumentsSignal.update((docs) => [saved, ...docs]);
       this.activeCvSignal.set(saved);
@@ -157,7 +157,7 @@ export class DocumentState {
         options: request.options ?? null,
       });
 
-      await this.jobs.updateJob(request.job.id!, { generatedCoverLetter: content });
+      await this.jobs.saveGeneratedDocument(request.job.id!, 'coverLetter', content);
 
       this.coverLetterDocumentsSignal.update((docs) => [saved, ...docs]);
       this.activeCoverLetterSignal.set(saved);
@@ -234,10 +234,7 @@ export class DocumentState {
     }
 
     if (isLatest) {
-      await this.jobs.updateJob(
-        jobId,
-        isCv ? { generatedCv: changes.content } : { generatedCoverLetter: changes.content },
-      );
+      await this.jobs.saveGeneratedDocument(jobId, isCv ? 'cv' : 'coverLetter', changes.content);
     }
   }
 }

@@ -32,7 +32,8 @@ export const routes: Routes = [
             image: '/clockedin-preview-transparent.png',
           },
         },
-        loadComponent: () => import('./features/home/home-page/home-page').then((m) => m.HomePage),
+        loadComponent: () =>
+          import('./domains/landing/feature/home-page/home-page').then((m) => m.HomePage),
       },
     ],
   },

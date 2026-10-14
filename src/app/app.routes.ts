@@ -77,7 +77,9 @@ export const routes: Routes = [
           },
         },
         loadComponent: () =>
-          import('./features/dashboard/dashboard-page/dashboard-page').then((m) => m.Dashboard),
+          import('./domains/dashboard/feature/dashboard-page/dashboard-page').then(
+            (m) => m.Dashboard,
+          ),
       },
       {
         path: 'profile',

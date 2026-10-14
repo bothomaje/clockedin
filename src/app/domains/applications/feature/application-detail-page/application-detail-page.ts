@@ -1,6 +1,6 @@
 import { Component, effect, inject, input, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { DocumentState } from '../../../documents/data/state/document-state';
+import { DocumentsFacade, AssociatedAssets } from '@domains/documents';
 import {
   JobDetail,
   StatusChangeEvent,
@@ -8,7 +8,6 @@ import {
   getLatestJobUpdate,
   JobStatus,
 } from '@domains/jobs';
-import { AssociatedAssets } from '../../../documents/feature/associated-assets/associated-assets';
 import { ConfirmDialog } from '@shared/ui/confirm-dialog/confirm-dialog';
 import { EmptyState } from '@shared/ui/empty-state/empty-state';
 import { ToastService } from '@shared/ui/toast/toast.service';
@@ -24,7 +23,7 @@ export class ApplicationDetailPage {
   private router = inject(Router);
   private toast = inject(ToastService);
   protected jobs = inject(JobsFacade);
-  protected documentState = inject(DocumentState);
+  protected documents = inject(DocumentsFacade);
   protected profile = inject(ProfileFacade);
 
   confirmingDelete = signal(false);
@@ -50,7 +49,7 @@ export class ApplicationDetailPage {
       this.router.navigate(['/jobs', id], { replaceUrl: true });
       return;
     }
-    this.documentState.loadForJob(id);
+    this.documents.loadForJob(id);
   }
 
   async onStatusChange({ status, note }: StatusChangeEvent): Promise<void> {

@@ -62,10 +62,7 @@ export const jobsRoutes: Routes = [
       documentType: 'cv',
       base: 'jobs',
     },
-    loadComponent: () =>
-      import('../../documents/feature/document-wizard-page/document-wizard-page').then(
-        (m) => m.DocumentWizardPage,
-      ),
+    loadComponent: () => import('@domains/documents').then((m) => m.loadDocumentWizardPage()),
   },
   {
     path: ':id/cover-letter',
@@ -79,9 +76,6 @@ export const jobsRoutes: Routes = [
       documentType: 'coverLetter',
       base: 'jobs',
     },
-    loadComponent: () =>
-      import('../../documents/feature/document-wizard-page/document-wizard-page').then(
-        (m) => m.DocumentWizardPage,
-      ),
+    loadComponent: () => import('@domains/documents').then((m) => m.loadDocumentWizardPage()),
   },
 ];

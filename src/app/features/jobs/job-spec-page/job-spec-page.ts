@@ -1,7 +1,6 @@
 import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AssociatedAssets } from '../../../domains/documents/feature/associated-assets/associated-assets';
-import { DocumentState } from '../../../domains/documents/data/state/document-state';
+import { AssociatedAssets, DocumentsFacade } from '@domains/documents';
 import { EmptyState } from '@shared/ui/empty-state/empty-state';
 import { ConfirmDialog } from '@shared/ui/confirm-dialog/confirm-dialog';
 import { ToastService } from '@shared/ui/toast/toast.service';
@@ -33,7 +32,7 @@ import { ProfileFacade } from '@domains/profile';
 export class JobSpecPage {
   private router = inject(Router);
   protected jobs = inject(JobsFacade);
-  protected documentState = inject(DocumentState);
+  protected documents = inject(DocumentsFacade);
   protected profile = inject(ProfileFacade);
   private toast = inject(ToastService);
 
@@ -70,7 +69,7 @@ export class JobSpecPage {
       this.notFound.set(true);
       return;
     }
-    this.documentState.loadForJob(id);
+    this.documents.loadForJob(id);
   }
 
   async applyNow(): Promise<void> {

@@ -66,10 +66,7 @@ export const applicationsRoutes: Routes = [
       documentType: 'cv',
       base: 'applications',
     },
-    loadComponent: () =>
-      import('../../documents/feature/document-wizard-page/document-wizard-page').then(
-        (m) => m.DocumentWizardPage,
-      ),
+    loadComponent: () => import('@domains/documents').then((m) => m.loadDocumentWizardPage()),
   },
   {
     path: ':id/cover-letter',
@@ -83,9 +80,6 @@ export const applicationsRoutes: Routes = [
       documentType: 'coverLetter',
       base: 'applications',
     },
-    loadComponent: () =>
-      import('../../documents/feature/document-wizard-page/document-wizard-page').then(
-        (m) => m.DocumentWizardPage,
-      ),
+    loadComponent: () => import('@domains/documents').then((m) => m.loadDocumentWizardPage()),
   },
 ];

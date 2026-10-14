@@ -1,6 +1,6 @@
 import { GeneratedCv } from '../../models/generated-cv';
-import { Career } from '../../../profile/models/career';
-import { Info } from '../../../profile/models/info';
+import { Career } from '../../../../domains/profile/data/models/career';
+import { Info } from '../../../../domains/profile/data/models/info';
 import { groupSkills } from './cv-payload';
 import { placeLabel } from '../../../../shared/location/location.model';
 

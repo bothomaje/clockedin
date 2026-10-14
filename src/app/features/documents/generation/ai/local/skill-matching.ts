@@ -1,5 +1,5 @@
 import { JobAnalysis } from '../../../../jobs/models/job-analysis';
-import { CareerProfile } from '../../../../profile/models/career-profile';
+import { CareerProfile } from '../../../../../domains/profile/data/models/career-profile';
 import { CareerFact } from '../../../models/career-fact';
 
 const REQUIRED_WEIGHT = 3;

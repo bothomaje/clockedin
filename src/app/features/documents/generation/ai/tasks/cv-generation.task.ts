@@ -1,7 +1,7 @@
 import { JobAnalysis } from '../../../../jobs/models/job-analysis';
-import { Info } from '../../../../profile/models/info';
-import { Career } from '../../../../profile/models/career';
-import { CareerProfile } from '../../../../profile/models/career-profile';
+import { Info } from '../../../../../domains/profile/data/models/info';
+import { Career } from '../../../../../domains/profile/data/models/career';
+import { CareerProfile } from '../../../../../domains/profile/data/models/career-profile';
 import { CareerFact } from '../../../models/career-fact';
 import { GeneratedCv } from '../../../models/generated-cv';
 import { CvOptions } from '../../../models/generation-options';

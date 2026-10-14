@@ -1,6 +1,6 @@
 import { CareerFact } from '../../models/career-fact';
-import { Career } from '../../../profile/models/career';
-import { CareerProfile } from '../../../profile/models/career-profile';
+import { Career } from '../../../../domains/profile/data/models/career';
+import { CareerProfile } from '../../../../domains/profile/data/models/career-profile';
 import { workLocationLabel } from '../../../../shared/location/location.model';
 
 function yearMonth(value?: Date | null): string {

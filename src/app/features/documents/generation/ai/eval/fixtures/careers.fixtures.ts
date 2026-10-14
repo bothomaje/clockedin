@@ -1,4 +1,4 @@
-import { Career } from '../../../../../profile/models/career';
+import { Career } from '../../../../../../domains/profile/data/models/career';
 import { CAPE_TOWN, JOHANNESBURG } from './locations.fixtures';
 
 const richExperience: Career['experience'] = [

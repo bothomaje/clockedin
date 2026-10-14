@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { of, switchMap, take } from 'rxjs';
-import { ProfileState } from './profile-state';
+import { ProfileState } from '../data/state/profile-state';
 import { AuthSession } from '@core/auth/auth-session';
 
 export const onboardingGuard: CanActivateFn = () => {

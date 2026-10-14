@@ -3,7 +3,7 @@ import { PdfCompiler } from '../generation/pdf-service';
 import { GeneratedDocument } from '../models/generated-document';
 import { GeneratedCv } from '../models/generated-cv';
 import { GeneratedCoverLetter } from '../models/generated-cover-letter';
-import { User } from '../../profile/models/user';
+import { User } from '../../../domains/profile/data/models/user';
 import { Job } from '../../jobs/models/job';
 import { buildCvPayload } from '../generation/ai/cv-payload';
 import { buildCoverLetterPayload } from '../generation/ai/cover-letter-renderer';

@@ -1,5 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { ProfileState } from '../profile/state/profile-state';
+import { ProfileState } from '../../domains/profile/data/state/profile-state';
 import { JobState } from '../jobs/state/job-state';
 
 @Service()

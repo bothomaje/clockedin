@@ -2,7 +2,7 @@ import { Component, effect, inject, input, signal, untracked } from '@angular/co
 import { Router, RouterLink } from '@angular/router';
 import { JobState } from '../../jobs/state/job-state';
 import { DocumentState } from '../../documents/state/document-state';
-import { ProfileState } from '../../profile/state/profile-state';
+import { ProfileState } from '../../../domains/profile/data/state/profile-state';
 import { JobDetail, StatusChangeEvent } from '../../jobs/job-detail/job-detail';
 import { AssociatedAssets } from '../../documents/associated-assets/associated-assets';
 import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog';

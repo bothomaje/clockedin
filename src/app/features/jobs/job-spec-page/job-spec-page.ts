@@ -4,7 +4,7 @@ import { JobState } from '../state/job-state';
 import { getLatestJobUpdate, getSavedAt, JobStatus } from '../models/job';
 import { AssociatedAssets } from '../../documents/associated-assets/associated-assets';
 import { DocumentState } from '../../documents/state/document-state';
-import { ProfileState } from '../../profile/state/profile-state';
+import { ProfileState } from '../../../domains/profile/data/state/profile-state';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog';
 import { ToastService } from '../../../shared/ui/toast/toast.service';

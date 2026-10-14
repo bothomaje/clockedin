@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
-import { ProfileState } from '../profile/state/profile-state';
-import { User } from '../profile/models/user';
+import { ProfileState } from '../../domains/profile/data/state/profile-state';
+import { User } from '../../domains/profile/data/models/user';
 import { AiGenerativeCapability } from './generation/ai/ai-provider';
 import { AiService } from './generation/ai/ai.service';
 

@@ -1,12 +1,12 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '../../../shared/ui/page-header/page-header';
-import { ProfileState } from '../../profile/state/profile-state';
+import { ProfileState } from '../../../domains/profile/data/state/profile-state';
 import { FormsModule } from '@angular/forms';
 import { StatCard } from '../../../shared/ui/stat-card/stat-card';
 import { JobState } from '../../jobs/state/job-state';
 import { APPLICATION_STATUSES, getLatestJobUpdate, Job, JobStatus } from '../../jobs/models/job';
-import { Todo } from '../../profile/models/info';
+import { Todo } from '../../../domains/profile/data/models/info';
 import { JobLocationPipe } from '../../jobs/models/job-location.pipe';
 import { TopMatchesState } from '../../explore/state/top-matches-state';
 import { WORK_MODE_LABELS } from '../../../shared/location/location.model';

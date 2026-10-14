@@ -1,4 +1,4 @@
-import { Location } from '../../../shared/location/location.model';
+import { Location } from '@shared/location/location.model';
 import { Link } from './link';
 
 export interface Todo {

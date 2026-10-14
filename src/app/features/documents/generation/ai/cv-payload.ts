@@ -1,7 +1,7 @@
 import { GeneratedCv } from '../../models/generated-cv';
-import { Career } from '../../../profile/models/career';
-import { Info } from '../../../profile/models/info';
-import { Link } from '../../../profile/models/link';
+import { Career } from '../../../../domains/profile/data/models/career';
+import { Info } from '../../../../domains/profile/data/models/info';
+import { Link } from '../../../../domains/profile/data/models/link';
 import { workLocationLabel } from '../../../../shared/location/location.model';
 
 export interface SkillGroup {

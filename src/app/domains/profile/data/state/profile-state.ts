@@ -1,5 +1,5 @@
 import { Service, inject, signal, computed } from '@angular/core';
-import { ProfileRepository } from '../data/profile.repository';
+import { ProfileRepository } from '../repositories/profile.repository';
 import { User } from '../models/user';
 import { Info } from '../models/info';
 import { Experience } from '../models/experience';
@@ -8,7 +8,7 @@ import { Project } from '../models/project';
 import { Skill } from '../models/skill';
 import { CareerProfile } from '../models/career-profile';
 import { DocTemplates } from '../models/doc-templates';
-import { settleLegacy } from '../../../shared/location/location.model';
+import { settleLegacy } from '../../../../shared/location/location.model';
 
 @Service()
 export class ProfileState {

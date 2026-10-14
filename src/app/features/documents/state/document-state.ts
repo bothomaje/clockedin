@@ -16,8 +16,8 @@ import { renderCoverLetterMarkdown } from '../generation/ai/cover-letter-rendere
 import { GenerationStage } from '../models/generation-stage';
 import { letterMaxWords } from '../generation/ai/generation-prompts';
 import { GeneratedCv } from '../models/generated-cv';
-import { Info } from '../../profile/models/info';
-import { Career } from '../../profile/models/career';
+import { Info } from '../../../domains/profile/data/models/info';
+import { Career } from '../../../domains/profile/data/models/career';
 import { GeneratedCoverLetter } from '../models/generated-cover-letter';
 import { Job } from '../../jobs/models/job';
 import { CoverLetterOptions } from '../models/generation-options';

@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/auth/auth.service';
 import { RouterLink } from '@angular/router';
-import { ProfileState } from '../../profile/state/profile-state';
+import { ProfileState } from '../../../domains/profile/data/state/profile-state';
 import { PageHeader } from '../../../shared/ui/page-header/page-header';
 import { DatePipe } from '@angular/common';
 import { DataExportService } from '../data-export.service';

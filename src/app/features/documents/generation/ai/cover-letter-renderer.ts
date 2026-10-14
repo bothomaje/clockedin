@@ -1,6 +1,6 @@
 import { GeneratedCoverLetter } from '../../models/generated-cover-letter';
 import { Job } from '../../../jobs/models/job';
-import { Info } from '../../../profile/models/info';
+import { Info } from '../../../../domains/profile/data/models/info';
 import { placeLabel } from '../../../../shared/location/location.model';
 
 export function renderCoverLetterMarkdown(

@@ -1,28 +1,28 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { ProfileState } from '../state/profile-state';
-import { Experience } from '../models/experience';
-import { Education } from '../models/education';
-import { Project } from '../models/project';
-import { Skill } from '../models/skill';
-import { CareerProfile } from '../models/career-profile';
-import { Evidence } from '../models/evidence';
-import { Link } from '../models/link';
-import { PageHeader } from '../../../shared/ui/page-header/page-header';
-import { Modal } from '../../../shared/ui/modal/modal';
-import { Info } from '../models/info';
-import { CompletenessId, getCompleteness, READY_SCORE } from '../state/profile-completeness';
-import { ErrorState } from '../../../shared/ui/error-state/error-state';
-import { DateField } from '../../../shared/ui/date-field/date-field';
-import { LocationInput } from '../../../shared/ui/location-input/location-input';
-import { Select, SelectOption } from '../../../shared/ui/select/select';
+import { ProfileState } from '../../data/state/profile-state';
+import { Experience } from '../../data/models/experience';
+import { Education } from '../../data/models/education';
+import { Project } from '../../data/models/project';
+import { Skill } from '../../data/models/skill';
+import { CareerProfile } from '../../data/models/career-profile';
+import { Evidence } from '../../data/models/evidence';
+import { Link } from '../../data/models/link';
+import { PageHeader } from '../../../../shared/ui/page-header/page-header';
+import { Modal } from '../../../../shared/ui/modal/modal';
+import { Info } from '../../data/models/info';
+import { CompletenessId, getCompleteness, READY_SCORE } from '../../util/profile-completeness';
+import { ErrorState } from '../../../../shared/ui/error-state/error-state';
+import { DateField } from '../../../../shared/ui/date-field/date-field';
+import { LocationInput } from '../../../../shared/ui/location-input/location-input';
+import { Select, SelectOption } from '../../../../shared/ui/select/select';
 import {
   placeLabel,
   WORK_MODE_LABELS,
   workLocationLabel,
   WorkMode,
-} from '../../../shared/location/location.model';
+} from '../../../../shared/location/location.model';
 
 @Component({
   imports: [FormsModule, DatePipe, PageHeader, Modal, ErrorState, DateField, LocationInput, Select],

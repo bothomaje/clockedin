@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { DocumentState } from '../state/document-state';
 import { DocumentActions } from '../document-actions/document-actions';
 import { Job } from '../../jobs/models/job';
-import { User } from '../../profile/models/user';
+import { User } from '../../../domains/profile/data/models/user';
 
 @Component({
   selector: 'app-associated-assets',

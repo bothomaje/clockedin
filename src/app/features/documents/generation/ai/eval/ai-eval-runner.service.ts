@@ -1,5 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { Info } from '../../../../profile/models/info';
+import { Info } from '../../../../../domains/profile/data/models/info';
 import { AiProviderId } from '../ai-provider';
 import { AiLabRunResult, AiLabService } from '../ai-lab.service';
 import { CAREER_FIXTURES, CareerFixtureName } from './fixtures/careers.fixtures';

@@ -1,5 +1,5 @@
 import { placeLabel } from '../../../shared/location/location.model';
-import { User } from '../models/user';
+import { User } from '../data/models/user';
 
 export type CompletenessId =
   | 'basics'

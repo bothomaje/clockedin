@@ -11,7 +11,7 @@ import { GeneratedDocument, GeneratedDocumentType } from '../models/generated-do
 import { JobState } from '../../jobs/state/job-state';
 import { Job } from '../../jobs/models/job';
 import { JobAnalysis } from '../../jobs/models/job-analysis';
-import { ProfileState } from '../../profile/state/profile-state';
+import { ProfileState } from '../../../domains/profile/data/state/profile-state';
 import { Breadcrumbs, Crumb } from '../../../shared/ui/breadcrumbs/breadcrumbs';
 import { PageHeader } from '../../../shared/ui/page-header/page-header';
 import { CvEditor } from '../editors/cv-editor/cv-editor';

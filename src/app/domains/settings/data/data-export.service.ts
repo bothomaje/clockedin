@@ -1,21 +1,21 @@
 import { inject, Service } from '@angular/core';
-import { JobState } from '../../jobs/data/state/job-state';
 import { ProfileFacade } from '@domains/profile';
+import { JobsFacade } from '@domains/jobs';
 
 @Service()
 export class DataExportService {
   private profile = inject(ProfileFacade);
-  private jobState = inject(JobState);
+  private jobs = inject(JobsFacade);
 
   async download(): Promise<void> {
     await this.profile.load();
-    if (this.jobState.jobs().length === 0) await this.jobState.loadJobs();
+    if (this.jobs.jobs().length === 0) await this.jobs.loadJobs();
 
     const user = this.profile.user();
     const payload = {
       exportedAt: new Date().toISOString(),
       profile: { info: user.info, career: user.career },
-      jobs: this.jobState.jobs(),
+      jobs: this.jobs.jobs(),
     };
 
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });

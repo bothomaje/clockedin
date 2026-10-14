@@ -1,4 +1,4 @@
-import { Job } from '../../../../../../domains/jobs/data/models/job';
+import { Job } from '@domains/jobs';
 
 function job(overrides: Partial<Job> & Pick<Job, 'jobDescription'>): Job {
   return { jobUpdates: [], ...overrides };

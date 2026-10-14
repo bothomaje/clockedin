@@ -11,10 +11,7 @@ export const jobsRoutes: Routes = [
         canonical: false,
       },
     },
-    loadComponent: () =>
-      import('../../domains/jobs/feature/jobs-list-page/jobs-list-page').then(
-        (m) => m.JobsListPage,
-      ),
+    loadComponent: () => import('./jobs-list-page/jobs-list-page').then((m) => m.JobsListPage),
   },
   {
     path: 'new',
@@ -26,8 +23,7 @@ export const jobsRoutes: Routes = [
         canonical: false,
       },
     },
-    loadComponent: () =>
-      import('../../domains/jobs/feature/job-form-page/job-form-page').then((m) => m.JobFormPage),
+    loadComponent: () => import('./job-form-page/job-form-page').then((m) => m.JobFormPage),
   },
   {
     path: ':id/edit',
@@ -39,8 +35,7 @@ export const jobsRoutes: Routes = [
         canonical: false,
       },
     },
-    loadComponent: () =>
-      import('../../domains/jobs/feature/job-form-page/job-form-page').then((m) => m.JobFormPage),
+    loadComponent: () => import('./job-form-page/job-form-page').then((m) => m.JobFormPage),
   },
   {
     path: ':id',
@@ -52,7 +47,8 @@ export const jobsRoutes: Routes = [
         canonical: false,
       },
     },
-    loadComponent: () => import('./job-spec-page/job-spec-page').then((m) => m.JobSpecPage),
+    loadComponent: () =>
+      import('../../../features/jobs/job-spec-page/job-spec-page').then((m) => m.JobSpecPage),
   },
   {
     path: ':id/cv',
@@ -67,7 +63,7 @@ export const jobsRoutes: Routes = [
       base: 'jobs',
     },
     loadComponent: () =>
-      import('../../domains/documents/feature/document-wizard-page/document-wizard-page').then(
+      import('../../documents/feature/document-wizard-page/document-wizard-page').then(
         (m) => m.DocumentWizardPage,
       ),
   },
@@ -84,7 +80,7 @@ export const jobsRoutes: Routes = [
       base: 'jobs',
     },
     loadComponent: () =>
-      import('../../domains/documents/feature/document-wizard-page/document-wizard-page').then(
+      import('../../documents/feature/document-wizard-page/document-wizard-page').then(
         (m) => m.DocumentWizardPage,
       ),
   },

@@ -3,18 +3,18 @@ import { RouterLink } from '@angular/router';
 import { PageHeader } from '@shared/ui/page-header/page-header';
 import { FormsModule } from '@angular/forms';
 import { StatCard } from '@shared/ui/stat-card/stat-card';
-import { JobState } from '../../../jobs/data/state/job-state';
 import {
+  JobsFacade,
   APPLICATION_STATUSES,
   getLatestJobUpdate,
   Job,
   JobStatus,
-} from '../../../jobs/data/models/job';
+  JobLocationPipe,
+  JobStatusChip,
+} from '@domains/jobs';
 import { ProfileFacade, Todo } from '@domains/profile';
-import { JobLocationPipe } from '../../../jobs/util/job-location.pipe';
 import { TopMatchesState } from '../../../recommendations/data/state/top-matches-state';
 import { WORK_MODE_LABELS } from '@shared/location/location.model';
-import { JobStatusChip } from '../../../jobs/ui/job-status-chip/job-status-chip';
 
 const FOLLOW_UP_AFTER_DAYS = 7;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -33,7 +33,7 @@ interface FollowUp {
 })
 export class Dashboard implements OnInit {
   protected profile = inject(ProfileFacade);
-  protected jobState = inject(JobState);
+  protected jobs = inject(JobsFacade);
   protected matches = inject(TopMatchesState);
 
   getLatestJobUpdate = getLatestJobUpdate;
@@ -56,7 +56,7 @@ export class Dashboard implements OnInit {
   });
 
   applications = computed(() =>
-    this.jobState.jobs().filter((j) => APPLICATION_STATUSES.includes(getLatestJobUpdate(j).status)),
+    this.jobs.jobs().filter((j) => APPLICATION_STATUSES.includes(getLatestJobUpdate(j).status)),
   );
 
   activeRoles = computed(
@@ -135,7 +135,7 @@ export class Dashboard implements OnInit {
   async ngOnInit(): Promise<void> {
     void this.matches.load();
     await this.profile.load();
-    await this.jobState.loadJobs();
+    await this.jobs.loadJobs();
     this.targetRolesDraft = this.profile.info().targetRoles ?? '';
     this.targetSalaryDraft = this.profile.info().targetSalary ?? '';
   }

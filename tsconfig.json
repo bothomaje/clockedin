@@ -6,7 +6,8 @@
     "paths": {
       "@core/*": ["./src/app/core/*"],
       "@shared/*": ["./src/app/shared/*"],
-      "@domains/profile": ["./src/app/domains/profile/index.ts"]
+      "@domains/profile": ["./src/app/domains/profile/index.ts"],
+      "@domains/jobs": ["./src/app/domains/jobs/index.ts"]
     },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,

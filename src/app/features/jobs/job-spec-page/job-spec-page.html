@@ -1,4 +1,4 @@
-@if (jobState.selectedJob(); as job) {
+@if (jobs.selectedJob(); as job) {
   <section class="clk-spec__top">
     <app-breadcrumbs [items]="crumbs()" />
     <section class="clk-spec__actions">
@@ -95,7 +95,7 @@
   <app-empty-state
     title="Job not found"
     [description]="
-      jobState.error()
+      jobs.error()
         ? 'Could not load this job. Check your connection and try again.'
         : 'It may have been deleted, or the link is wrong.'
     "

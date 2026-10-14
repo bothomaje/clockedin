@@ -2,7 +2,7 @@ import { Service, inject } from '@angular/core';
 import { doc, getDoc, serverTimestamp, setDoc, writeBatch } from 'firebase/firestore';
 import { firebaseAuth, firestore } from '@core/firebase/firebase';
 import { JobRepository } from '../../../jobs/data/repositories/job.repository';
-import { Job } from '../../../jobs/data/models/job';
+import { Job } from '@domains/jobs';
 import { Recommendation } from '../models/recommendation';
 import { recommendationToJob } from './recommendation.mapper';
 import { DiscoveryPreferences, resolveSources } from '../models/discovery-sources';

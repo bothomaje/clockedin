@@ -1,6 +1,6 @@
 @if (!ready()) {
   <p class="text-muted">Loading...</p>
-} @else if (jobState.selectedJob(); as job) {
+} @else if (jobs.selectedJob(); as job) {
   <app-breadcrumbs [items]="crumbs()" />
 
   <app-page-header [title]="title()">

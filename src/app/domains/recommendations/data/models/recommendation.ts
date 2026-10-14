@@ -1,4 +1,4 @@
-import { Job } from '../../../jobs/data/models/job';
+import { Job } from '@domains/jobs';
 
 export interface AiInsight {
   matchScore: number;

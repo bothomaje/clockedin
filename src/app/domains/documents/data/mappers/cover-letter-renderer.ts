@@ -1,5 +1,5 @@
 import { GeneratedCoverLetter } from '../models/generated-cover-letter';
-import { Job } from '../../../jobs/data/models/job';
+import { Job } from '@domains/jobs';
 import { Info } from '@domains/profile';
 import { placeLabel } from '@shared/location/location.model';
 

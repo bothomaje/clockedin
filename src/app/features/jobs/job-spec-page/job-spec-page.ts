@@ -1,7 +1,5 @@
 import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { JobState } from '../../../domains/jobs/data/state/job-state';
-import { getLatestJobUpdate, getSavedAt, JobStatus } from '../../../domains/jobs/data/models/job';
 import { AssociatedAssets } from '../../../domains/documents/feature/associated-assets/associated-assets';
 import { DocumentState } from '../../../domains/documents/data/state/document-state';
 import { EmptyState } from '@shared/ui/empty-state/empty-state';
@@ -9,7 +7,13 @@ import { ConfirmDialog } from '@shared/ui/confirm-dialog/confirm-dialog';
 import { ToastService } from '@shared/ui/toast/toast.service';
 import { DatePipe } from '@angular/common';
 import { Breadcrumbs, Crumb } from '@shared/ui/breadcrumbs/breadcrumbs';
-import { JobLocationPipe } from '../../../domains/jobs/util/job-location.pipe';
+import {
+  JobLocationPipe,
+  JobsFacade,
+  getLatestJobUpdate,
+  getSavedAt,
+  JobStatus,
+} from '@domains/jobs';
 import { ProfileFacade } from '@domains/profile';
 
 @Component({
@@ -28,7 +32,7 @@ import { ProfileFacade } from '@domains/profile';
 })
 export class JobSpecPage {
   private router = inject(Router);
-  protected jobState = inject(JobState);
+  protected jobs = inject(JobsFacade);
   protected documentState = inject(DocumentState);
   protected profile = inject(ProfileFacade);
   private toast = inject(ToastService);
@@ -39,16 +43,16 @@ export class JobSpecPage {
   notFound = signal(false);
 
   linked = computed(() => {
-    const job = this.jobState.selectedJob();
+    const job = this.jobs.selectedJob();
     return !!job && getLatestJobUpdate(job).status !== JobStatus.NEW;
   });
   savedAt = computed(() => {
-    const job = this.jobState.selectedJob();
+    const job = this.jobs.selectedJob();
     return job ? getSavedAt(job) : undefined;
   });
   crumbs = computed<Crumb[]>(() => [
     { label: 'Jobs', link: '/jobs' },
-    { label: `${this.jobState.selectedJob()?.role || 'Untitled'} specification` },
+    { label: `${this.jobs.selectedJob()?.role || 'Untitled'} specification` },
   ]);
 
   constructor() {
@@ -60,7 +64,7 @@ export class JobSpecPage {
 
   private async load(id: string): Promise<void> {
     this.notFound.set(false);
-    const [job] = await Promise.all([this.jobState.openJob(id), this.profile.load()]);
+    const [job] = await Promise.all([this.jobs.openJob(id), this.profile.load()]);
     if (this.id() !== id) return;
     if (!job) {
       this.notFound.set(true);
@@ -70,10 +74,10 @@ export class JobSpecPage {
   }
 
   async applyNow(): Promise<void> {
-    const job = this.jobState.selectedJob();
+    const job = this.jobs.selectedJob();
     if (!job?.id) return;
     try {
-      await this.jobState.updateJobStatus(job.id, JobStatus.APPLIED);
+      await this.jobs.updateJobStatus(job.id, JobStatus.APPLIED);
       this.toast.success('Moved to Applications.', {
         label: 'Create tailored CV',
         link: ['/applications', job.id, 'cv'],
@@ -93,11 +97,11 @@ export class JobSpecPage {
   }
 
   async confirmDelete(): Promise<void> {
-    const job = this.jobState.selectedJob();
+    const job = this.jobs.selectedJob();
     if (!job?.id || this.deleting()) return;
     this.deleting.set(true);
     try {
-      await this.jobState.deleteJob(job.id);
+      await this.jobs.deleteJob(job.id);
       this.router.navigate(['/jobs']);
     } catch {
       this.confirmingDelete.set(false);

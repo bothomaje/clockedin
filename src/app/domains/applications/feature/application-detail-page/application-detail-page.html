@@ -1,4 +1,4 @@
-@if (jobState.selectedJob(); as job) {
+@if (jobs.selectedJob(); as job) {
   <app-job-detail
     [job]="job"
     section="applications"
@@ -27,7 +27,7 @@
   <app-empty-state
     title="Application not found"
     [description]="
-      jobState.error()
+      jobs.error()
         ? 'Could not load this application. Check your connection and try again.'
         : 'It may have been deleted, or the link is wrong.'
     "

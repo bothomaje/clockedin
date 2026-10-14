@@ -1,5 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { JobAnalysis } from '../../../../domains/jobs/data/models/job-analysis';
+import { JobAnalysis } from '@domains/jobs';
 import { AiUsageRepository } from '../repositories/ai-usage.repository';
 import {
   AiGenerationRequest,

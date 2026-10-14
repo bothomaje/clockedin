@@ -8,9 +8,7 @@ import { DocumentState } from '../../data/state/document-state';
 import { DocumentActions } from '../document-actions/document-actions';
 import { GeneratedCv } from '../../data/models/generated-cv';
 import { GeneratedDocument, GeneratedDocumentType } from '../../data/models/generated-document';
-import { JobState } from '../../../jobs/data/state/job-state';
-import { Job } from '../../../jobs/data/models/job';
-import { JobAnalysis } from '../../../jobs/data/models/job-analysis';
+import { JobsFacade, Job, JobAnalysis, JobLocationPipe } from '@domains/jobs';
 import { Breadcrumbs, Crumb } from '@shared/ui/breadcrumbs/breadcrumbs';
 import { PageHeader } from '@shared/ui/page-header/page-header';
 import { CvEditor } from '../../ui/editors/cv-editor/cv-editor';
@@ -27,7 +25,6 @@ import {
 } from '../../data/models/generation-options';
 import { GeneratedCoverLetter } from '../../data/models/generated-cover-letter';
 import { GENERATION_STAGES } from '../../data/models/generation-stage';
-import { JobLocationPipe } from '../../../jobs/util/job-location.pipe';
 import { AuthSession } from '@core/auth/auth-session';
 import { ProfileFacade } from '@domains/profile';
 
@@ -55,7 +52,7 @@ export class DocumentWizardPage implements OnInit {
   private router = inject(Router);
   private consent = inject(AiConsentService);
   private session = inject(AuthSession);
-  protected jobState = inject(JobState);
+  protected jobs = inject(JobsFacade);
   protected profile = inject(ProfileFacade);
   protected documentState = inject(DocumentState);
 
@@ -124,7 +121,7 @@ export class DocumentWizardPage implements OnInit {
   });
 
   crumbs = computed<Crumb[]>(() => {
-    const job = this.jobState.selectedJob();
+    const job = this.jobs.selectedJob();
     const items: Crumb[] = [
       { label: this.base === 'jobs' ? 'Jobs' : 'Applications', link: this.basePath },
       { label: job?.company || 'Application', link: this.jobId },
@@ -194,10 +191,10 @@ export class DocumentWizardPage implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.profile.load();
-    if (this.jobState.jobs().length === 0) await this.jobState.loadJobs();
-    this.jobState.selectJob(this.jobId);
+    if (this.jobs.jobs().length === 0) await this.jobs.loadJobs();
+    this.jobs.selectJob(this.jobId);
 
-    const job = this.jobState.selectedJob();
+    const job = this.jobs.selectedJob();
     if (!job) {
       await this.router.navigate([this.basePath]);
       return;
@@ -210,7 +207,7 @@ export class DocumentWizardPage implements OnInit {
   }
 
   async generate(): Promise<void> {
-    const job = this.jobState.selectedJob();
+    const job = this.jobs.selectedJob();
     if (!job || !this.aiAllowed()) return;
 
     const user = this.profile.user();
@@ -260,7 +257,7 @@ export class DocumentWizardPage implements OnInit {
   private async persistAnalysis(job: Job, analysis: JobAnalysis): Promise<void> {
     if (job.jobAnalysis || !job.id) return;
     try {
-      await this.jobState.saveJobAnalysis(job.id, analysis);
+      await this.jobs.saveJobAnalysis(job.id, analysis);
     } catch {
       // non-fatal
     }
@@ -315,7 +312,7 @@ export class DocumentWizardPage implements OnInit {
 
   async saveEdit(): Promise<void> {
     const doc = this.active();
-    const job = this.jobState.selectedJob();
+    const job = this.jobs.selectedJob();
     if (!doc || !job) return;
 
     const user = this.profile.user();

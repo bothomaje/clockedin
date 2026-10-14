@@ -1,9 +1,8 @@
+import { JobsFacade, Job } from '@domains/jobs';
 import { Service, computed, inject, signal } from '@angular/core';
 import { QueryDocumentSnapshot } from 'firebase/firestore';
 import { DiscoveryRepository } from '../repositories/discovery.repository';
 import { ExploreSort, RecommendationRepository } from '../repositories/recommendation.repository';
-import { Job } from '../../../jobs/data/models/job';
-import { JobState } from '../../../jobs/data/state/job-state';
 import { isVisible, Recommendation } from '../models/recommendation';
 import { DISCOVERY_SOURCES } from '../models/discovery-sources';
 
@@ -11,7 +10,7 @@ import { DISCOVERY_SOURCES } from '../models/discovery-sources';
 export class ExploreState {
   private recommendations = inject(RecommendationRepository);
   private discovery = inject(DiscoveryRepository);
-  private jobState = inject(JobState);
+  private jobs = inject(JobsFacade);
 
   private itemsSignal = signal<Recommendation[]>([]);
   private cursor: QueryDocumentSnapshot | null = null;
@@ -96,7 +95,7 @@ export class ExploreState {
 
   async save(rec: Recommendation): Promise<Job> {
     const job = await this.discovery.saveRecommendation(rec);
-    this.jobState.adoptJob(job);
+    this.jobs.adoptJob(job);
     this.remove(rec);
     return job;
   }

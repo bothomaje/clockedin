@@ -1,4 +1,4 @@
-import { JobAnalysis } from '../../../../../domains/jobs/data/models/job-analysis';
+import { JobAnalysis } from '@domains/jobs';
 import { Info } from '@domains/profile';
 import { Career } from '@domains/profile';
 import { CareerProfile } from '@domains/profile';

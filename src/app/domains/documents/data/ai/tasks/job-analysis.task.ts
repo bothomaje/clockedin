@@ -1,4 +1,4 @@
-import { JobAnalysis } from '../../../../../domains/jobs/data/models/job-analysis';
+import { JobAnalysis } from '@domains/jobs';
 import { DATA_BOUNDARY, FACTUAL_RULES, MAX_JOB_DESCRIPTION_CHARS } from '../prompts/shared';
 import { jobAnalysisSchema } from '../schemas/ai-schemas';
 import { AiRun } from './ai-task';

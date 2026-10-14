@@ -1,6 +1,6 @@
 import { Service, inject, signal } from '@angular/core';
 import { DocumentRepository } from '../repositories/document.repository';
-import { JobState } from '../../../jobs/data/state/job-state';
+import { JobsFacade, Job } from '@domains/jobs';
 import { AiService } from '../ai/ai.service';
 import {
   GenerateCvRequest,
@@ -19,13 +19,12 @@ import { GeneratedCv } from '../models/generated-cv';
 import { Info } from '@domains/profile';
 import { Career } from '@domains/profile';
 import { GeneratedCoverLetter } from '../models/generated-cover-letter';
-import { Job } from '../../../jobs/data/models/job';
 import { CoverLetterOptions } from '../models/generation-options';
 
 @Service()
 export class DocumentState {
   private documentRepository = inject(DocumentRepository);
-  private jobState = inject(JobState);
+  private jobs = inject(JobsFacade);
   private aiService = inject(AiService);
 
   private cvDocumentsSignal = signal<GeneratedDocument[]>([]);
@@ -111,7 +110,7 @@ export class DocumentState {
         options: request.options ?? null,
       });
 
-      await this.jobState.updateJob(request.job.id!, { generatedCv: content });
+      await this.jobs.updateJob(request.job.id!, { generatedCv: content });
 
       this.cvDocumentsSignal.update((docs) => [saved, ...docs]);
       this.activeCvSignal.set(saved);
@@ -158,7 +157,7 @@ export class DocumentState {
         options: request.options ?? null,
       });
 
-      await this.jobState.updateJob(request.job.id!, { generatedCoverLetter: content });
+      await this.jobs.updateJob(request.job.id!, { generatedCoverLetter: content });
 
       this.coverLetterDocumentsSignal.update((docs) => [saved, ...docs]);
       this.activeCoverLetterSignal.set(saved);
@@ -235,7 +234,7 @@ export class DocumentState {
     }
 
     if (isLatest) {
-      await this.jobState.updateJob(
+      await this.jobs.updateJob(
         jobId,
         isCv ? { generatedCv: changes.content } : { generatedCoverLetter: changes.content },
       );

@@ -4,7 +4,7 @@ import { GeneratedDocument } from '../../data/models/generated-document';
 import { GeneratedCv } from '../../data/models/generated-cv';
 import { GeneratedCoverLetter } from '../../data/models/generated-cover-letter';
 import { User } from '@domains/profile';
-import { Job } from '../../../jobs/data/models/job';
+import { Job } from '@domains/jobs';
 import { buildCvPayload } from '../../data/mappers/cv-payload';
 import { buildCoverLetterPayload } from '../../data/mappers/cover-letter-renderer';
 import { DEFAULT_CV_TEMPLATE } from '../../data/templates/default-cv.typst';

@@ -1,11 +1,15 @@
 import { Component, effect, inject, input, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { JobState } from '../../../jobs/data/state/job-state';
 import { DocumentState } from '../../../documents/data/state/document-state';
-import { JobDetail, StatusChangeEvent } from '../../../jobs/ui/job-detail/job-detail';
+import {
+  JobDetail,
+  StatusChangeEvent,
+  JobsFacade,
+  getLatestJobUpdate,
+  JobStatus,
+} from '@domains/jobs';
 import { AssociatedAssets } from '../../../documents/feature/associated-assets/associated-assets';
 import { ConfirmDialog } from '@shared/ui/confirm-dialog/confirm-dialog';
-import { getLatestJobUpdate, JobStatus } from '../../../jobs/data/models/job';
 import { EmptyState } from '@shared/ui/empty-state/empty-state';
 import { ToastService } from '@shared/ui/toast/toast.service';
 import { ProfileFacade } from '@domains/profile';
@@ -19,7 +23,7 @@ export class ApplicationDetailPage {
   id = input.required<string>();
   private router = inject(Router);
   private toast = inject(ToastService);
-  protected jobState = inject(JobState);
+  protected jobs = inject(JobsFacade);
   protected documentState = inject(DocumentState);
   protected profile = inject(ProfileFacade);
 
@@ -36,7 +40,7 @@ export class ApplicationDetailPage {
 
   private async load(id: string): Promise<void> {
     this.notFound.set(false);
-    const [job] = await Promise.all([this.jobState.openJob(id), this.profile.load()]);
+    const [job] = await Promise.all([this.jobs.openJob(id), this.profile.load()]);
     if (this.id() !== id) return;
     if (!job) {
       this.notFound.set(true);
@@ -50,20 +54,20 @@ export class ApplicationDetailPage {
   }
 
   async onStatusChange({ status, note }: StatusChangeEvent): Promise<void> {
-    const job = this.jobState.selectedJob();
+    const job = this.jobs.selectedJob();
     if (!job?.id) return;
     try {
-      await this.jobState.updateJobStatus(job.id, status, note);
+      await this.jobs.updateJobStatus(job.id, status, note);
     } catch {
       this.toast.error('Could not update status. Try again.');
     }
   }
 
   async onNotesSave(notes: string): Promise<void> {
-    const job = this.jobState.selectedJob();
+    const job = this.jobs.selectedJob();
     if (!job?.id) return;
     try {
-      await this.jobState.updateJob(job.id, { notes });
+      await this.jobs.updateJob(job.id, { notes });
     } catch {
       this.toast.error('Could not save notes. Try again.');
     }
@@ -78,11 +82,11 @@ export class ApplicationDetailPage {
   }
 
   async confirmDelete(): Promise<void> {
-    const job = this.jobState.selectedJob();
+    const job = this.jobs.selectedJob();
     if (!job?.id || this.deleting()) return;
     this.deleting.set(true);
     try {
-      await this.jobState.deleteJob(job.id);
+      await this.jobs.deleteJob(job.id);
       this.router.navigate(['/applications']);
     } catch {
       this.confirmingDelete.set(false);

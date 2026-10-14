@@ -157,7 +157,7 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadChildren: () => import('./features/jobs/jobs.routes').then((m) => m.jobsRoutes),
+        loadChildren: () => import('@domains/jobs').then((m) => m.jobsRoutes),
       },
     ],
   },

@@ -1,5 +1,5 @@
 import { Service, inject, signal } from '@angular/core';
-import { JobState } from '../../../jobs/data/state/job-state';
+import { JobsFacade } from '@domains/jobs';
 import { DiscoveryRepository } from '../repositories/discovery.repository';
 import { RecommendationRepository } from '../repositories/recommendation.repository';
 import { Recommendation, isVisible } from '../models/recommendation';
@@ -13,7 +13,7 @@ const time = (r: Recommendation) => r.job.postedAt?.getTime() ?? 0;
 export class TopMatchesState {
   private recommendations = inject(RecommendationRepository);
   private discovery = inject(DiscoveryRepository);
-  private jobState = inject(JobState);
+  private jobs = inject(JobsFacade);
 
   enabled = signal<boolean | null>(null);
   items = signal<Recommendation[]>([]);
@@ -46,7 +46,7 @@ export class TopMatchesState {
     this.busyId.set(rec.id);
     this.actionError.set('');
     try {
-      this.jobState.adoptJob(await this.discovery.saveRecommendation(rec));
+      this.jobs.adoptJob(await this.discovery.saveRecommendation(rec));
       this.items.update((items) => items.filter((r) => r.id !== rec.id));
     } catch {
       this.actionError.set('Could not save this job. Try again.');

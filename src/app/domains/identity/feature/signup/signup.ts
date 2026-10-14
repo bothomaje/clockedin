@@ -1,6 +1,6 @@
-import { ProfileState } from '../../profile/state/profile-state';
+import { ProfileState } from '../../../../features/profile/state/profile-state';
 import { Component, inject, signal } from '@angular/core';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgTemplateOutlet } from '@angular/common';

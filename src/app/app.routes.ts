@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
-import { onboardingGuard } from './features/profile/state/onboarding.guard';
+import { onboardingGuard } from './domains/profile/feature/onboarding.guard';
 
 export const routes: Routes = [
   {
@@ -13,7 +13,8 @@ export const routes: Routes = [
         canonical: false,
       },
     },
-    loadComponent: () => import('./features/onboarding/onboarding').then((m) => m.Onboarding),
+    loadComponent: () =>
+      import('./domains/profile/feature/onboarding/onboarding').then((m) => m.Onboarding),
     canActivate: [onboardingGuard],
   },
   {
@@ -49,7 +50,8 @@ export const routes: Routes = [
         canonical: false,
       },
     },
-    loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
+    loadChildren: () =>
+      import('./domains/identity/feature/identity.routes').then((m) => m.authRoutes),
   },
   {
     path: '',
@@ -88,7 +90,7 @@ export const routes: Routes = [
           },
         },
         loadComponent: () =>
-          import('./features/profile/profile-page/profile-page').then((m) => m.Profile),
+          import('./domains/profile/feature/profile-page/profile-page').then((m) => m.Profile),
       },
       {
         path: 'settings',

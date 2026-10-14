@@ -2,6 +2,7 @@ import { AuthService } from '@core/auth/auth.service';
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { getAuthErrorMessage } from '@core/auth/auth-errors';
 
 @Component({
   imports: [FormsModule, RouterLink],
@@ -28,7 +29,7 @@ export class Login {
       await this.auth.signIn(this.email, this.password);
       this.router.navigate(['/dashboard']);
     } catch (err) {
-      this.errorMessage.set(this.auth.getAuthErrorMessage(err));
+      this.errorMessage.set(getAuthErrorMessage(err));
       const code = (err as { code?: string })?.code ?? '';
       this.credentialError.set(
         [

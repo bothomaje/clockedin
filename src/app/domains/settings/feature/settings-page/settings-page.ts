@@ -1,14 +1,15 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '@core/auth/auth.service';
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '@shared/ui/page-header/page-header';
 import { DatePipe } from '@angular/common';
 import { DataExportService } from '../../data/data-export.service';
 import { DiscoveryRepository } from '../../../recommendations/data/repositories/discovery.repository';
 import { DISCOVERY_SOURCES } from '../../../recommendations/data/models/discovery-sources';
-import { AuthSession } from '@core/auth/auth-session';
 import { ProfileFacade } from '@domains/profile';
+import { AuthSession } from '@core/auth/auth-session';
+import { getAuthErrorMessage } from '@core/auth/auth-errors';
+import { AccountService } from '../../data/account.service';
 
 type Pane = 'account' | 'security' | 'discovery' | 'ai' | 'data';
 
@@ -19,8 +20,8 @@ type Pane = 'account' | 'security' | 'discovery' | 'ai' | 'data';
   styleUrl: './settings-page.scss',
 })
 export class Settings {
-  private auth = inject(AuthService);
   private session = inject(AuthSession);
+  private account = inject(AccountService);
   private profile = inject(ProfileFacade);
   private exporter = inject(DataExportService);
   private discovery = inject(DiscoveryRepository);
@@ -83,10 +84,10 @@ export class Settings {
     this.isSendingVerification.set(true);
 
     try {
-      await this.auth.sendVerificationEmail();
+      await this.session.sendVerificationEmail();
       this.verificationSent.set(true);
     } catch (err) {
-      this.verificationError.set(this.auth.getAuthErrorMessage(err));
+      this.verificationError.set(getAuthErrorMessage(err));
     } finally {
       this.isSendingVerification.set(false);
     }
@@ -110,13 +111,13 @@ export class Settings {
     this.isSavingPassword.set(true);
 
     try {
-      await this.auth.changePassword(this.currentPassword, this.newPassword);
+      await this.account.changePassword(this.currentPassword, this.newPassword);
       this.passwordMessage.set('Password updated.');
       this.currentPassword = '';
       this.newPassword = '';
       this.confirmNewPassword = '';
     } catch (err) {
-      this.passwordError.set(this.auth.getAuthErrorMessage(err));
+      this.passwordError.set(getAuthErrorMessage(err));
     } finally {
       this.isSavingPassword.set(false);
     }

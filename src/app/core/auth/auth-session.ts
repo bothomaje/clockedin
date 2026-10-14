@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   onIdTokenChanged,
   reload,
+  sendEmailVerification,
   signOut,
   User,
 } from 'firebase/auth';
@@ -41,6 +42,18 @@ export class AuthSession {
       this.emailVerifiedSignal.set(user.emailVerified);
     }
     return user;
+  }
+
+  requireUser(): User {
+    const user = this.auth.currentUser;
+    if (!user) throw new Error('No user is signed in.');
+    return user;
+  }
+
+  async sendVerificationEmail(): Promise<void> {
+    await sendEmailVerification(this.requireUser(), {
+      url: `${window.location.origin}/onboarding`,
+    });
   }
 
   logOut() {

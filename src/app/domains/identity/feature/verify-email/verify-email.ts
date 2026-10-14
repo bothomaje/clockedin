@@ -4,6 +4,7 @@ import { AuthService } from '@core/auth/auth.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 import { AuthSession } from '@core/auth/auth-session';
+import { getAuthErrorMessage } from '@core/auth/auth-errors';
 
 type VerifyView = 'pending' | 'confirm' | 'success' | 'invalid';
 
@@ -92,7 +93,7 @@ export class VerifyEmail implements OnInit, OnDestroy {
         this.view.set('success');
         return;
       }
-      this.errorMessage.set(this.auth.getAuthErrorMessage(err));
+      this.errorMessage.set(getAuthErrorMessage(err));
       this.view.set('invalid');
     } finally {
       this.verifying.set(false);
@@ -105,11 +106,11 @@ export class VerifyEmail implements OnInit, OnDestroy {
     this.sending.set(true);
     this.errorMessage.set('');
     try {
-      await this.auth.sendVerificationEmail();
+      await this.session.sendVerificationEmail();
       this.sent.set(true);
       this.startCooldown();
     } catch (err) {
-      this.errorMessage.set(this.auth.getAuthErrorMessage(err));
+      this.errorMessage.set(getAuthErrorMessage(err));
     } finally {
       this.sending.set(false);
     }

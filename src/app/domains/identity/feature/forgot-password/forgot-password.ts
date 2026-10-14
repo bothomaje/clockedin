@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { getAuthErrorMessage } from '@core/auth/auth-errors';
 import { AuthService } from '@core/auth/auth.service';
 @Component({
   imports: [FormsModule, RouterLink],
@@ -32,7 +33,7 @@ export class ForgotPassword {
           : '';
       this.message.set(fallbackMessage);
       if (!fallbackMessage) {
-        this.errorMessage.set(this.auth.getAuthErrorMessage(err));
+        this.errorMessage.set(getAuthErrorMessage(err));
       }
     } finally {
       if (this.message()) this.sentTo.set(this.email);

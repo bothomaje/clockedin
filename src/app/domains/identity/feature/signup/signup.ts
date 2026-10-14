@@ -4,6 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgTemplateOutlet } from '@angular/common';
 import { ProfileFacade } from '@domains/profile';
+import { getAuthErrorMessage } from '@core/auth/auth-errors';
+import { AuthSession } from '@core/auth/auth-session';
 
 @Component({
   imports: [FormsModule, RouterLink, NgTemplateOutlet],
@@ -12,6 +14,7 @@ import { ProfileFacade } from '@domains/profile';
 })
 export class Signup {
   private auth = inject(AuthService);
+  private session = inject(AuthSession);
   private profile = inject(ProfileFacade);
   private router = inject(Router);
 
@@ -53,10 +56,10 @@ export class Signup {
     try {
       const credential = await this.auth.signUp(this.email, this.password, this.name);
       await this.profile.createProfile(credential.user.uid, this.email, this.name);
-      await this.auth.sendVerificationEmail();
+      await this.session.sendVerificationEmail();
       this.router.navigate(['/verify-email']);
     } catch (err) {
-      this.errorMessage.set(this.auth.getAuthErrorMessage(err));
+      this.errorMessage.set(getAuthErrorMessage(err));
     } finally {
       this.isSubmitting.set(false);
     }

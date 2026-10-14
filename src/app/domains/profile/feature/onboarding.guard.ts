@@ -6,17 +6,17 @@ import { AuthSession } from '@core/auth/auth-session';
 
 export const onboardingGuard: CanActivateFn = () => {
   const session = inject(AuthSession);
-  const profileState = inject(ProfileState);
+  const profile = inject(ProfileState);
   const router = inject(Router);
 
   return session.currentUser$.pipe(
     take(1),
     switchMap((user) => {
       if (!user) return of(router.createUrlTree(['/login']));
-      return profileState
+      return profile
         .load()
         .then(() =>
-          profileState.error() || profileState.onboardingComplete()
+          profile.error() || profile.onboardingComplete()
             ? router.createUrlTree(['/dashboard'])
             : true,
         );

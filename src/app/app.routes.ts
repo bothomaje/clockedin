@@ -48,8 +48,7 @@ export const routes: Routes = [
         canonical: false,
       },
     },
-    loadChildren: () =>
-      import('./domains/identity/feature/identity.routes').then((m) => m.authRoutes),
+    loadChildren: () => import('@domains/identity').then((m) => m.authRoutes),
   },
   {
     path: '',

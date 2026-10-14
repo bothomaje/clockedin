@@ -13,7 +13,7 @@ import {
   JobStatusChip,
 } from '@domains/jobs';
 import { ProfileFacade, Todo } from '@domains/profile';
-import { TopMatchesState } from '../../../recommendations/data/state/top-matches-state';
+import { RecommendationsFacade } from '@domains/recommendations';
 import { WORK_MODE_LABELS } from '@shared/location/location.model';
 
 const FOLLOW_UP_AFTER_DAYS = 7;
@@ -34,7 +34,7 @@ interface FollowUp {
 export class Dashboard implements OnInit {
   protected profile = inject(ProfileFacade);
   protected jobs = inject(JobsFacade);
-  protected matches = inject(TopMatchesState);
+  protected recommendations = inject(RecommendationsFacade);
 
   getLatestJobUpdate = getLatestJobUpdate;
   workModeLabels = WORK_MODE_LABELS;
@@ -133,7 +133,7 @@ export class Dashboard implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    void this.matches.load();
+    void this.recommendations.load();
     await this.profile.load();
     await this.jobs.loadJobs();
     this.targetRolesDraft = this.profile.info().targetRoles ?? '';

@@ -128,8 +128,7 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadChildren: () =>
-          import('./domains/recommendations/feature/explore.routes').then((m) => m.exploreRoutes),
+        loadChildren: () => import('@domains/recommendations').then((m) => m.exploreRoutes),
       },
       {
         path: 'applications',

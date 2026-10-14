@@ -9,7 +9,8 @@
       "@domains/profile": ["./src/app/domains/profile/index.ts"],
       "@domains/jobs": ["./src/app/domains/jobs/index.ts"],
       "@domains/identity": ["./src/app/domains/identity/index.ts"],
-      "@domains/documents": ["./src/app/domains/documents/index.ts"]
+      "@domains/documents": ["./src/app/domains/documents/index.ts"],
+      "@domains/recommendations": ["./src/app/domains/recommendations/index.ts"]
     },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,

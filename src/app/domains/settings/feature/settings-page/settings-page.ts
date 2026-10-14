@@ -4,8 +4,7 @@ import { RouterLink } from '@angular/router';
 import { PageHeader } from '@shared/ui/page-header/page-header';
 import { DatePipe } from '@angular/common';
 import { DataExportService } from '../../data/data-export.service';
-import { DiscoveryRepository } from '../../../recommendations/data/repositories/discovery.repository';
-import { DISCOVERY_SOURCES } from '../../../recommendations/data/models/discovery-sources';
+import { DISCOVERY_SOURCES, RecommendationsFacade } from '@domains/recommendations';
 import { ProfileFacade } from '@domains/profile';
 import { AuthSession } from '@core/auth/auth-session';
 import { getAuthErrorMessage } from '@core/auth/auth-errors';
@@ -24,7 +23,7 @@ export class Settings {
   private account = inject(AccountService);
   private profile = inject(ProfileFacade);
   private exporter = inject(DataExportService);
-  private discovery = inject(DiscoveryRepository);
+  private discovery = inject(RecommendationsFacade);
 
   readonly panes: { id: Pane; label: string }[] = [
     { id: 'account', label: 'Account Information' },

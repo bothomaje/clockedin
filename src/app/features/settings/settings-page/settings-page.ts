@@ -6,8 +6,8 @@ import { ProfileState } from '../../../domains/profile/data/state/profile-state'
 import { PageHeader } from '../../../shared/ui/page-header/page-header';
 import { DatePipe } from '@angular/common';
 import { DataExportService } from '../data-export.service';
-import { DiscoveryRepository } from '../../explore/data/discovery.repository';
-import { DISCOVERY_SOURCES } from '../../explore/models/discovery-sources';
+import { DiscoveryRepository } from '../../../domains/recommendations/data/repositories/discovery.repository';
+import { DISCOVERY_SOURCES } from '../../../domains/recommendations/data/models/discovery-sources';
 import { AuthSession } from '@core/auth/auth-session';
 
 type Pane = 'account' | 'security' | 'discovery' | 'ai' | 'data';

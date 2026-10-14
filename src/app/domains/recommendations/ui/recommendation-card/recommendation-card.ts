@@ -1,9 +1,9 @@
 import { Component, input, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { JobLocationPipe } from '../../../domains/jobs/util/job-location.pipe';
-import { WORK_MODE_LABELS } from '../../../shared/location/location.model';
-import { providerLabel } from '../data/recommendation.mapper';
-import { Recommendation } from '../models/recommendation';
+import { JobLocationPipe } from '../../../jobs/util/job-location.pipe';
+import { WORK_MODE_LABELS } from '@shared/location/location.model';
+import { providerLabel } from '../../data/repositories/recommendation.mapper';
+import { Recommendation } from '../../data/models/recommendation';
 
 @Component({
   selector: 'app-recommendation-card',

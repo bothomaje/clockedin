@@ -1,7 +1,7 @@
 import { Service, inject, signal } from '@angular/core';
-import { JobState } from '../../../domains/jobs/data/state/job-state';
-import { DiscoveryRepository } from '../data/discovery.repository';
-import { RecommendationRepository } from '../data/recommendation.repository';
+import { JobState } from '../../../jobs/data/state/job-state';
+import { DiscoveryRepository } from '../repositories/discovery.repository';
+import { RecommendationRepository } from '../repositories/recommendation.repository';
 import { Recommendation, isVisible } from '../models/recommendation';
 
 const SHOWN = 3;

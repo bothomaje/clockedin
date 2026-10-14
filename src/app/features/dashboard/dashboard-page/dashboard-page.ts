@@ -13,7 +13,7 @@ import {
 } from '../../../domains/jobs/data/models/job';
 import { Todo } from '../../../domains/profile/data/models/info';
 import { JobLocationPipe } from '../../../domains/jobs/util/job-location.pipe';
-import { TopMatchesState } from '../../explore/state/top-matches-state';
+import { TopMatchesState } from '../../../domains/recommendations/data/state/top-matches-state';
 import { WORK_MODE_LABELS } from '../../../shared/location/location.model';
 import { JobStatusChip } from '../../../domains/jobs/ui/job-status-chip/job-status-chip';
 

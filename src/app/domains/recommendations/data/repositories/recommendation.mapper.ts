@@ -1,4 +1,4 @@
-import { Job, JobStatus } from './../../../domains/jobs/data/models/job';
+import { Job, JobStatus } from '../../../jobs/data/models/job';
 import { DocumentData, Timestamp } from 'firebase/firestore';
 import { AiInsight, Recommendation } from '../models/recommendation';
 

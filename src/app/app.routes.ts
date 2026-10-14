@@ -131,7 +131,7 @@ export const routes: Routes = [
           },
         },
         loadChildren: () =>
-          import('./features/explore/explore.routes').then((m) => m.exploreRoutes),
+          import('./domains/recommendations/feature/explore.routes').then((m) => m.exploreRoutes),
       },
       {
         path: 'applications',

@@ -1,17 +1,17 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
-import { ErrorState } from '../../../shared/ui/error-state/error-state';
-import { PageHeader } from '../../../shared/ui/page-header/page-header';
-import { Select, SelectOption } from '../../../shared/ui/select/select';
-import { WORK_MODE_LABELS } from '../../../shared/location/location.model';
-import { jobLocationLabel } from '../../../domains/jobs/data/models/job';
-import { providerLabel } from '../data/recommendation.mapper';
-import { ExploreSort } from '../data/recommendation.repository';
-import { Recommendation } from '../models/recommendation';
-import { RecommendationCard } from '../recommendation-card/recommendation-card';
-import { ExploreState } from '../state/explore-state';
+import { EmptyState } from '@shared/ui/empty-state/empty-state';
+import { ErrorState } from '@shared/ui/error-state/error-state';
+import { PageHeader } from '@shared/ui/page-header/page-header';
+import { Select, SelectOption } from '@shared/ui/select/select';
+import { WORK_MODE_LABELS } from '@shared/location/location.model';
+import { jobLocationLabel } from '../../../jobs/data/models/job';
+import { providerLabel } from '../../data/repositories/recommendation.mapper';
+import { ExploreSort } from '../../data/repositories/recommendation.repository';
+import { Recommendation } from '../../data/models/recommendation';
+import { RecommendationCard } from '../../ui/recommendation-card/recommendation-card';
+import { ExploreState } from '../../data/state/explore-state';
 
 const DAY_MS = 86_400_000;
 

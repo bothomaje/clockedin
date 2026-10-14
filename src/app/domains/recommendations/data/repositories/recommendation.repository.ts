@@ -11,7 +11,7 @@ import {
   startAfter,
   writeBatch,
 } from 'firebase/firestore';
-import { firebaseAuth, firestore } from '../../../core/firebase/firebase';
+import { firebaseAuth, firestore } from '../../../../core/firebase/firebase';
 import { Recommendation } from '../models/recommendation';
 import { toRecommendation } from './recommendation.mapper';
 

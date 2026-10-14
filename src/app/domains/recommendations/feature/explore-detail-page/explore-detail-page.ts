@@ -1,11 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { JobLocationPipe } from '../../../domains/jobs/util/job-location.pipe';
+import { JobLocationPipe } from '../../../jobs/util/job-location.pipe';
 import { WORK_MODE_LABELS } from '@shared/location/location.model';
-import { providerLabel } from '../data/recommendation.mapper';
-import { Recommendation } from '../models/recommendation';
-import { ExploreState } from '../state/explore-state';
+import { providerLabel } from '../../data/repositories/recommendation.mapper';
+import { Recommendation } from '../../data/models/recommendation';
+import { ExploreState } from '../../data/state/explore-state';
 
 @Component({
   selector: 'app-explore-detail-page',

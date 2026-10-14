@@ -25,7 +25,7 @@ export const routes: Routes = [
         path: '',
         data: {
           seo: {
-            title: 'clockedin | Job Application and Career Tracker',
+            title: 'clockedin | AI-Powered Job Application and Career Tracker',
             description:
               'Organise your job search with clockedin. Track applications and interviews, explore opportunities and prepare career documents.',
             robots: 'index, follow',

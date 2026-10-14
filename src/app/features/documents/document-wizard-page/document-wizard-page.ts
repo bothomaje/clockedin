@@ -28,8 +28,8 @@ import {
 } from '../models/generation-options';
 import { GeneratedCoverLetter } from '../models/generated-cover-letter';
 import { GENERATION_STAGES } from '../models/generation-stage';
-import { AuthService } from '../../../core/auth/auth.service';
 import { JobLocationPipe } from '../../jobs/models/job-location.pipe';
+import { AuthSession } from '@core/auth/auth-session';
 
 type WizardView = 'setup' | 'processing' | 'preview' | 'error';
 
@@ -54,7 +54,7 @@ export class DocumentWizardPage implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private consent = inject(AiConsentService);
-  private authService = inject(AuthService);
+  private session = inject(AuthSession);
   protected jobState = inject(JobState);
   protected profileState = inject(ProfileState);
   protected documentState = inject(DocumentState);
@@ -144,7 +144,7 @@ export class DocumentWizardPage implements OnInit {
   });
 
   canGenerate = computed(() => this.profileState.experience().length > 0);
-  aiAllowed = this.authService.isEmailVerified;
+  aiAllowed = this.session.isEmailVerified;
 
   emphasisChoices = computed(() => {
     const a = this.analysis();

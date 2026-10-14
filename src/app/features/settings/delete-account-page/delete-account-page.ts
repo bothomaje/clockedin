@@ -5,6 +5,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { ProfileState } from '../../profile/state/profile-state';
 import { PageHeader } from '../../../shared/ui/page-header/page-header';
 import { DataExportService } from '../data-export.service';
+import { AuthSession } from '@core/auth/auth-session';
 
 @Component({
   selector: 'app-delete-account-page',
@@ -13,7 +14,8 @@ import { DataExportService } from '../data-export.service';
   styleUrl: './delete-account-page.scss',
 })
 export class DeleteAccountPage {
-  private authService = inject(AuthService);
+  private auth = inject(AuthService);
+  private session = inject(AuthSession);
   private profileState = inject(ProfileState);
   private router = inject(Router);
   private exporter = inject(DataExportService);
@@ -42,15 +44,15 @@ export class DeleteAccountPage {
     this.error.set('');
     this.isDeleting.set(true);
     try {
-      const uid = this.authService.currentUserSnapshot()?.uid;
+      const uid = this.session.currentUserSnapshot()?.uid;
       if (!uid) throw new Error('No user is signed in.');
 
-      await this.authService.reauthenticate(this.password);
+      await this.auth.reauthenticate(this.password);
       await this.profileState.deleteAllData();
-      await this.authService.deleteAuthAccount();
+      await this.auth.deleteAuthAccount();
       this.router.navigate(['/']);
     } catch (err) {
-      this.error.set(this.authService.getAuthErrorMessage(err));
+      this.error.set(this.auth.getAuthErrorMessage(err));
     } finally {
       this.isDeleting.set(false);
     }

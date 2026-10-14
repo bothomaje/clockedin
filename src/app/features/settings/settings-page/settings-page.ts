@@ -1,13 +1,14 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/auth/auth.service';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { ProfileState } from '../../profile/state/profile-state';
 import { PageHeader } from '../../../shared/ui/page-header/page-header';
 import { DatePipe } from '@angular/common';
 import { DataExportService } from '../data-export.service';
 import { DiscoveryRepository } from '../../explore/data/discovery.repository';
 import { DISCOVERY_SOURCES } from '../../explore/models/discovery-sources';
+import { AuthSession } from '@core/auth/auth-session';
 
 type Pane = 'account' | 'security' | 'discovery' | 'ai' | 'data';
 
@@ -18,7 +19,8 @@ type Pane = 'account' | 'security' | 'discovery' | 'ai' | 'data';
   styleUrl: './settings-page.scss',
 })
 export class Settings {
-  private authService = inject(AuthService);
+  private auth = inject(AuthService);
+  private session = inject(AuthSession);
   private profileState = inject(ProfileState);
   private exporter = inject(DataExportService);
   private discovery = inject(DiscoveryRepository);
@@ -49,8 +51,8 @@ export class Settings {
     void this.loadDiscovery();
   }
 
-  email = this.authService.currentUserSnapshot()?.email ?? '';
-  emailVerified = this.authService.isEmailVerified;
+  email = this.session.currentUserSnapshot()?.email ?? '';
+  emailVerified = this.session.isEmailVerified;
   verificationSent = signal(false);
   verificationError = signal('');
   isSendingVerification = signal(false);
@@ -81,10 +83,10 @@ export class Settings {
     this.isSendingVerification.set(true);
 
     try {
-      await this.authService.sendVerificationEmail();
+      await this.auth.sendVerificationEmail();
       this.verificationSent.set(true);
     } catch (err) {
-      this.verificationError.set(this.authService.getAuthErrorMessage(err));
+      this.verificationError.set(this.auth.getAuthErrorMessage(err));
     } finally {
       this.isSendingVerification.set(false);
     }
@@ -108,13 +110,13 @@ export class Settings {
     this.isSavingPassword.set(true);
 
     try {
-      await this.authService.changePassword(this.currentPassword, this.newPassword);
+      await this.auth.changePassword(this.currentPassword, this.newPassword);
       this.passwordMessage.set('Password updated.');
       this.currentPassword = '';
       this.newPassword = '';
       this.confirmNewPassword = '';
     } catch (err) {
-      this.passwordError.set(this.authService.getAuthErrorMessage(err));
+      this.passwordError.set(this.auth.getAuthErrorMessage(err));
     } finally {
       this.isSavingPassword.set(false);
     }

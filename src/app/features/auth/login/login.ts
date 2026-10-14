@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './login.html',
 })
 export class Login {
-  private authService = inject(AuthService);
+  private auth = inject(AuthService);
   private router = inject(Router);
 
   email = '';
@@ -25,10 +25,10 @@ export class Login {
     this.isSubmitting.set(true);
 
     try {
-      await this.authService.signIn(this.email, this.password);
+      await this.auth.signIn(this.email, this.password);
       this.router.navigate(['/dashboard']);
     } catch (err) {
-      this.errorMessage.set(this.authService.getAuthErrorMessage(err));
+      this.errorMessage.set(this.auth.getAuthErrorMessage(err));
       const code = (err as { code?: string })?.code ?? '';
       this.credentialError.set(
         [

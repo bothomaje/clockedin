@@ -24,12 +24,12 @@ import { generateCvTask } from './tasks/cv-generation.task';
 import { generateCoverLetterTask } from './tasks/cover-letter-generation.task';
 import { SemanticSimilarityService } from './local/semantic-similarity';
 import { AiTelemetry } from './local/ai-telemetry';
-import { AuthService } from '../../../../core/auth/auth.service';
 import { Career } from '../../../profile/models/career';
 import { validateCv } from './cv-validator';
 import { GeneratedCv } from '../../models/generated-cv';
 import { validateCoverLetter } from './cover-letter-validator';
 import { GeneratedCoverLetter } from '../../models/generated-cover-letter';
+import { AuthSession } from '@core/auth/auth-session';
 
 type EvidenceInput = Pick<
   GenerateCvRequest,
@@ -38,7 +38,7 @@ type EvidenceInput = Pick<
 
 @Service()
 export class AiService {
-  private auth = inject(AuthService);
+  private session = inject(AuthSession);
   private transformers = inject(TransformersProvider);
   private webllm = inject(WebLlmProvider);
   private gemini = inject(FirebaseGeminiProvider);
@@ -52,7 +52,7 @@ export class AiService {
     request: AiGenerationRequest,
     isAcceptable: (capability: AiGenerativeCapability, data: unknown) => boolean,
   ): Promise<AiGenerationResult<T>> {
-    if (!this.auth.isEmailVerified()) {
+    if (!this.session.isEmailVerified()) {
       throw new Error('Verify your email to use AI features.');
     }
 

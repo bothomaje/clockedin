@@ -11,7 +11,7 @@ import { NgTemplateOutlet } from '@angular/common';
   templateUrl: './signup.html',
 })
 export class Signup {
-  private authService = inject(AuthService);
+  private auth = inject(AuthService);
   private profileState = inject(ProfileState);
   private router = inject(Router);
 
@@ -51,12 +51,12 @@ export class Signup {
     this.isSubmitting.set(true);
 
     try {
-      const credential = await this.authService.signUp(this.email, this.password, this.name);
+      const credential = await this.auth.signUp(this.email, this.password, this.name);
       await this.profileState.createProfile(credential.user.uid, this.email, this.name);
-      await this.authService.sendVerificationEmail();
+      await this.auth.sendVerificationEmail();
       this.router.navigate(['/verify-email']);
     } catch (err) {
-      this.errorMessage.set(this.authService.getAuthErrorMessage(err));
+      this.errorMessage.set(this.auth.getAuthErrorMessage(err));
     } finally {
       this.isSubmitting.set(false);
     }

@@ -8,7 +8,7 @@ import { AuthService } from '../../../core/auth/auth.service';
   templateUrl: './forgot-password.html',
 })
 export class ForgotPassword {
-  private authService = inject(AuthService);
+  private auth = inject(AuthService);
 
   email = '';
   message = signal('');
@@ -22,7 +22,7 @@ export class ForgotPassword {
     this.isSubmitting.set(true);
 
     try {
-      await this.authService.sendPasswordReset(this.email);
+      await this.auth.sendPasswordReset(this.email);
       this.message.set('If an account exists for that email, a reset link has been sent.');
     } catch (err) {
       const code = (err as { code?: string })?.code;
@@ -32,7 +32,7 @@ export class ForgotPassword {
           : '';
       this.message.set(fallbackMessage);
       if (!fallbackMessage) {
-        this.errorMessage.set(this.authService.getAuthErrorMessage(err));
+        this.errorMessage.set(this.auth.getAuthErrorMessage(err));
       }
     } finally {
       if (this.message()) this.sentTo.set(this.email);

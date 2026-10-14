@@ -1,8 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { AuthService } from '../../../core/auth/auth.service';
 import { ToastBanner } from '../../ui/toast/toast-banner/toast-banner';
+import { AuthSession } from '@core/auth/auth-session';
 
 @Component({
   selector: 'app-shell',
@@ -15,10 +15,10 @@ import { ToastBanner } from '../../ui/toast/toast-banner/toast-banner';
   },
 })
 export class AppShell {
-  private authService = inject(AuthService);
+  private session = inject(AuthSession);
   private router = inject(Router);
 
-  currentUser = toSignal(this.authService.currentUser$, { initialValue: null });
+  currentUser = toSignal(this.session.currentUser$, { initialValue: null });
   menuOpen = signal(false);
 
   displayName = computed(() => {
@@ -46,7 +46,7 @@ export class AppShell {
 
   async logOut() {
     this.menuOpen.set(false);
-    await this.authService.logOut();
+    await this.session.logOut();
     this.router.navigate(['/login']);
   }
 }

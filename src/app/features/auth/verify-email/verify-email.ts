@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
+import { AuthSession } from '@core/auth/auth-session';
 
 type VerifyView = 'pending' | 'confirm' | 'success' | 'invalid';
 
@@ -17,11 +18,12 @@ const RESEND_COOLDOWN_SECONDS = 30;
 export class VerifyEmail implements OnInit, OnDestroy {
   private pollTimer?: ReturnType<typeof setInterval>;
   private cooldownTimer?: ReturnType<typeof setInterval>;
-  private authService = inject(AuthService);
+  private auth = inject(AuthService);
+  private session = inject(AuthSession);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  user = toSignal(this.authService.currentUser$, { initialValue: null });
+  user = toSignal(this.session.currentUser$, { initialValue: null });
   email = computed(() => this.user()?.email ?? '');
 
   view = signal<VerifyView>('pending');
@@ -55,7 +57,7 @@ export class VerifyEmail implements OnInit, OnDestroy {
   }
 
   private async startPending(): Promise<void> {
-    const user = await firstValueFrom(this.authService.currentUser$);
+    const user = await firstValueFrom(this.session.currentUser$);
     if (this.destroyed) return;
 
     if (!user) {
@@ -83,14 +85,14 @@ export class VerifyEmail implements OnInit, OnDestroy {
     this.errorMessage.set('');
 
     try {
-      await this.authService.verifyEmail(code);
+      await this.auth.verifyEmail(code);
       this.view.set('success');
     } catch (err) {
       if (await this.isAlreadyVerified()) {
         this.view.set('success');
         return;
       }
-      this.errorMessage.set(this.authService.getAuthErrorMessage(err));
+      this.errorMessage.set(this.auth.getAuthErrorMessage(err));
       this.view.set('invalid');
     } finally {
       this.verifying.set(false);
@@ -103,11 +105,11 @@ export class VerifyEmail implements OnInit, OnDestroy {
     this.sending.set(true);
     this.errorMessage.set('');
     try {
-      await this.authService.sendVerificationEmail();
+      await this.auth.sendVerificationEmail();
       this.sent.set(true);
       this.startCooldown();
     } catch (err) {
-      this.errorMessage.set(this.authService.getAuthErrorMessage(err));
+      this.errorMessage.set(this.auth.getAuthErrorMessage(err));
     } finally {
       this.sending.set(false);
     }
@@ -124,7 +126,7 @@ export class VerifyEmail implements OnInit, OnDestroy {
 
   private async isAlreadyVerified(): Promise<boolean> {
     try {
-      const user = await this.authService.refreshCurrentUser();
+      const user = await this.session.refreshCurrentUser();
       return user?.emailVerified === true;
     } catch {
       return false;
@@ -133,7 +135,7 @@ export class VerifyEmail implements OnInit, OnDestroy {
 
   async checkVerified(): Promise<void> {
     try {
-      const user = await this.authService.refreshCurrentUser();
+      const user = await this.session.refreshCurrentUser();
       if (user?.emailVerified) {
         clearInterval(this.pollTimer);
         this.router.navigate(['/onboarding']);
@@ -144,7 +146,7 @@ export class VerifyEmail implements OnInit, OnDestroy {
   }
 
   async logOut(): Promise<void> {
-    await this.authService.logOut();
+    await this.session.logOut();
     this.router.navigate(['/signup']);
   }
 

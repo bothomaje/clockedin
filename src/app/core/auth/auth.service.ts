@@ -1,42 +1,25 @@
-import { Service, signal } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import {
   applyActionCode,
   Auth,
   createUserWithEmailAndPassword,
   deleteUser,
   EmailAuthProvider,
-  getIdToken,
-  onAuthStateChanged,
-  onIdTokenChanged,
   reauthenticateWithCredential,
-  reload,
   sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
-  signOut,
   updatePassword,
   updateProfile,
   User,
 } from 'firebase/auth';
-import { Observable, shareReplay } from 'rxjs';
 import { firebaseAuth } from '../firebase/firebase';
+import { AuthSession } from './auth-session';
 
 @Service()
 export class AuthService {
   private auth: Auth = firebaseAuth;
-
-  currentUser$ = new Observable<User | null>((subscriber) => {
-    return onAuthStateChanged(this.auth, subscriber);
-  }).pipe(shareReplay(1));
-
-  private emailVerifiedSignal = signal(false);
-  readonly isEmailVerified = this.emailVerifiedSignal.asReadonly();
-
-  constructor() {
-    onIdTokenChanged(this.auth, (user) => {
-      this.emailVerifiedSignal.set(user?.emailVerified === true);
-    });
-  }
+  private session = inject(AuthSession);
 
   async signUp(email: string, password: string, name?: string) {
     const credential = await createUserWithEmailAndPassword(this.auth, email, password);
@@ -48,10 +31,6 @@ export class AuthService {
 
   signIn(email: string, password: string) {
     return signInWithEmailAndPassword(this.auth, email, password);
-  }
-
-  logOut() {
-    return signOut(this.auth);
   }
 
   getAuthErrorMessage(err: unknown): string {
@@ -79,21 +58,6 @@ export class AuthService {
     }
   }
 
-  currentUserSnapshot(): User | null {
-    return this.auth.currentUser;
-  }
-
-  async refreshCurrentUser(): Promise<User | null> {
-    const user = this.auth.currentUser;
-    if (user) {
-      await reload(user);
-
-      if (user.emailVerified) await getIdToken(user, true);
-      this.emailVerifiedSignal.set(user.emailVerified);
-    }
-    return user;
-  }
-
   sendPasswordReset(email: string) {
     return sendPasswordResetEmail(this.auth, email);
   }
@@ -112,7 +76,7 @@ export class AuthService {
 
   async verifyEmail(actionCode: string): Promise<void> {
     await applyActionCode(this.auth, actionCode);
-    await this.refreshCurrentUser();
+    await this.session.refreshCurrentUser();
   }
 
   async reauthenticate(currentPassword: string) {

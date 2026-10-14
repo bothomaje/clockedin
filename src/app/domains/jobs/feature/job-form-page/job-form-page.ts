@@ -1,11 +1,11 @@
 import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { JobState } from '../state/job-state';
-import { JobForm } from '../job-form/job-form';
-import { Job, JobStatus, getLatestJobUpdate } from '../models/job';
-import { PageHeader } from '../../../shared/ui/page-header/page-header';
-import { ToastService } from '../../../shared/ui/toast/toast.service';
-import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
+import { JobState } from '../../data/state/job-state';
+import { JobForm } from '../../ui/job-form/job-form';
+import { Job, JobStatus, getLatestJobUpdate } from '../../data/models/job';
+import { PageHeader } from '@shared/ui/page-header/page-header';
+import { ToastService } from '@shared/ui/toast/toast.service';
+import { EmptyState } from '@shared/ui/empty-state/empty-state';
 
 @Component({
   selector: 'app-job-form-page',

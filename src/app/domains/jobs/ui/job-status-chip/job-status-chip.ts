@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 import { StatusChip } from '@shared/ui/status-chip/status-chip';
-import { JobStatus } from '../models/job';
-import { STATUS_META } from '../models/job-status-meta';
+import { JobStatus } from '../../data/models/job';
+import { STATUS_META } from '../../data/models/job-status-meta';
 
 @Component({
   selector: 'app-job-status-chip',

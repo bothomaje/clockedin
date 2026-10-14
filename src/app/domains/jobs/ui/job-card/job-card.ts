@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Job, getDateApplied, getLatestJobUpdate, getSavedAt } from '../models/job';
-import { JobLocationPipe } from '../models/job-location.pipe';
+import { Job, getDateApplied, getLatestJobUpdate, getSavedAt } from '../../data/models/job';
+import { JobLocationPipe } from '../../util/job-location.pipe';
 import { JobStatusChip } from '../job-status-chip/job-status-chip';
 
 export type JobRowVariant = 'application' | 'saved';

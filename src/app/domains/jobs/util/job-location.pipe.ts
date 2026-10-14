@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Job, jobLocationLabel, jobPlaceLabel } from './job';
+import { Job, jobLocationLabel, jobPlaceLabel } from '../data/models/job';
 
 @Pipe({ name: 'jobLocation' })
 export class JobLocationPipe implements PipeTransform {

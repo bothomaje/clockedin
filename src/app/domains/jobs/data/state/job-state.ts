@@ -1,5 +1,5 @@
 import { Service, inject, signal, computed } from '@angular/core';
-import { JobRepository } from '../data/job.repository';
+import { JobRepository } from '../repositories/job.repository';
 import { Job, JobStatus } from '../models/job';
 import { JobAnalysis } from '../models/job-analysis';
 

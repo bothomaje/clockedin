@@ -4,13 +4,18 @@ import { PageHeader } from '../../../shared/ui/page-header/page-header';
 import { ProfileState } from '../../../domains/profile/data/state/profile-state';
 import { FormsModule } from '@angular/forms';
 import { StatCard } from '../../../shared/ui/stat-card/stat-card';
-import { JobState } from '../../jobs/state/job-state';
-import { APPLICATION_STATUSES, getLatestJobUpdate, Job, JobStatus } from '../../jobs/models/job';
+import { JobState } from '../../../domains/jobs/data/state/job-state';
+import {
+  APPLICATION_STATUSES,
+  getLatestJobUpdate,
+  Job,
+  JobStatus,
+} from '../../../domains/jobs/data/models/job';
 import { Todo } from '../../../domains/profile/data/models/info';
-import { JobLocationPipe } from '../../jobs/models/job-location.pipe';
+import { JobLocationPipe } from '../../../domains/jobs/util/job-location.pipe';
 import { TopMatchesState } from '../../explore/state/top-matches-state';
 import { WORK_MODE_LABELS } from '../../../shared/location/location.model';
-import { JobStatusChip } from '../../jobs/job-status-chip/job-status-chip';
+import { JobStatusChip } from '../../../domains/jobs/ui/job-status-chip/job-status-chip';
 
 const FOLLOW_UP_AFTER_DAYS = 7;
 const DAY_MS = 24 * 60 * 60 * 1000;

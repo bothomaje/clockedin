@@ -8,9 +8,9 @@ import { DocumentState } from '../state/document-state';
 import { DocumentActions } from '../document-actions/document-actions';
 import { GeneratedCv } from '../models/generated-cv';
 import { GeneratedDocument, GeneratedDocumentType } from '../models/generated-document';
-import { JobState } from '../../jobs/state/job-state';
-import { Job } from '../../jobs/models/job';
-import { JobAnalysis } from '../../jobs/models/job-analysis';
+import { JobState } from '../../../domains/jobs/data/state/job-state';
+import { Job } from '../../../domains/jobs/data/models/job';
+import { JobAnalysis } from '../../../domains/jobs/data/models/job-analysis';
 import { ProfileState } from '../../../domains/profile/data/state/profile-state';
 import { Breadcrumbs, Crumb } from '../../../shared/ui/breadcrumbs/breadcrumbs';
 import { PageHeader } from '../../../shared/ui/page-header/page-header';
@@ -28,7 +28,7 @@ import {
 } from '../models/generation-options';
 import { GeneratedCoverLetter } from '../models/generated-cover-letter';
 import { GENERATION_STAGES } from '../models/generation-stage';
-import { JobLocationPipe } from '../../jobs/models/job-location.pipe';
+import { JobLocationPipe } from '../../../domains/jobs/util/job-location.pipe';
 import { AuthSession } from '@core/auth/auth-session';
 
 type WizardView = 'setup' | 'processing' | 'preview' | 'error';

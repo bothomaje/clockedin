@@ -1,5 +1,5 @@
-import { Job, jobLocationLabel } from '../../../../jobs/models/job';
-import { JobAnalysis } from '../../../../jobs/models/job-analysis';
+import { Job, jobLocationLabel } from '../../../../../domains/jobs/data/models/job';
+import { JobAnalysis } from '../../../../../domains/jobs/data/models/job-analysis';
 import { Info } from '../../../../../domains/profile/data/models/info';
 import { Career } from '../../../../../domains/profile/data/models/career';
 import { CareerProfile } from '../../../../../domains/profile/data/models/career-profile';

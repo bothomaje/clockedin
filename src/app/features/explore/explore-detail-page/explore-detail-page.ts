@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { JobLocationPipe } from '../../jobs/models/job-location.pipe';
-import { WORK_MODE_LABELS } from '../../../shared/location/location.model';
+import { JobLocationPipe } from '../../../domains/jobs/util/job-location.pipe';
+import { WORK_MODE_LABELS } from '@shared/location/location.model';
 import { providerLabel } from '../data/recommendation.mapper';
 import { Recommendation } from '../models/recommendation';
 import { ExploreState } from '../state/explore-state';

@@ -12,9 +12,9 @@ import {
   deleteDoc,
   WriteBatch,
 } from 'firebase/firestore';
-import { firestore, firebaseAuth } from '../../../core/firebase/firebase';
+import { firestore, firebaseAuth } from '../../../../core/firebase/firebase';
 import { JobAnalysis } from '../models/job-analysis';
-import { Location } from '../../../shared/location/location.model';
+import { Location } from '../../../../shared/location/location.model';
 
 @Service()
 export class JobRepository {

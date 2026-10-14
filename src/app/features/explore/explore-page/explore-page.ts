@@ -6,7 +6,7 @@ import { ErrorState } from '../../../shared/ui/error-state/error-state';
 import { PageHeader } from '../../../shared/ui/page-header/page-header';
 import { Select, SelectOption } from '../../../shared/ui/select/select';
 import { WORK_MODE_LABELS } from '../../../shared/location/location.model';
-import { jobLocationLabel } from '../../jobs/models/job';
+import { jobLocationLabel } from '../../../domains/jobs/data/models/job';
 import { providerLabel } from '../data/recommendation.mapper';
 import { ExploreSort } from '../data/recommendation.repository';
 import { Recommendation } from '../models/recommendation';

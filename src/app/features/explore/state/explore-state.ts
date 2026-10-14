@@ -2,8 +2,8 @@ import { Service, computed, inject, signal } from '@angular/core';
 import { QueryDocumentSnapshot } from 'firebase/firestore';
 import { DiscoveryRepository } from '../data/discovery.repository';
 import { ExploreSort, RecommendationRepository } from '../data/recommendation.repository';
-import { Job } from '../../jobs/models/job';
-import { JobState } from '../../jobs/state/job-state';
+import { Job } from '../../../domains/jobs/data/models/job';
+import { JobState } from '../../../domains/jobs/data/state/job-state';
 import { isVisible, Recommendation } from '../models/recommendation';
 import { DISCOVERY_SOURCES } from '../models/discovery-sources';
 

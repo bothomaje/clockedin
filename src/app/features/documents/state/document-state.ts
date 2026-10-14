@@ -1,6 +1,6 @@
 import { Service, inject, signal } from '@angular/core';
 import { DocumentRepository } from '../data/document.repository';
-import { JobState } from '../../jobs/state/job-state';
+import { JobState } from '../../../domains/jobs/data/state/job-state';
 import { AiService } from '../generation/ai/ai.service';
 import {
   GenerateCvRequest,
@@ -19,7 +19,7 @@ import { GeneratedCv } from '../models/generated-cv';
 import { Info } from '../../../domains/profile/data/models/info';
 import { Career } from '../../../domains/profile/data/models/career';
 import { GeneratedCoverLetter } from '../models/generated-cover-letter';
-import { Job } from '../../jobs/models/job';
+import { Job } from '../../../domains/jobs/data/models/job';
 import { CoverLetterOptions } from '../models/generation-options';
 
 @Service()

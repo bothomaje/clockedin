@@ -11,7 +11,10 @@ export const jobsRoutes: Routes = [
         canonical: false,
       },
     },
-    loadComponent: () => import('./jobs-list-page/jobs-list-page').then((m) => m.JobsListPage),
+    loadComponent: () =>
+      import('../../domains/jobs/feature/jobs-list-page/jobs-list-page').then(
+        (m) => m.JobsListPage,
+      ),
   },
   {
     path: 'new',
@@ -23,7 +26,8 @@ export const jobsRoutes: Routes = [
         canonical: false,
       },
     },
-    loadComponent: () => import('./job-form-page/job-form-page').then((m) => m.JobFormPage),
+    loadComponent: () =>
+      import('../../domains/jobs/feature/job-form-page/job-form-page').then((m) => m.JobFormPage),
   },
   {
     path: ':id/edit',
@@ -35,7 +39,8 @@ export const jobsRoutes: Routes = [
         canonical: false,
       },
     },
-    loadComponent: () => import('./job-form-page/job-form-page').then((m) => m.JobFormPage),
+    loadComponent: () =>
+      import('../../domains/jobs/feature/job-form-page/job-form-page').then((m) => m.JobFormPage),
   },
   {
     path: ':id',

@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { JobList } from '../job-list/job-list';
-import { PageHeader } from '../../../shared/ui/page-header/page-header';
-import { Job } from '../models/job';
+import { PageHeader } from '@shared/ui/page-header/page-header';
+import { Job } from '../../data/models/job';
 
 @Component({
   selector: 'app-jobs-list-page',

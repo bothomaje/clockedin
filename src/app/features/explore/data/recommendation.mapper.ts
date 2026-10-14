@@ -1,5 +1,5 @@
+import { Job, JobStatus } from './../../../domains/jobs/data/models/job';
 import { DocumentData, Timestamp } from 'firebase/firestore';
-import { Job, JobStatus } from '../../jobs/models/job';
 import { AiInsight, Recommendation } from '../models/recommendation';
 
 const toDate = (value: unknown): Date | null =>

@@ -25,7 +25,8 @@ export const applicationsRoutes: Routes = [
       },
       mode: 'application',
     },
-    loadComponent: () => import('../jobs/job-form-page/job-form-page').then((m) => m.JobFormPage),
+    loadComponent: () =>
+      import('../../domains/jobs/feature/job-form-page/job-form-page').then((m) => m.JobFormPage),
   },
   {
     path: ':id/edit',
@@ -37,7 +38,8 @@ export const applicationsRoutes: Routes = [
         canonical: false,
       },
     },
-    loadComponent: () => import('../jobs/job-form-page/job-form-page').then((m) => m.JobFormPage),
+    loadComponent: () =>
+      import('../../domains/jobs/feature/job-form-page/job-form-page').then((m) => m.JobFormPage),
   },
   {
     path: ':id',

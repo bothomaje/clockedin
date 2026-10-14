@@ -1,5 +1,5 @@
 import { Service, inject, signal } from '@angular/core';
-import { JobState } from '../../jobs/state/job-state';
+import { JobState } from '../../../domains/jobs/data/state/job-state';
 import { DiscoveryRepository } from '../data/discovery.repository';
 import { RecommendationRepository } from '../data/recommendation.repository';
 import { Recommendation, isVisible } from '../models/recommendation';

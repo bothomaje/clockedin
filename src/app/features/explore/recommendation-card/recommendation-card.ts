@@ -1,6 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { JobLocationPipe } from '../../jobs/models/job-location.pipe';
+import { JobLocationPipe } from '../../../domains/jobs/util/job-location.pipe';
 import { WORK_MODE_LABELS } from '../../../shared/location/location.model';
 import { providerLabel } from '../data/recommendation.mapper';
 import { Recommendation } from '../models/recommendation';

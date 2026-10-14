@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 import { ProfileState } from '../../domains/profile/data/state/profile-state';
-import { JobState } from '../jobs/state/job-state';
+import { JobState } from '../../domains/jobs/data/state/job-state';
 
 @Service()
 export class DataExportService {

@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DocumentState } from '../state/document-state';
 import { DocumentActions } from '../document-actions/document-actions';
-import { Job } from '../../jobs/models/job';
+import { Job } from '../../../domains/jobs/data/models/job';
 import { User } from '../../../domains/profile/data/models/user';
 
 @Component({

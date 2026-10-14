@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
-import { JobState } from '../state/job-state';
+import { JobState } from '../../data/state/job-state';
 import {
   getDateApplied,
   getLatestJobUpdate,
@@ -7,13 +7,13 @@ import {
   Job,
   jobPlaceLabel,
   JobStatus,
-} from '../models/job';
-import { JobCard, JobRowVariant } from '../job-card/job-card';
+} from '../../data/models/job';
+import { JobCard, JobRowVariant } from '../../ui/job-card/job-card';
 import { FormsModule } from '@angular/forms';
-import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
-import { ErrorState } from '../../../shared/ui/error-state/error-state';
-import { Select, SelectOption } from '../../../shared/ui/select/select';
-import { statusLabel } from '../models/job-status-meta';
+import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
+import { ErrorState } from '../../../../shared/ui/error-state/error-state';
+import { Select, SelectOption } from '../../../../shared/ui/select/select';
+import { statusLabel } from '../../data/models/job-status-meta';
 
 export type SortField = 'updatedAt' | 'dateApplied' | 'savedAt' | 'company' | 'role';
 

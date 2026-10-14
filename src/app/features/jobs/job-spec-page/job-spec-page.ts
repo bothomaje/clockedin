@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { JobState } from '../state/job-state';
-import { getLatestJobUpdate, getSavedAt, JobStatus } from '../models/job';
+import { JobState } from '../../../domains/jobs/data/state/job-state';
+import { getLatestJobUpdate, getSavedAt, JobStatus } from '../../../domains/jobs/data/models/job';
 import { AssociatedAssets } from '../../documents/associated-assets/associated-assets';
 import { DocumentState } from '../../documents/state/document-state';
 import { ProfileState } from '../../../domains/profile/data/state/profile-state';
@@ -10,7 +10,7 @@ import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog'
 import { ToastService } from '../../../shared/ui/toast/toast.service';
 import { DatePipe } from '@angular/common';
 import { Breadcrumbs, Crumb } from '../../../shared/ui/breadcrumbs/breadcrumbs';
-import { JobLocationPipe } from '../models/job-location.pipe';
+import { JobLocationPipe } from '../../../domains/jobs/util/job-location.pipe';
 
 @Component({
   selector: 'app-job-spec-page',

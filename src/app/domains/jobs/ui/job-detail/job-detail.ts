@@ -1,14 +1,14 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Job, JobStatus, getDateApplied, getLatestJobUpdate } from '../models/job';
+import { Job, JobStatus, getDateApplied, getLatestJobUpdate } from '../../data/models/job';
 import { RouterLink } from '@angular/router';
-import { Breadcrumbs, Crumb } from '../../../shared/ui/breadcrumbs/breadcrumbs';
-import { Modal } from '../../../shared/ui/modal/modal';
-import { Select, SelectOption } from '../../../shared/ui/select/select';
-import { JobLocationPipe } from '../models/job-location.pipe';
+import { Breadcrumbs, Crumb } from '@shared/ui/breadcrumbs/breadcrumbs';
+import { Modal } from '@shared/ui/modal/modal';
+import { Select, SelectOption } from '@shared/ui/select/select';
+import { JobLocationPipe } from '../../util/job-location.pipe';
 import { JobStatusChip } from '../job-status-chip/job-status-chip';
-import { statusLabel } from '../models/job-status-meta';
+import { statusLabel } from '../../data/models/job-status-meta';
 
 export interface StatusChangeEvent {
   status: JobStatus;

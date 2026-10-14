@@ -3,7 +3,7 @@ import {
   locationLabel,
   WORK_MODE_LABELS,
   WorkMode,
-} from '../../../shared/location/location.model';
+} from '@shared/location/location.model';
 import { JobAnalysis } from './job-analysis';
 
 export enum JobStatus {

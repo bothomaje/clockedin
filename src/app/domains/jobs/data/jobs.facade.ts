@@ -16,7 +16,6 @@ export class JobsFacade {
   readonly stats = this.state.stats;
 
   adoptJob = (job: Job) => this.state.adoptJob(job);
-  loadJobs = () => this.state.loadJobs();
   openJob = (id: string) => this.state.openJob(id);
   selectJob = (id: string) => this.state.selectJob(id);
   updateJob = (id: string, updates: Partial<Job>) => this.state.updateJob(id, updates);
@@ -34,4 +33,10 @@ export class JobsFacade {
     );
   saveJobAnalysis = (id: string, analysis: JobAnalysis) => this.state.saveJobAnalysis(id, analysis);
   addJobInBatch = (batch: WriteBatch, job: Job) => this.repository.addJobInBatch(batch, job);
+
+  private loadPromise?: Promise<void>;
+  ensureLoaded(): Promise<void> {
+    this.loadPromise ??= this.state.loadJobs();
+    return this.loadPromise;
+  }
 }

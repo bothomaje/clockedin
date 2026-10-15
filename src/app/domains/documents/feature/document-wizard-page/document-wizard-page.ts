@@ -190,8 +190,8 @@ export class DocumentWizardPage implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
-    await this.profile.load();
-    if (this.jobs.jobs().length === 0) await this.jobs.loadJobs();
+    await this.profile.ensureLoaded();
+    if (this.jobs.jobs().length === 0) await this.jobs.ensureLoaded();
     this.jobs.selectJob(this.jobId);
 
     const job = this.jobs.selectedJob();

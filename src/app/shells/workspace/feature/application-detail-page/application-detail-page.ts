@@ -39,7 +39,7 @@ export class ApplicationDetailPage {
 
   private async load(id: string): Promise<void> {
     this.notFound.set(false);
-    const [job] = await Promise.all([this.jobs.openJob(id), this.profile.load()]);
+    const [job] = await Promise.all([this.jobs.openJob(id), this.profile.ensureLoaded()]);
     if (this.id() !== id) return;
     if (!job) {
       this.notFound.set(true);

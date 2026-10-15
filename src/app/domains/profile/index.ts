@@ -6,6 +6,8 @@ export type { Link } from './data/models/link';
 export type { User } from './data/models/user';
 export { onboardingGuard } from './feature/onboarding.guard';
 export { ProfileFacade } from './data/profile.facade';
+export { TodoListWidget } from './feature/todo-list-widget/todo-list-widget';
+export { JobSearchGoalsWidget } from './feature/job-search-goals-widget/job-search-goals-widget';
 
 export const loadOnboarding = () =>
   import('./feature/onboarding/onboarding').then((m) => m.Onboarding);

@@ -1,0 +1,12 @@
+.clk-dashboard__edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.clk-dashboard__text {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--clk-color-text-muted);
+}

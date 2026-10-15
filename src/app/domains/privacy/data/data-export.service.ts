@@ -8,8 +8,8 @@ export class DataExportService {
   private jobs = inject(JobsFacade);
 
   async download(): Promise<void> {
-    await this.profile.load();
-    if (this.jobs.jobs().length === 0) await this.jobs.loadJobs();
+    await this.profile.ensureLoaded();
+    if (this.jobs.jobs().length === 0) await this.jobs.ensureLoaded();
 
     const user = this.profile.user();
     const payload = {

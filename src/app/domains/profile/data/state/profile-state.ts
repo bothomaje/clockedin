@@ -1,7 +1,7 @@
 import { Service, inject, signal, computed } from '@angular/core';
 import { ProfileRepository } from '../repositories/profile.repository';
 import { User } from '../models/user';
-import { Info } from '../models/info';
+import { Info, Todo } from '../models/info';
 import { Experience } from '../models/experience';
 import { Education } from '../models/education';
 import { Project } from '../models/project';
@@ -48,6 +48,8 @@ export class ProfileState {
     templates: this.templatesSignal(),
     aiConsentAt: this.aiConsentAtSignal(),
   }));
+
+  todos = computed(() => this.info().todos ?? []);
 
   async load(): Promise<void> {
     this.loadingSignal.set(true);
@@ -122,5 +124,33 @@ export class ProfileState {
   async saveCareerProfiles(careerProfiles: CareerProfile[]): Promise<void> {
     await this.profileRepository.updateCareerProfiles(careerProfiles);
     this.careerProfilesSignal.set(careerProfiles);
+  }
+
+  async addTodo(text: string): Promise<void> {
+    const t = text.trim();
+    if (!t) return;
+    const todo: Todo = { id: crypto.randomUUID(), text, done: false };
+    await this.saveInfo({
+      ...this.info(),
+      todos: [...this.todos(), todo],
+    });
+  }
+
+  async toggleTodo(id: string): Promise<void> {
+    const updated = this.todos().map((t) => (t.id === id ? { ...t, done: !t.done } : t));
+    await this.saveInfo({ ...this.info(), todos: updated });
+  }
+
+  async removeTodo(id: string): Promise<void> {
+    const updated = this.todos().filter((t) => t.id !== id);
+    await this.saveInfo({ ...this.info(), todos: updated });
+  }
+
+  async saveTargets(roles: string, salary: string): Promise<void> {
+    await this.saveInfo({
+      ...this.info(),
+      targetRoles: roles.trim(),
+      targetSalary: salary.trim(),
+    });
   }
 }

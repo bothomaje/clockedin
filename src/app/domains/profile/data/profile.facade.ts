@@ -14,11 +14,16 @@ export class ProfileFacade {
   readonly onboardingComplete = this.state.onboardingComplete;
   readonly user = this.state.user;
 
-  load = () => this.state.load();
   recordAiConsent = () => this.state.recordAiConsent();
   revokeAiConsent = () => this.state.revokeAiConsent();
   createProfile = (uid: string, email: string, name: string) =>
     this.state.createProfile(uid, email, name);
   deleteAllData = () => this.state.deleteAllData();
   saveInfo = (info: Info) => this.state.saveInfo(info);
+
+  private loadPromise?: Promise<void>;
+  ensureLoaded(): Promise<void> {
+    this.loadPromise ??= this.state.load();
+    return this.loadPromise;
+  }
 }

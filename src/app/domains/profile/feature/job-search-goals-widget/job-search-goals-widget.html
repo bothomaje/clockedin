@@ -1,0 +1,37 @@
+<article class="clk-card clk-card--stack clk-card--tight">
+  <header class="clk-widget__head">
+    <h3 class="clk-dashboard__subtitle">Job Search Goals</h3>
+    @if (!editingTargets()) {
+      <button type="button" class="clk-link-action" (click)="editTargets()">Edit</button>
+    }
+  </header>
+  @if (editingTargets()) {
+    <section class="clk-field">
+      <label class="form-label" for="targetRoles">Roles I'm looking for</label>
+      <textarea
+        id="targetRoles"
+        class="form-control"
+        rows="3"
+        [formField]="goals.targetRoles"
+      ></textarea>
+    </section>
+    <section class="clk-field">
+      <label class="form-label" for="targetSalary">Salary range</label>
+      <input id="targetSalary" class="form-control" [formField]="goals.targetSalary" />
+    </section>
+    <section class="clk-dashboard__edit-actions">
+      <button type="button" class="btn btn-outline-secondary" (click)="editingTargets.set(false)">
+        Cancel
+      </button>
+      <button type="button" class="btn btn-primary" (click)="saveTargets()">Save</button>
+    </section>
+  } @else {
+    <p class="clk-dashboard__text">
+      {{ goals.targetRoles().value() || "Add the roles you're looking for." }}
+    </p>
+    <dl class="clk-kv">
+      <dt>Target Base Salary</dt>
+      <dd>{{ goals.targetSalary().value() || '—' }}</dd>
+    </dl>
+  }
+</article>

@@ -3,6 +3,7 @@ import { JobRepository } from '../repositories/job.repository';
 import { Job, JobStatus } from '../models/job';
 import { JobAnalysis } from '../models/job-analysis';
 import { computeFollowUps } from '../../util/follow-ups';
+import { computeActiveApplications, computeStats } from '../../util/application-stats';
 
 @Service()
 export class JobState {
@@ -21,6 +22,8 @@ export class JobState {
     this.jobsSignal().find((job) => job.id === this.selectedJobIdSignal()),
   );
   followUps = computed(() => computeFollowUps(this.jobsSignal()));
+  stats = computed(() => computeStats(this.jobsSignal()));
+  activeApplications = computed(() => computeActiveApplications(this.jobsSignal()));
 
   async loadJobs(): Promise<void> {
     this.loadingSignal.set(true);

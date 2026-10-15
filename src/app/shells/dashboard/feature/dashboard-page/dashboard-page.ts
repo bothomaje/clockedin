@@ -2,15 +2,15 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '@shared/ui/page-header/page-header';
 import { FormsModule } from '@angular/forms';
-import { StatCard } from '@shared/ui/stat-card/stat-card';
 import {
   JobsFacade,
   APPLICATION_STATUSES,
   getLatestJobUpdate,
   JobStatus,
   JobLocationPipe,
-  JobStatusChip,
   FollowUpsWidget,
+  ApplicationStatsWidget,
+  ActiveApplicationsWidget,
 } from '@domains/jobs';
 import { ProfileFacade, Todo } from '@domains/profile';
 import { RecommendationsFacade } from '@domains/recommendations';
@@ -20,11 +20,11 @@ import { WORK_MODE_LABELS } from '@shared/location/location.model';
   imports: [
     RouterLink,
     PageHeader,
-    StatCard,
-    JobStatusChip,
     FormsModule,
     JobLocationPipe,
     FollowUpsWidget,
+    ApplicationStatsWidget,
+    ActiveApplicationsWidget,
   ],
   selector: 'app-dashboard',
   templateUrl: './dashboard-page.html',
@@ -35,7 +35,6 @@ export class Dashboard implements OnInit {
   protected jobs = inject(JobsFacade);
   protected recommendations = inject(RecommendationsFacade);
 
-  getLatestJobUpdate = getLatestJobUpdate;
   workModeLabels = WORK_MODE_LABELS;
 
   newTodoText = '';
@@ -47,52 +46,12 @@ export class Dashboard implements OnInit {
 
   headline = computed(() => {
     const name = this.firstName();
-    const n = this.interviews();
+    const n = this.jobs.stats().interviews;
     const greeting = name ? `Welcome back, ${name}.` : 'Welcome back.';
     return n > 0
       ? `${greeting} You have ${n} interview${n === 1 ? '' : 's'} in progress.`
       : greeting;
   });
-
-  applications = computed(() =>
-    this.jobs.jobs().filter((j) => APPLICATION_STATUSES.includes(getLatestJobUpdate(j).status)),
-  );
-
-  activeRoles = computed(
-    () =>
-      this.applications().filter((j) =>
-        [JobStatus.APPLIED, JobStatus.INTERVIEW].includes(getLatestJobUpdate(j).status),
-      ).length,
-  );
-
-  interviews = computed(
-    () =>
-      this.applications().filter((j) => getLatestJobUpdate(j).status === JobStatus.INTERVIEW)
-        .length,
-  );
-
-  offers = computed(
-    () =>
-      this.applications().filter((j) =>
-        [JobStatus.OFFER, JobStatus.ACCEPTED].includes(getLatestJobUpdate(j).status),
-      ).length,
-  );
-
-  total = computed(() => this.applications().length);
-
-  activeApplications = computed(() =>
-    this.applications()
-      .filter((j) =>
-        [JobStatus.APPLIED, JobStatus.INTERVIEW, JobStatus.OFFER].includes(
-          getLatestJobUpdate(j).status,
-        ),
-      )
-      .sort(
-        (a, b) =>
-          getLatestJobUpdate(b).updatedAt.getTime() - getLatestJobUpdate(a).updatedAt.getTime(),
-      )
-      .slice(0, 5),
-  );
 
   todos = computed(() => this.profile.info().todos ?? []);
 

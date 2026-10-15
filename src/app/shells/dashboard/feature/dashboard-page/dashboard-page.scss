@@ -52,38 +52,6 @@
   gap: 12px;
 }
 
-.clk-table--dash {
-  min-width: 640px;
-  table-layout: fixed;
-
-  th {
-    padding-right: 12px;
-  }
-  td {
-    padding: 14px 12px 14px 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 0.875rem;
-    font-weight: 500;
-  }
-  td:first-child {
-    font-weight: 700;
-  }
-  td:last-child {
-    font-size: 0.8125rem;
-    font-weight: 400;
-    color: var(--clk-color-text-muted);
-  }
-  .clk-clickable-row {
-    cursor: pointer;
-
-    &:hover td {
-      background: var(--clk-color-canvas);
-    }
-  }
-}
-
 .clk-todos {
   display: flex;
   flex-direction: column;

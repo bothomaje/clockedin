@@ -1,0 +1,39 @@
+<article class="clk-card clk-card--lg clk-card--stack">
+  <header class="clk-widget__head">
+    <h3 class="clk-dashboard__title">Active Applications</h3>
+    <a routerLink="/applications" class="clk-dashboard__link">View all applications →</a>
+  </header>
+
+  @if (activeApplications().length === 0) {
+    <p class="clk-widget__empty">
+      No active applications yet.
+      <a routerLink="/applications/new">Add your first application</a>.
+    </p>
+  } @else {
+    <section class="clk-table-wrap">
+      <table class="clk-table clk-table--dash">
+        <colgroup>
+          <col style="width: 220px" />
+          <col />
+          <col style="width: 120px" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Role</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (job of activeApplications(); track job.id) {
+            <tr [routerLink]="['/applications', job.id]" class="clk-clickable-row">
+              <td>{{ job.company }}</td>
+              <td>{{ job.role }}</td>
+              <td><app-job-status-chip [status]="getLatestJobUpdate(job).status" /></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  }
+</article>

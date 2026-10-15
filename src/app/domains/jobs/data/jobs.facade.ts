@@ -13,6 +13,7 @@ export class JobsFacade {
   readonly jobs = this.state.jobs;
   readonly selectedJob = this.state.selectedJob;
   readonly error = this.state.error;
+  readonly stats = this.state.stats;
 
   adoptJob = (job: Job) => this.state.adoptJob(job);
   loadJobs = () => this.state.loadJobs();

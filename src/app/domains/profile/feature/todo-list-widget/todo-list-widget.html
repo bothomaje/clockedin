@@ -1,0 +1,52 @@
+<article class="clk-card clk-card--stack">
+  <h3 class="clk-dashboard__subtitle">To-do list</h3>
+  <ul class="clk-todos">
+    @for (todo of todos(); track todo.id) {
+      <li class="clk-todo">
+        <label class="clk-todo__label">
+          <input
+            type="checkbox"
+            class="clk-checkbox"
+            [checked]="todo.done"
+            (change)="toggleTodo(todo.id)"
+          />
+          <span [class.is-done]="todo.done">{{ todo.text }}</span>
+        </label>
+        <button
+          type="button"
+          class="clk-todo__remove"
+          aria-label="Remove todo"
+          (click)="removeTodo(todo.id)"
+        >
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </li>
+    } @empty {
+      <li class="clk-widget__empty">Nothing on your list yet.</li>
+    }
+  </ul>
+  <section class="clk-todo-add">
+    <input
+      class="form-control"
+      placeholder="Add a todo"
+      aria-label="New todo"
+      [(ngModel)]="newTodoText"
+      name="newTodo"
+      (keyup.enter)="addTodo(newTodoText)"
+    />
+    <button type="button" class="btn btn-outline-secondary" (click)="addTodo(newTodoText)">
+      Add
+    </button>
+  </section>
+</article>

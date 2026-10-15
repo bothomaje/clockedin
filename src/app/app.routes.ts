@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/auth/auth.guard';
-import { onboardingGuard } from './core/auth/onboarding.guard';
+import { authGuard } from '@core/auth/auth.guard';
+import { onboardingGuard } from '@domains/profile';
 
 export const routes: Routes = [
   {
@@ -13,13 +13,13 @@ export const routes: Routes = [
         canonical: false,
       },
     },
-    loadComponent: () => import('./features/onboarding/onboarding').then((m) => m.Onboarding),
+    loadComponent: () => import('@domains/profile').then((m) => m.loadOnboarding()),
     canActivate: [onboardingGuard],
   },
   {
     path: '',
     loadComponent: () =>
-      import('./shared/layout/public-layout/public-layout').then((m) => m.PublicLayout),
+      import('@shared/layout/public-layout/public-layout').then((m) => m.PublicLayout),
     children: [
       {
         path: '',
@@ -32,14 +32,13 @@ export const routes: Routes = [
             image: '/clockedin-preview-transparent.png',
           },
         },
-        loadComponent: () => import('./features/home/home-page/home-page').then((m) => m.HomePage),
+        loadComponent: () => import('@shells/landing').then((m) => m.loadHomePage()),
       },
     ],
   },
   {
     path: '',
-    loadComponent: () =>
-      import('./shared/layout/auth-layout/auth-layout').then((m) => m.AuthLayout),
+    loadComponent: () => import('@shared/layout/auth-layout/auth-layout').then((m) => m.AuthLayout),
     data: {
       seo: {
         title: 'Your Account | clockedin',
@@ -48,11 +47,11 @@ export const routes: Routes = [
         canonical: false,
       },
     },
-    loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
+    loadChildren: () => import('@domains/identity').then((m) => m.authRoutes),
   },
   {
     path: '',
-    loadComponent: () => import('./shared/layout/app-shell/app-shell').then((m) => m.AppShell),
+    loadComponent: () => import('@shared/layout/app-shell/app-shell').then((m) => m.AppShell),
     canActivate: [authGuard],
     data: {
       seo: {
@@ -73,8 +72,7 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadComponent: () =>
-          import('./features/dashboard/dashboard-page/dashboard-page').then((m) => m.Dashboard),
+        loadComponent: () => import('@shells/dashboard').then((m) => m.loadDashboardPage()),
       },
       {
         path: 'profile',
@@ -86,8 +84,7 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadComponent: () =>
-          import('./features/profile/profile-page/profile-page').then((m) => m.Profile),
+        loadComponent: () => import('@domains/profile').then((m) => m.loadProfile()),
       },
       {
         path: 'settings',
@@ -99,8 +96,7 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadComponent: () =>
-          import('./features/settings/settings-page/settings-page').then((m) => m.Settings),
+        loadComponent: () => import('@shells/settings').then((m) => m.loadSettingsPage()),
       },
       {
         path: 'settings/delete',
@@ -112,10 +108,7 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadComponent: () =>
-          import('./features/settings/delete-account-page/delete-account-page').then(
-            (m) => m.DeleteAccountPage,
-          ),
+        loadComponent: () => import('@shells/settings').then((m) => m.loadDeleteAccountPage()),
       },
       {
         path: 'explore',
@@ -127,8 +120,7 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadChildren: () =>
-          import('./features/explore/explore.routes').then((m) => m.exploreRoutes),
+        loadChildren: () => import('@domains/recommendations').then((m) => m.exploreRoutes),
       },
       {
         path: 'applications',
@@ -140,8 +132,7 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadChildren: () =>
-          import('./features/applications/applications.routes').then((m) => m.applicationsRoutes),
+        loadChildren: () => import('@shells/workspace').then((m) => m.workspaceRoutes),
       },
       {
         path: 'jobs',
@@ -153,7 +144,10 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadChildren: () => import('./features/jobs/jobs.routes').then((m) => m.jobsRoutes),
+        loadChildren: async () => [
+          ...(await import('@domains/jobs')).jobsRoutes,
+          ...(await import('@shells/workspace')).jobWorkspaceRoutes,
+        ],
       },
     ],
   },

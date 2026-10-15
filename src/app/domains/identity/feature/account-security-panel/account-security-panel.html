@@ -1,0 +1,49 @@
+<article class="clk-card">
+  <h3>Change Password</h3>
+  @if (passwordMessage()) {
+    <p class="alert alert-success m-0">{{ passwordMessage() }}</p>
+  }
+  @if (passwordError()) {
+    <p class="alert alert-danger m-0">{{ passwordError() }}</p>
+  }
+  <form class="d-flex flex-column gap-3" (ngSubmit)="changePassword()">
+    <label class="clk-field">
+      <span>Current Password</span>
+      <input
+        type="password"
+        class="form-control"
+        name="current-password"
+        [(ngModel)]="currentPassword"
+        required
+      />
+    </label>
+    <label class="clk-field">
+      <span>New Password</span>
+      <input
+        type="password"
+        class="form-control"
+        name="new-password"
+        [(ngModel)]="newPassword"
+        required
+      />
+    </label>
+    <label class="clk-field">
+      <span>Confirm New Password</span>
+      <input
+        type="password"
+        class="form-control"
+        name="confirm-new-password"
+        [(ngModel)]="confirmNewPassword"
+        required
+      />
+    </label>
+    <p class="form-text m-0">At least 8 characters, with a letter and a number.</p>
+    <button
+      type="submit"
+      class="btn btn-primary align-self-start"
+      [disabled]="isSavingPassword() || !currentPassword || !newPasswordValid || !newPasswordsMatch"
+    >
+      {{ isSavingPassword() ? 'Saving...' : 'Update Password' }}
+    </button>
+  </form>
+</article>

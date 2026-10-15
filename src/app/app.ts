@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SeoService } from './core/seo/seo.service';
+import { SeoService } from '@core/seo/seo.service';
 
 @Component({
   imports: [RouterOutlet],

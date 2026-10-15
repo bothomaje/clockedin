@@ -3,6 +3,20 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "@core/*": ["./src/app/core/*"],
+      "@shared/*": ["./src/app/shared/*"],
+      "@domains/profile": ["./src/app/domains/profile/index.ts"],
+      "@domains/jobs": ["./src/app/domains/jobs/index.ts"],
+      "@domains/identity": ["./src/app/domains/identity/index.ts"],
+      "@domains/documents": ["./src/app/domains/documents/index.ts"],
+      "@domains/recommendations": ["./src/app/domains/recommendations/index.ts"],
+      "@domains/privacy": ["./src/app/domains/privacy/index.ts"],
+      "@shells/dashboard": ["./src/app/shells/dashboard/index.ts"],
+      "@shells/landing": ["./src/app/shells/landing/index.ts"],
+      "@shells/settings": ["./src/app/shells/settings/index.ts"],
+      "@shells/workspace": ["./src/app/shells/workspace/index.ts"]
+    },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,

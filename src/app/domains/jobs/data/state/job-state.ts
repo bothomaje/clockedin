@@ -2,6 +2,7 @@ import { Service, inject, signal, computed } from '@angular/core';
 import { JobRepository } from '../repositories/job.repository';
 import { Job, JobStatus } from '../models/job';
 import { JobAnalysis } from '../models/job-analysis';
+import { computeFollowUps } from '../../util/follow-ups';
 
 @Service()
 export class JobState {
@@ -19,6 +20,7 @@ export class JobState {
   selectedJob = computed(() =>
     this.jobsSignal().find((job) => job.id === this.selectedJobIdSignal()),
   );
+  followUps = computed(() => computeFollowUps(this.jobsSignal()));
 
   async loadJobs(): Promise<void> {
     this.loadingSignal.set(true);

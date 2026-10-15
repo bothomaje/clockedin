@@ -126,30 +126,7 @@
         </article>
       }
 
-      <article class="clk-card clk-card--lg clk-card--stack">
-        <h3 class="clk-dashboard__title">Follow-ups</h3>
-        @if (followUps().length === 0) {
-          <p class="clk-widget__empty">Nothing needs your attention right now.</p>
-        } @else {
-          <section class="clk-followups">
-            @for (f of followUps(); track f.job.id) {
-              <a
-                class="clk-followup"
-                [class.clk-followup--urgent]="f.urgent"
-                [routerLink]="['/applications', f.job.id]"
-              >
-                <section class="clk-followup__head">
-                  <span class="clk-followup__company">{{ f.job.company }}</span>
-                  @if (f.urgent) {
-                    <span class="clk-followup__tag">Needs attention</span>
-                  }
-                </section>
-                <p class="clk-followup__text">{{ f.text }}</p>
-              </a>
-            }
-          </section>
-        }
-      </article>
+      <app-follow-ups-widget />
     </section>
 
     <aside class="clk-dashboard__side">

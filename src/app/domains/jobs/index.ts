@@ -14,6 +14,6 @@ export { JobList } from './feature/job-list/job-list';
 export { JobLocationPipe } from './util/job-location.pipe';
 export { JobStatusChip } from './ui/job-status-chip/job-status-chip';
 export { jobsRoutes } from './feature/jobs.routes';
-
+export { FollowUpsWidget } from './feature/follow-ups-widget/follow-ups-widget';
 export const loadJobFormPage = () =>
   import('./feature/job-form-page/job-form-page').then((m) => m.JobFormPage);

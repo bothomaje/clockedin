@@ -32,8 +32,7 @@ export const routes: Routes = [
             image: '/clockedin-preview-transparent.png',
           },
         },
-        loadComponent: () =>
-          import('./domains/landing/feature/home-page/home-page').then((m) => m.HomePage),
+        loadComponent: () => import('@shells/landing').then((m) => m.loadHomePage()),
       },
     ],
   },
@@ -73,10 +72,7 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadComponent: () =>
-          import('./domains/dashboard/feature/dashboard-page/dashboard-page').then(
-            (m) => m.Dashboard,
-          ),
+        loadComponent: () => import('@shells/dashboard').then((m) => m.loadDashboardPage()),
       },
       {
         path: 'profile',
@@ -100,8 +96,7 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadComponent: () =>
-          import('./domains/settings/feature/settings-page/settings-page').then((m) => m.Settings),
+        loadComponent: () => import('@shells/settings').then((m) => m.loadSettingsPage()),
       },
       {
         path: 'settings/delete',
@@ -113,10 +108,7 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadComponent: () =>
-          import('./domains/settings/feature/delete-account-page/delete-account-page').then(
-            (m) => m.DeleteAccountPage,
-          ),
+        loadComponent: () => import('@shells/settings').then((m) => m.loadDeleteAccountPage()),
       },
       {
         path: 'explore',
@@ -140,10 +132,7 @@ export const routes: Routes = [
             canonical: false,
           },
         },
-        loadChildren: () =>
-          import('./domains/applications/feature/applications.routes').then(
-            (m) => m.applicationsRoutes,
-          ),
+        loadChildren: () => import('@shells/workspace').then((m) => m.workspaceRoutes),
       },
       {
         path: 'jobs',
@@ -157,7 +146,7 @@ export const routes: Routes = [
         },
         loadChildren: async () => [
           ...(await import('@domains/jobs')).jobsRoutes,
-          ...(await import('@domains/applications')).jobWorkspaceRoutes,
+          ...(await import('@shells/workspace')).jobWorkspaceRoutes,
         ],
       },
     ],

@@ -1,14 +1,14 @@
+import { IdentityFacade } from '@domains/identity';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '@shared/ui/page-header/page-header';
 import { DatePipe } from '@angular/common';
-import { DataExportService } from '../../data/data-export.service';
+import { PrivacyFacade } from '@domains/privacy';
 import { DISCOVERY_SOURCES, RecommendationsFacade } from '@domains/recommendations';
 import { ProfileFacade } from '@domains/profile';
 import { AuthSession } from '@core/auth/auth-session';
 import { getAuthErrorMessage } from '@core/auth/auth-errors';
-import { AccountService } from '../../data/account.service';
 
 type Pane = 'account' | 'security' | 'discovery' | 'ai' | 'data';
 
@@ -20,9 +20,9 @@ type Pane = 'account' | 'security' | 'discovery' | 'ai' | 'data';
 })
 export class Settings {
   private session = inject(AuthSession);
-  private account = inject(AccountService);
+  private identity = inject(IdentityFacade);
   private profile = inject(ProfileFacade);
-  private exporter = inject(DataExportService);
+  private privacy = inject(PrivacyFacade);
   private discovery = inject(RecommendationsFacade);
 
   readonly panes: { id: Pane; label: string }[] = [
@@ -110,7 +110,7 @@ export class Settings {
     this.isSavingPassword.set(true);
 
     try {
-      await this.account.changePassword(this.currentPassword, this.newPassword);
+      await this.identity.changePassword(this.currentPassword, this.newPassword);
       this.passwordMessage.set('Password updated.');
       this.currentPassword = '';
       this.newPassword = '';
@@ -183,7 +183,7 @@ export class Settings {
     this.exportError.set('');
     this.exporting.set(true);
     try {
-      await this.exporter.download();
+      await this.privacy.download();
     } catch {
       this.exportError.set('Could not export your data. Try again.');
     } finally {

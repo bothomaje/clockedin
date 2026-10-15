@@ -1,11 +1,11 @@
-import { IdentityFacade } from '@domains/identity';
+import { AccountSecurityPanel } from '@domains/identity';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '@shared/ui/page-header/page-header';
 import { DatePipe } from '@angular/common';
 import { PrivacyFacade } from '@domains/privacy';
-import { DISCOVERY_SOURCES, RecommendationsFacade } from '@domains/recommendations';
+import { DiscoverySettingsPanel, RecommendationsFacade } from '@domains/recommendations';
 import { ProfileFacade } from '@domains/profile';
 import { AuthSession } from '@core/auth/auth-session';
 import { getAuthErrorMessage } from '@core/auth/auth-errors';
@@ -13,17 +13,22 @@ import { getAuthErrorMessage } from '@core/auth/auth-errors';
 type Pane = 'account' | 'security' | 'discovery' | 'ai' | 'data';
 
 @Component({
-  imports: [FormsModule, DatePipe, RouterLink, PageHeader],
+  imports: [
+    FormsModule,
+    DatePipe,
+    RouterLink,
+    PageHeader,
+    AccountSecurityPanel,
+    DiscoverySettingsPanel,
+  ],
   selector: 'app-settings',
   templateUrl: './settings-page.html',
   styleUrl: './settings-page.scss',
 })
 export class Settings {
   private session = inject(AuthSession);
-  private identity = inject(IdentityFacade);
   private profile = inject(ProfileFacade);
   private privacy = inject(PrivacyFacade);
-  private discovery = inject(RecommendationsFacade);
 
   readonly panes: { id: Pane; label: string }[] = [
     { id: 'account', label: 'Account Information' },
@@ -40,41 +45,11 @@ export class Settings {
   exporting = signal(false);
   exportError = signal('');
 
-  readonly discoverySources = DISCOVERY_SOURCES;
-  discoveryLoaded = signal(false);
-  discoveryBusy = signal(false);
-  discoveryError = signal('');
-  discoveryEnabled = signal(false);
-  selectedSources = signal<string[]>([]);
-
-  constructor() {
-    void this.loadDiscovery();
-  }
-
   email = this.session.currentUserSnapshot()?.email ?? '';
   emailVerified = this.session.isEmailVerified;
   verificationSent = signal(false);
   verificationError = signal('');
   isSendingVerification = signal(false);
-
-  currentPassword = '';
-  newPassword = '';
-  confirmNewPassword = '';
-  passwordMessage = signal('');
-  passwordError = signal('');
-  isSavingPassword = signal(false);
-
-  get newPasswordValid(): boolean {
-    return (
-      this.newPassword.length >= 8 &&
-      /[A-Za-z]/.test(this.newPassword) &&
-      /[0-9]/.test(this.newPassword)
-    );
-  }
-
-  get newPasswordsMatch(): boolean {
-    return this.newPassword === this.confirmNewPassword;
-  }
 
   async resendVerification() {
     if (this.isSendingVerification() || this.verificationSent()) return;
@@ -92,90 +67,12 @@ export class Settings {
     }
   }
 
-  async changePassword() {
-    this.passwordError.set('');
-    this.passwordMessage.set('');
-
-    if (!this.newPasswordValid) {
-      this.passwordError.set(
-        'New password must be at least 8 characters and include a letter and a number.',
-      );
-      return;
-    }
-    if (!this.newPasswordsMatch) {
-      this.passwordError.set('New passwords do not match.');
-      return;
-    }
-
-    this.isSavingPassword.set(true);
-
-    try {
-      await this.identity.changePassword(this.currentPassword, this.newPassword);
-      this.passwordMessage.set('Password updated.');
-      this.currentPassword = '';
-      this.newPassword = '';
-      this.confirmNewPassword = '';
-    } catch (err) {
-      this.passwordError.set(getAuthErrorMessage(err));
-    } finally {
-      this.isSavingPassword.set(false);
-    }
-  }
-
   async revokeConsent() {
     this.revoking.set(true);
     try {
       await this.profile.revokeAiConsent();
     } finally {
       this.revoking.set(false);
-    }
-  }
-
-  private async loadDiscovery() {
-    try {
-      const prefs = await this.discovery.loadPreferences();
-      this.discoveryEnabled.set(prefs.enabled);
-      this.selectedSources.set(prefs.sources);
-      this.discoveryLoaded.set(true);
-    } catch {
-      this.discoveryError.set('Could not load job match settings.');
-    }
-  }
-
-  async toggleSource(id: string, checked: boolean) {
-    const previous = this.selectedSources();
-    const next = checked ? [...previous, id] : previous.filter((s) => s !== id);
-    if (!next.length) return;
-    await this.saveDiscovery(
-      () => this.discovery.setSources(next),
-      () => {
-        this.selectedSources.set(next);
-      },
-      () => this.selectedSources.set(previous),
-    );
-  }
-
-  async setDiscoveryEnabled(enabled: boolean) {
-    await this.saveDiscovery(
-      () => this.discovery.setEnabled(enabled),
-      () => {
-        this.discoveryEnabled.set(enabled);
-      },
-    );
-  }
-
-  private async saveDiscovery(write: () => Promise<void>, apply: () => void, revert?: () => void) {
-    this.discoveryError.set('');
-    this.discoveryBusy.set(true);
-    apply();
-    try {
-      await write();
-    } catch {
-      revert?.();
-      this.discoveryError.set('Could not save. Try again.');
-      if (!revert) void this.loadDiscovery();
-    } finally {
-      this.discoveryBusy.set(false);
     }
   }
 

@@ -62,101 +62,11 @@
       }
 
       @case ('security') {
-        <article class="clk-card">
-          <h3>Change Password</h3>
-          @if (passwordMessage()) {
-            <p class="alert alert-success m-0">{{ passwordMessage() }}</p>
-          }
-          @if (passwordError()) {
-            <p class="alert alert-danger m-0">{{ passwordError() }}</p>
-          }
-          <form class="d-flex flex-column gap-3" (ngSubmit)="changePassword()">
-            <label class="clk-field">
-              <span>Current Password</span>
-              <input
-                type="password"
-                class="form-control"
-                name="current-password"
-                [(ngModel)]="currentPassword"
-                required
-              />
-            </label>
-            <label class="clk-field">
-              <span>New Password</span>
-              <input
-                type="password"
-                class="form-control"
-                name="new-password"
-                [(ngModel)]="newPassword"
-                required
-              />
-            </label>
-            <label class="clk-field">
-              <span>Confirm New Password</span>
-              <input
-                type="password"
-                class="form-control"
-                name="confirm-new-password"
-                [(ngModel)]="confirmNewPassword"
-                required
-              />
-            </label>
-            <p class="form-text m-0">At least 8 characters, with a letter and a number.</p>
-            <button
-              type="submit"
-              class="btn btn-primary align-self-start"
-              [disabled]="
-                isSavingPassword() || !currentPassword || !newPasswordValid || !newPasswordsMatch
-              "
-            >
-              {{ isSavingPassword() ? 'Saving...' : 'Update Password' }}
-            </button>
-          </form>
-        </article>
+        <app-account-security-panel />
       }
 
       @case ('discovery') {
-        <article class="clk-card">
-          <h3>Job Matches</h3>
-          @if (discoveryError()) {
-            <p class="text-danger m-0" role="alert">{{ discoveryError() }}</p>
-          }
-          @if (discoveryLoaded()) {
-            <label class="form-check form-switch m-0">
-              <input
-                type="checkbox"
-                class="form-check-input"
-                role="switch"
-                [checked]="discoveryEnabled()"
-                [disabled]="discoveryBusy()"
-                (change)="setDiscoveryEnabled($any($event.target).checked)"
-              />
-              <span class="form-check-label">Match me to jobs</span>
-            </label>
-
-            <fieldset class="d-flex flex-column gap-2 m-0" [disabled]="!discoveryEnabled()">
-              <legend class="fs-6 fw-semibold">Job sources</legend>
-              @for (s of discoverySources; track s.id) {
-                <label class="form-check m-0">
-                  <input
-                    type="checkbox"
-                    class="form-check-input"
-                    [checked]="selectedSources().includes(s.id)"
-                    [disabled]="
-                      discoveryBusy() ||
-                      (selectedSources().length === 1 && selectedSources().includes(s.id))
-                    "
-                    (change)="toggleSource(s.id, $any($event.target).checked)"
-                  />
-                  <span class="form-check-label">{{ s.label }}</span>
-                </label>
-              }
-            </fieldset>
-            <p class="form-text m-0">Turning a source off hides its matches.</p>
-          } @else if (!discoveryError()) {
-            <p aria-busy="true" class="text-secondary m-0">Loading…</p>
-          }
-        </article>
+        <app-discovery-settings-panel />
       }
 
       @case ('ai') {

@@ -1,1 +1,1 @@
-export { PrivacyFacade } from './privacy.facade';
+export { PrivacyFacade } from './data/privacy.facade';

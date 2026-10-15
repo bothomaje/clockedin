@@ -1,7 +1,7 @@
 import { inject, Service } from '@angular/core';
-import { TopMatchesState } from './data/state/top-matches-state';
-import { Recommendation } from './data/models/recommendation';
-import { DiscoveryRepository } from './data/repositories/discovery.repository';
+import { TopMatchesState } from './state/top-matches-state';
+import { Recommendation } from './models/recommendation';
+import { DiscoveryRepository } from './repositories/discovery.repository';
 
 @Service()
 export class RecommendationsFacade {

@@ -7,8 +7,8 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
 } from 'firebase/auth';
-import { firebaseAuth } from '../firebase/firebase';
-import { AuthSession } from './auth-session';
+import { firebaseAuth } from '@core/firebase/firebase';
+import { AuthSession } from '@core/auth/auth-session';
 
 @Service()
 export class AuthService {

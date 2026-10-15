@@ -1,9 +1,9 @@
 import { inject, Service } from '@angular/core';
-import { JobState } from './data/state/job-state';
-import { Job, JobStatus } from './data/models/job';
-import { JobAnalysis } from './data/models/job-analysis';
+import { JobState } from './state/job-state';
+import { Job, JobStatus } from './models/job';
+import { JobAnalysis } from './models/job-analysis';
 import { WriteBatch } from 'firebase/firestore';
-import { JobRepository } from './data/repositories/job.repository';
+import { JobRepository } from './repositories/job.repository';
 
 @Service()
 export class JobsFacade {

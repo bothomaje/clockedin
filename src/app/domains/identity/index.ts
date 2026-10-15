@@ -1,2 +1,2 @@
 export { authRoutes } from './feature/identity.routes';
-export { IdentityFacade } from './identity.facade';
+export { IdentityFacade } from './data/identity.facade';

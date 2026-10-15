@@ -1,4 +1,4 @@
-import { AuthService } from '@core/auth/auth.service';
+import { AuthService } from '../../data/auth.service';
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';

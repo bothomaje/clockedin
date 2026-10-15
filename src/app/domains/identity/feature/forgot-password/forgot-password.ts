@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { getAuthErrorMessage } from '@core/auth/auth-errors';
-import { AuthService } from '@core/auth/auth.service';
+import { AuthService } from '../../data/auth.service';
 @Component({
   imports: [FormsModule, RouterLink],
   selector: 'app-forgot-password',

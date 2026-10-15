@@ -1,5 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { AccountService } from './data/account.service';
+import { AccountService } from './account.service';
 
 @Service()
 export class IdentityFacade {

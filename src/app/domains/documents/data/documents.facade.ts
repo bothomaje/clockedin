@@ -1,5 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { DocumentState } from './data/state/document-state';
+import { DocumentState } from './state/document-state';
 
 @Service()
 export class DocumentsFacade {

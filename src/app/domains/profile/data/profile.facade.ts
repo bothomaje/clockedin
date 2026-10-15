@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
-import { ProfileState } from './data/state/profile-state';
-import { Info } from './data/models/info';
+import { ProfileState } from './state/profile-state';
+import { Info } from './models/info';
 
 @Service()
 export class ProfileFacade {

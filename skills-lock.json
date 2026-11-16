@@ -1,0 +1,383 @@
+{
+  "version": 2,
+  "skills": {
+    "<skill-name>": {
+      "source": "danielteles/awesome-agent-skills",
+      "sourceType": "github",
+      "skillPath": "templates/SKILL.md",
+      "computedHash": "3a6c22f6399bc7758b8789df5600301d7f72855bf113bb9c2c9d6ee1c29ea8fc"
+    },
+    "a11y": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/a11y/SKILL.md",
+      "computedHash": "8e8b94bdc20123337e7afade1c7ee82c7a7d5c64321c40c118eb7bdc6c140cd6"
+    },
+    "accessibility": {
+      "source": "danielteles/awesome-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/accessibility/SKILL.md",
+      "computedHash": "325a2c23fc471037f0477759d09634b9d363b4fb9258756c4f3b0d59cb85e66a"
+    },
+    "adapt": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/adapt/SKILL.md",
+      "computedHash": "c075233a71f5c49f67dd4838e67c8c20488ba0d9525b6166ab4cd4eac692c7ea"
+    },
+    "add-ui": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/add-ui/SKILL.md",
+      "computedHash": "ea79ca1f89d69231a6db120ecaba5c47e94464d9080b983da6ea64ceac6652c3"
+    },
+    "angular": {
+      "source": "danielteles/awesome-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/angular/SKILL.md",
+      "computedHash": "6650c8d37bd6945c4d561c8c414ddbc956b5e33d44f5d383610102ddfbba29e3"
+    },
+    "angular-developer": {
+      "source": "angular/skills",
+      "sourceType": "github",
+      "skillPath": "angular-developer/SKILL.md",
+      "computedHash": "50ac5be541125767b4864c31ecf2947558bf4a897b54cedd1d43e04b857f4e42"
+    },
+    "animate": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/animate/SKILL.md",
+      "computedHash": "1feb5bc44da0cf19afec130ec1bd027eb003000f85bbfe3ccde79f9027872314"
+    },
+    "architecture-and-design": {
+      "source": "danielteles/awesome-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/architecture-and-design/SKILL.md",
+      "computedHash": "53a1f96c6657da586c01b8421e32ee2d65979874f6a99401392b672b0127cc29"
+    },
+    "arrange": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/arrange/SKILL.md",
+      "computedHash": "a1628e739f55d6b045e60304e345c6fc5b22c6ecc250ff66f4c13c2c721f0963"
+    },
+    "audit": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/audit/SKILL.md",
+      "computedHash": "e07d9f285a4ee662202610fcf1f0bba30a455da5b85565ad6afbbd8e3354fb38"
+    },
+    "audit-design-md": {
+      "source": "andrescevp/website-agent-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/audit-design-md/SKILL.md",
+      "computedHash": "9403c519c80bf5957dc1c91261fedd100d5c234bec3a4eb0a4ce466f7a34ffc5"
+    },
+    "better-accessibility": {
+      "source": "andrescevp/website-agent-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/better-accessibility/SKILL.md",
+      "computedHash": "8029b459f2b5e43a80fcb162f4b878e8bb0db45c011943f45a4235a80e624620"
+    },
+    "better-colors": {
+      "source": "andrescevp/website-agent-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/better-colors/SKILL.md",
+      "computedHash": "d826480a0d1e7ef1da1613f694e8c0a35f3d08319ee4507700908cd089b7942b"
+    },
+    "better-interface": {
+      "source": "andrescevp/website-agent-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/better-interface/SKILL.md",
+      "computedHash": "9ba52c26ea5754196da8c48b1bdc2a39e344d628c538c4622691eae4718f5a35"
+    },
+    "better-layout": {
+      "source": "andrescevp/website-agent-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/better-layout/SKILL.md",
+      "computedHash": "c65c14d0a877e5dc3044321bfe60fbd2b29f26b5139143978c3e51430b0bc827"
+    },
+    "better-typography": {
+      "source": "andrescevp/website-agent-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/better-typography/SKILL.md",
+      "computedHash": "f183bb9db7bc9136142ac83ef56c481561d9494f7e00dcf006c8c1ce0ac388f6"
+    },
+    "better-ui": {
+      "source": "andrescevp/website-agent-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/better-ui/SKILL.md",
+      "computedHash": "863e30273bf5b5f7884ed3def5f67f160b618547dc7b4645f392b7c5a59460b0"
+    },
+    "better-writing": {
+      "source": "andrescevp/website-agent-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/better-writing/SKILL.md",
+      "computedHash": "c9f15eabc7de2f50882029da7f2b6bb711f0e094a664d02ee9c457c9a988201c"
+    },
+    "bolder": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/bolder/SKILL.md",
+      "computedHash": "a2c109c587dcfc5d0bdfcef9d84128780e8d5e86e8ebf6bb61132477ff525ad4"
+    },
+    "break-site": {
+      "source": "andrescevp/website-agent-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/break-site/SKILL.md",
+      "computedHash": "8dbaf5ce5da43c9d1096ed78bdd25c9f3729f9dadcf5c87c3aa9acce7383bde2"
+    },
+    "clarify": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/clarify/SKILL.md",
+      "computedHash": "09e2089f7d8985d7f0e2e9600985b9eed6996729ddf028d366409ab5ae3b256e"
+    },
+    "colorize": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/colorize/SKILL.md",
+      "computedHash": "a1ce5f3143f946e5ab969fcd94e6ec08704429f79fd931424855a74e976d3c11"
+    },
+    "component-api-design": {
+      "source": "danielteles/awesome-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/component-api-design/SKILL.md",
+      "computedHash": "c332ccd7adfed0768d7a31feeb932e548ceae7426349fe3f0c041dfc127a8e45"
+    },
+    "component-variant": {
+      "source": "andrescevp/website-agent-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/component-variant/SKILL.md",
+      "computedHash": "16e0dcd08496e10c46077491bd0587b7ec8f91e98ed31f3fceb4c9717fc4edd0"
+    },
+    "core-typescript": {
+      "source": "danielteles/awesome-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/core-typescript/SKILL.md",
+      "computedHash": "c79953c37b5b842dd7f801c3a8b22eadf865568a0cf5c537155bde3207ac2ec3"
+    },
+    "critique": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/critique/SKILL.md",
+      "computedHash": "96d3d345f7dfa288f2050ff3965fadebc746ad3c490133c6a1e44d4f5f093d27"
+    },
+    "critiquing-visual-design": {
+      "source": "Prasad-D-Ware/critiquing-visual-design",
+      "sourceType": "github",
+      "skillPath": "skills/critiquing-visual-design/SKILL.md",
+      "computedHash": "df5b14cc8a66105ae38f4d2d138fc594b16d198adfca2deac5a1a0be9349a0f1"
+    },
+    "data-viz": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/data-viz/SKILL.md",
+      "computedHash": "108668d5291e7d880bf24c57b698f114502ff1149b6d77d4ecb8c9bf1fe8174c"
+    },
+    "delight": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/delight/SKILL.md",
+      "computedHash": "6e343dc30177262c54dc5a1ba84d3d2987181eda12ccf48e08e29ea865df79e8"
+    },
+    "depth": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/depth/SKILL.md",
+      "computedHash": "59b4bda327eedfc897f3988e7755bded224738d92aef14637ca7471f0f435c9b"
+    },
+    "design-taste-frontend": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/taste-skill/SKILL.md",
+      "computedHash": "b10eab0a9684cd09cf34c31ef04a3bf530a5f4404422f9c520d42372d670c7fc"
+    },
+    "distill": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/distill/SKILL.md",
+      "computedHash": "7445acbd0638bd8a6e8239482c13eb8fc904897a3a2859bf2de72377241b199d"
+    },
+    "e2e-testing": {
+      "source": "danielteles/awesome-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/e2e-testing/SKILL.md",
+      "computedHash": "36f4b49f84f3839f1e224aaf272413597465fc992ededde3d673d58252862e1e"
+    },
+    "empty-state": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/empty-state/SKILL.md",
+      "computedHash": "ea808d4aa8a6df5cfee3d604d7a56ee09b3f58e5d71af9c3eb4ec8cde426ee56"
+    },
+    "explain-interface": {
+      "source": "andrescevp/website-agent-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/explain-interface/SKILL.md",
+      "computedHash": "143268bfb495d3a6a4e15efc3a2b8a6316221f2305be13b9826c1a45d9a2e900"
+    },
+    "extract": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/extract/SKILL.md",
+      "computedHash": "6238aedb6c278785b7f0ca076a98798749b5b0439cc10c314963d872859fd310"
+    },
+    "forms": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/forms/SKILL.md",
+      "computedHash": "f1f5af636c9da6a4b739df5e4f9b042e84bc875a097b89925c9ecb9129c1255a"
+    },
+    "frontend-code-review": {
+      "source": "danielteles/awesome-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-code-review/SKILL.md",
+      "computedHash": "c5b89cd7b0d975770a017e42033fd366dc54db6090a7ca1fb093d9faa99589d7"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "computedHash": "83485963700bcf11d5bf78118facb301676b69d918fee2e45a95e7f1a2840f6c"
+    },
+    "harden": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/harden/SKILL.md",
+      "computedHash": "447d3d6d4ff757c9453b00c3899cf65059b40ca756a2d1d8ecfd5fb15c92a67c"
+    },
+    "hierarchy": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/hierarchy/SKILL.md",
+      "computedHash": "7fc359bc6c159c035edec77c90ee3f8d364e1e7230a28adf4120cfa0a94fcf9c"
+    },
+    "i18n-and-localization": {
+      "source": "danielteles/awesome-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/i18n-and-localization/SKILL.md",
+      "computedHash": "6d2101f6599fad167a7d14566c02145d9cc55f5abd8b16a925f5ced2749349ac"
+    },
+    "imagery": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/imagery/SKILL.md",
+      "computedHash": "e7b504f7727f51383525591a75cd36b52d089277f5358149e22bf21bd9a7ad8b"
+    },
+    "interface-review": {
+      "source": "andrescevp/website-agent-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/interface-review/SKILL.md",
+      "computedHash": "87e62c90013ff4e06d1e26af52c7c73efbccb51d06daaa5acc87a8553dc4bcaf"
+    },
+    "localize": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/localize/SKILL.md",
+      "computedHash": "9eb8cba793b7a1cf6863688517dd6201cbef1d096676e930d727b296c7a93894"
+    },
+    "normalize": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/normalize/SKILL.md",
+      "computedHash": "ab40563b0ee358408b8d38aca4eeca65334a71cf8db81078eabba74d6cc42a96"
+    },
+    "onboard": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/onboard/SKILL.md",
+      "computedHash": "dfa97fd99c29e7b8a18d32b78ac30314da0424d646f203e09495d64e5f5b2f17"
+    },
+    "optimize": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/optimize/SKILL.md",
+      "computedHash": "8103418af5b04eb943711684032429d9dd08e5bcaf4ead70e11b73a6eff4baca"
+    },
+    "polish": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/polish/SKILL.md",
+      "computedHash": "b54e71e1dbbf46175d79f859ddc83e76bfd85996cb8366e1720e7fd7739d4c68"
+    },
+    "quieter": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/quieter/SKILL.md",
+      "computedHash": "8d45867afbf222d33bbab3c7ac4df3a427223e2c410c725915e01a48164c0dda"
+    },
+    "react": {
+      "source": "danielteles/awesome-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react/SKILL.md",
+      "computedHash": "df70951ac7793e3c0ced6e138102b3f802bc2db971394f193a16467f600e5f8b"
+    },
+    "search": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/search/SKILL.md",
+      "computedHash": "a948d8178dc44de03781f5ed4a7971f8586e23ddbeb695cab5445d6a0adf06ed"
+    },
+    "security-ux": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/security-ux/SKILL.md",
+      "computedHash": "db1ba2dfe5a39386359c2dd00639bd0ba001fe43fa0531d7adf03ce47e22010d"
+    },
+    "setup": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/setup/SKILL.md",
+      "computedHash": "9fd5d744b8f0bac62171834c2fc8eaed4b789b81729cc375c7449f0a323b5eb6"
+    },
+    "showcase": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/showcase/SKILL.md",
+      "computedHash": "c5e4b7f29627e3682d385641dad7f91d2ad68cbdfd50858034d1575a094c32e6"
+    },
+    "styling-and-design-tokens": {
+      "source": "danielteles/awesome-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/styling-and-design-tokens/SKILL.md",
+      "computedHash": "d6460ef46daafbc35a946f1322bbbc2ebc1f7e8337ec71d04c6d3a4c9dd1cb14"
+    },
+    "test": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/test/SKILL.md",
+      "computedHash": "0c38ac3e36a61d044db76ce3e0aef599825e7a0dbc2a2cd51d16e3941d56851d"
+    },
+    "test-quality": {
+      "source": "danielteles/awesome-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/test-quality/SKILL.md",
+      "computedHash": "4b3fc07554fc98ef1334a225d409664da31ef2e0db6618c151c1587a17612f06"
+    },
+    "typeset": {
+      "source": "aladicf/better-web-ui",
+      "sourceType": "github",
+      "skillPath": "skills/typeset/SKILL.md",
+      "computedHash": "b479897356e25ae18a4bf3d4e31f738b32bbd55145c230e8483b673332428def"
+    },
+    "vue": {
+      "source": "danielteles/awesome-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/vue/SKILL.md",
+      "computedHash": "43da0e99b74d875fd15a791a9cd796e12abd57461f11250835605aa8da7590f6"
+    },
+    "web-performance": {
+      "source": "danielteles/awesome-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-performance/SKILL.md",
+      "computedHash": "55f139e8197381451868c4a4d41769b249470e3432bf8d9ae672fd219a954d84"
+    },
+    "website-audit": {
+      "source": "andrescevp/website-agent-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/website-audit/SKILL.md",
+      "computedHash": "fda6dbc9f09ec7b7569984ae74b7be309a023c93d40c1b55152efada53a42165"
+    }
+  }
+}
